@@ -1,11 +1,17 @@
 <script>
     import Select, { Option } from '@smui/select';
     import Button from '@smui/button';
+    import { onMount } from 'svelte';
 
     export let name;
     let using_net = "main";
-    let accounts = ["acct1", "acct2"];
+    let accounts = {};
     let networks = ["Main", "Test"];
+
+    onMount(async () => {
+        const res = await fetch('http://127.0.0.1:12345/wallets');
+        accounts = await res.json();
+    });
 </script>
 
 <main>
@@ -20,7 +26,7 @@
     <p>{using_net} network</p>
 
     <ul>
-    {#each accounts as account}
+    {#each Object.keys(accounts) as account}
         <li>{account}</li>
     {/each}
     </ul>
