@@ -3,14 +3,19 @@
     import Button from '@smui/button';
     import { onMount } from 'svelte';
 
+    const walletd_addr = 'http://127.0.0.1:12345';
+
     export let name;
-    let using_net = "main";
-    let accounts = {};
-    let networks = ["Main", "Test"];
+    let using_net = 0;
+    let using_wallet = [];
+    // wallet name to info
+    let wallets = {};
+    // Network name to integer id
+    let networks = {"Main" : 0, "Test" : 1};
 
     onMount(async () => {
-        const res = await fetch('http://127.0.0.1:12345/wallets');
-        accounts = await res.json();
+        const res = await fetch(walletd_addr + '/wallets');
+        wallets = await res.json();
     });
 </script>
 
@@ -18,18 +23,18 @@
     <h1>Themelio wallet</h1>
 
     <Select bind:value={using_net} label="Network">
-    {#each networks as net}
-        <Option value={net}>{net}</Option>
+    {#each Object.entries(networks) as net}
+        <Option value={net[1]}>{net[0]}</Option>
     {/each}
     </Select>
 
-    <p>{using_net} network</p>
-
-    <ul>
-    {#each Object.keys(accounts) as account}
-        <li>{account}</li>
+    <Select bind:value={using_wallet} label="Wallet">
+    {#each Object.entries(wallets)
+            .filter(x => x[1].network == using_net)
+            .map(x => x[0]) as wallet}
+        <Option>{wallet}</Option>
     {/each}
-    </ul>
+    </Select>
 </main>
 
 <style>
