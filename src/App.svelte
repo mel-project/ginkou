@@ -1,14 +1,17 @@
-<script>
+<script lang="typescript">
+    //import TxHash from './types';
     import Select, { Option } from '@smui/select';
     import Button from '@smui/button';
     import Textfield from '@smui/textfield';
     import { onMount } from 'svelte';
 
+    //type TxHash = string;
+
     const walletd_addr = 'http://127.0.0.1:12345';
 
     export let name;
     // Current network being used
-    let using_net = 0;
+    let using_net: number = 0;
     // Current wallet being used
     let using_wallet = [];
     // wallet name to info
@@ -16,33 +19,50 @@
     // Network name to integer id
     let networks = {"Main" : 0, "Test" : 1};
     // Amount to send in a tx
-    let send_amount = 0;
+    let send_amount: number = 0;
 
-    async function send_mel(wallet_name, mel) {
+    /*
+    async function send_mel(wallet_name: string, mel: number): Promise<Result<TxHash>> {
         const micromel = mel * 1000;
         const wallet   = wallets[wallet_name];
         const outputs  = [micromel, wallet.total_micromel - micromel];
         const addr     = walletd_addr + '/wallets/' + wallet_name;
 
         // Prepare tx
-        const res = await fetch(addr + '/prepare-tx');
+        const res = await fetch(addr + '/prepare-tx', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: {
+                outputs: outputs,
+                // TODO tmp dummy
+                signing_key: "cde6cb9f4850495201db80b884135870916850e3167e6eaaa8c70895e10f462a45567a851dbf93797099d0c9557494b896e0f4d9b9cc3feb93e353221ed0bffb",
+            },
+        });
         const tx = await res.json();
 
         // Send tx
-        await fetch(addr + '/send-tx', {
+        return await fetch(addr + '/send-tx', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: tx,
-        });
+        })
     }
+    */
 
     // Send faucet to given wallet. Returns a succesful request to walletd,
     // not a succesful transaction.
-    async function tap_faucet(wallet_name) {
+    async function tap_faucet(wallet_name: string): Promise<string> {
         let addr = walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
-        await fetch(addr);
+        let res = await fetch_or_err(addr, {
+            method: 'POST'
+        }).chain( res => res.text() );
+
+        // Return the tx hash
+        //return await res.text()
     }
 
     onMount(async () => {
@@ -80,7 +100,7 @@
         label="Amount"
         type="number"
         suffix="mel" />
-    <!-- <Button on:click={() => send_mel()}>Send</Button> -->
+    <!--<Button on:click={() => send_mel(using_wallet, send_amount)}>Send</Button>-->
 </main>
 
 <style>
