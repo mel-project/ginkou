@@ -1,12 +1,11 @@
 <script lang="typescript">
     import {fetch_or_err} from './utils';
+    import type {TxHash} from './utils';
     import { EitherAsync } from 'purify-ts/EitherAsync';
     import Select, { Option } from '@smui/select';
     import Button from '@smui/button';
     import Textfield from '@smui/textfield';
     import { onMount } from 'svelte';
-
-    type TxHash = string;
 
     const walletd_addr = 'http://127.0.0.1:12345';
 
