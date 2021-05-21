@@ -1,11 +1,12 @@
 <script lang="typescript">
-    //import TxHash from './types';
+    import {fetch_or_err} from './utils';
+    import { EitherAsync } from 'purify-ts/EitherAsync';
     import Select, { Option } from '@smui/select';
     import Button from '@smui/button';
     import Textfield from '@smui/textfield';
     import { onMount } from 'svelte';
 
-    //type TxHash = string;
+    type TxHash = string;
 
     const walletd_addr = 'http://127.0.0.1:12345';
 
@@ -13,7 +14,7 @@
     // Current network being used
     let using_net: number = 0;
     // Current wallet being used
-    let using_wallet = [];
+    let using_wallet: string;
     // wallet name to info
     let wallets = {};
     // Network name to integer id
@@ -55,15 +56,12 @@
 
     // Send faucet to given wallet. Returns a succesful request to walletd,
     // not a succesful transaction.
-    async function tap_faucet(wallet_name: string): Promise<string> {
-        let addr = walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
-        let res = await fetch_or_err(addr, {
-            method: 'POST'
-        }).chain( res => res.text() );
-
-        // Return the tx hash
-        //return await res.text()
-    }
+    const tap_faucet = (wallet_name: string): EitherAsync<string, TxHash> =>
+        EitherAsync( async ({ fromPromise }) => {
+            let addr = walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
+            let res: Response = await fromPromise(fetch_or_err(addr, { method: 'POST' }));
+            return await res.text();
+        });
 
     onMount(async () => {
         const res = await fetch(walletd_addr + '/wallets');
@@ -91,7 +89,7 @@
 
     <!-- show faucet tx if using test net -->
     {#if using_net == 1}
-        <Button on:click={() => tap_faucet(using_wallet)}>Tap Faucet</Button>
+        <Button on:click={() => tap_faucet(using_wallet).run()}>Tap Faucet</Button>
     {/if}
 
     <p>{JSON.stringify(wallets[using_wallet])}</p>
