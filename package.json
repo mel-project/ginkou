@@ -6,7 +6,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' ./node_modules/.bin/mocha -r ts-node/register ./tests/*.spec.ts"
+    "test": "./node_modules/.bin/mocha -r ts-node/register ./tests/*.spec.ts"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
@@ -33,6 +33,7 @@
     "@smui/select": "^4.2.0",
     "@smui/textfield": "^4.2.0",
     "purify-ts": "^0.16.3",
-    "sirv-cli": "^1.0.0"
+    "sirv-cli": "^1.0.0",
+    "typescript-is": "^0.18.2"
   }
 }
