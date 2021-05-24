@@ -1,13 +1,14 @@
 <script lang="typescript">
-    import {fetch_or_err} from './utils';
-    import type {TxHash} from './utils';
-    import { EitherAsync } from 'purify-ts/EitherAsync';
+    import { tap_faucet, send_mel } from './utils';
+    //import type {TxHash} from './utils';
+    //import { EitherAsync } from 'purify-ts/EitherAsync';
     import Select, { Option } from '@smui/select';
     import Button from '@smui/button';
     import Textfield from '@smui/textfield';
     import { onMount } from 'svelte';
 
     const walletd_addr = 'http://127.0.0.1:12345';
+    const faucet_url = (wallet_name: string) => walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
 
     export let name;
     // Current network being used
@@ -20,47 +21,6 @@
     let networks = {"Main" : 0, "Test" : 1};
     // Amount to send in a tx
     let send_amount: number = 0;
-
-    /*
-    async function send_mel(wallet_name: string, mel: number): Promise<Result<TxHash>> {
-        const micromel = mel * 1000;
-        const wallet   = wallets[wallet_name];
-        const outputs  = [micromel, wallet.total_micromel - micromel];
-        const addr     = walletd_addr + '/wallets/' + wallet_name;
-
-        // Prepare tx
-        const res = await fetch(addr + '/prepare-tx', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: {
-                outputs: outputs,
-                // TODO tmp dummy
-                signing_key: "cde6cb9f4850495201db80b884135870916850e3167e6eaaa8c70895e10f462a45567a851dbf93797099d0c9557494b896e0f4d9b9cc3feb93e353221ed0bffb",
-            },
-        });
-        const tx = await res.json();
-
-        // Send tx
-        return await fetch(addr + '/send-tx', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: tx,
-        })
-    }
-    */
-
-    // Send faucet to given wallet. Returns a succesful request to walletd,
-    // not a succesful transaction.
-    const tap_faucet = (wallet_name: string): EitherAsync<string, TxHash> =>
-        EitherAsync( async ({ fromPromise }) => {
-            let addr = walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
-            let res: Response = await fromPromise(fetch_or_err(addr, { method: 'POST' }));
-            return await res.text();
-        });
 
     onMount(async () => {
         const res = await fetch(walletd_addr + '/wallets');
@@ -88,16 +48,20 @@
 
     <!-- show faucet tx if using test net -->
     {#if using_net == 1}
-        <Button on:click={() => tap_faucet(using_wallet).run()}>Tap Faucet</Button>
+        <Button on:click={() => tap_faucet( faucet_url(using_wallet) ).run()}>Tap Faucet</Button>
     {/if}
 
     <p>{JSON.stringify(wallets[using_wallet])}</p>
 
-    <Textfield bind:value={send_amount}
-        label="Amount"
-        type="number"
-        suffix="mel" />
-    <!--<Button on:click={() => send_mel(using_wallet, send_amount)}>Send</Button>-->
+    <!-- Send TXs -->
+    {#if using_wallet }
+        <Textfield bind:value={send_amount}
+            label="Amount"
+            type="number"
+            suffix="mel" />
+
+            <Button on:click={() => send_mel(using_wallet, send_amount)}>Send</Button>
+    {/if}
 </main>
 
 <style>
