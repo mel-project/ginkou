@@ -1,5 +1,7 @@
 import { EitherAsync } from 'purify-ts/EitherAsync';
 import { Either, Left, Right } from 'purify-ts/Either';
+import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
+import { is } from 'typescript-is';
 
 export type BlockHeight = number;
 export type TxHash = string;
@@ -8,14 +10,26 @@ export type PrivateKey = string;
 const home_addr = '127.0.0.1';
 const default_port = 11773;
 
-export async function fetch_or_err(url: string, opts): Promise<Either<string, Response>> {
+export interface Wallet {
+    total_micromel: number,
+    network: number,
+    address: TxHash,
+}
+
+// Runtime-cast any type into an expected type or none
+function fromAny<T>(x: any): Maybe<T> {
+    return is<T>(x) ? Just(x) : Nothing;
+}
+
+/// Fetch a url endpoint and decode as json, error if the http response is not ok
+export async function fetch_or_err(url: string, opts: any): Promise<Either<string, any>> {
     // Throws on a promise rejection, which will be caught by EitherAsync's run()
     let res = await fetch(url, opts);
 
     if ( !res.ok )
         return Left(res.statusText);
     else
-        return Right(res);
+        return Right( await res.json() );
 }
 
 // Send faucet to given wallet. Returns a succesful request to walletd,
@@ -57,7 +71,7 @@ export const confirm_tx = async (url: string, txhash: TxHash)
     });
 
 // TODO type annotation for wallet
-export const send_mel = (base_url: string, wallet_name: string, wallet, mel: number)
+export const send_mel = (base_url: string, wallet_name: string, wallet: any, mel: number)
 //: Promise<Either<string, TxHash>> =>
 :EitherAsync<string, TxHash> =>
     EitherAsync( async ({ fromPromise }) => {
@@ -95,11 +109,15 @@ export const send_mel = (base_url: string, wallet_name: string, wallet, mel: num
     });
 
 // Get a list of all stored wallets
-/*
 export const list_wallets = (port: number = default_port)
 :EitherAsync<string, Wallet[]> =>
-    EitherAsync( async ({ fromPromise }) => {
+    EitherAsync( async ({ liftEither, fromPromise }) => {
         const url = '${home_addr}:${port}/wallets';
-        const res = fromPromise(fetch_or_err(url, { method: 'GET' }));
+        const res = await fromPromise(fetch_or_err(url, { method: 'GET' }));
+        const m_wallets = fromAny<Wallet[]>(res);
+
+        return liftEither( m_wallets.caseOf({
+            Just: l => Right(l),
+            Nothing: () => Left('failed to cast'),
+        }));
     });
-*/
