@@ -1,5 +1,6 @@
 <script lang="typescript">
-    import { tap_faucet, send_mel } from './utils';
+    import { tap_faucet, send_mel, confirm_tx, new_wallet } from './utils';
+    import NewWallet from './NewWallet.svelte';
     //import type {TxHash} from './utils';
     //import { EitherAsync } from 'purify-ts/EitherAsync';
     import Select, { Option } from '@smui/select';
@@ -9,6 +10,7 @@
 
     const walletd_addr = 'http://127.0.0.1:12345';
     const faucet_url = (wallet_name: string) => walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
+    const create_wallet_url = (wallet_name: string) => walletd_addr + '/wallets/' + wallet_name;
 
     export let name;
     // Current network being used
@@ -18,9 +20,11 @@
     // wallet name to info
     let wallets = {};
     // Network name to integer id
-    let networks = {"Main" : 0, "Test" : 1};
+    let networks = {"Main" : 255, "Test" : 1};
     // Amount to send in a tx
     let send_amount: number = 0;
+    // Name of a new wallet if being defined
+    let new_wallet_name: string | undefined;
 
     onMount(async () => {
         const res = await fetch(walletd_addr + '/wallets');
@@ -53,6 +57,14 @@
 
     <p>{JSON.stringify(wallets[using_wallet])}</p>
 
+    <!--<NewWallet bind:value={new_wallet_name} bind:value={using_net} />-->
+    <Button on:click={() =>
+        new_wallet(
+            create_wallet_url(using_wallet),
+            using_net == networks["Test"] ? true : false)
+            .run()
+        }>Tap Faucet</Button>
+
     <!-- Send TXs -->
     {#if using_wallet }
         <Textfield bind:value={send_amount}
@@ -60,7 +72,7 @@
             type="number"
             suffix="mel" />
 
-            <Button on:click={() => send_mel(using_wallet, send_amount)}>Send</Button>
+        <Button on:click={() => send_mel(using_wallet, send_amount)}>Send</Button>
     {/if}
 </main>
 

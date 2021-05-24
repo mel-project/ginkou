@@ -3,6 +3,10 @@ import { Either, Left, Right } from 'purify-ts/Either';
 
 export type BlockHeight = number;
 export type TxHash = string;
+export type PrivateKey = string;
+
+const home_addr = '127.0.0.1';
+const default_port = 11773;
 
 export async function fetch_or_err(url: string, opts): Promise<Either<string, Response>> {
     // Throws on a promise rejection, which will be caught by EitherAsync's run()
@@ -16,14 +20,28 @@ export async function fetch_or_err(url: string, opts): Promise<Either<string, Re
 
 // Send faucet to given wallet. Returns a succesful request to walletd,
 // not a succesful transaction.
-export const tap_faucet = (url: string, wallet_name: string)
+export const tap_faucet = (url: string)
 : EitherAsync<string, TxHash> =>
     EitherAsync( async ({ fromPromise }) => {
         let res: Response = await fromPromise(fetch_or_err(url, { method: 'POST' }));
         return await res.text();
     });
 
-export const check_tx = async (url: string, txhash: TxHash)
+// Creates a new wallet and returns a private key for the new wallet.
+export const new_wallet = (url: string, use_testnet: boolean)
+: EitherAsync<string, PrivateKey> =>
+    EitherAsync( async ({ fromPromise }) => {
+        //let addr = url + '/' + wallet_name;
+        let res: Response = await fromPromise(fetch_or_err(url, {
+            method: 'PUT',
+            body: { testnet : use_testnet },
+        }));
+
+        // Response is a quoted string, so json parses to a string
+        return await res.json();
+    });
+
+export const confirm_tx = async (url: string, txhash: TxHash)
 : Promise<Either<string, BlockHeight>> =>
     EitherAsync( async ({ liftEither, fromPromise }) => {
         let res: Response = await fromPromise(fetch_or_err(url, { method : 'GET' }));
@@ -33,15 +51,18 @@ export const check_tx = async (url: string, txhash: TxHash)
         if (height != null)
             return liftEither(Right(height as BlockHeight));
         else
-            return liftEither(Left('not yet confirmed'));
+            // Poll until tx is confirmed
+            return await fromPromise(confirm_tx(url, txhash));
+            //return liftEither(Left('not yet confirmed'));
     });
 
-export const send_mel = (base_url: string, wallet_name: string, mel: number)
+// TODO type annotation for wallet
+export const send_mel = (base_url: string, wallet_name: string, wallet, mel: number)
 //: Promise<Either<string, TxHash>> =>
 :EitherAsync<string, TxHash> =>
     EitherAsync( async ({ fromPromise }) => {
         const micromel = mel * 1000;
-        const wallet   = wallets[wallet_name];
+        //const wallet   = wallets[wallet_name];
         const outputs  = [micromel, wallet.total_micromel - micromel];
         const addr     = base_url + '/wallets/' + wallet_name;
 
@@ -62,11 +83,23 @@ export const send_mel = (base_url: string, wallet_name: string, mel: number)
         const tx: TxHash = await res.json();
 
         // Send tx
-        return await fromPromise(fetch_or_err(addr + '/send-tx', {
+        const send_res: Response = await fromPromise(fetch_or_err(addr + '/send-tx', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: tx,
         }));
+
+        return send_res.text();
     });
+
+// Get a list of all stored wallets
+/*
+export const list_wallets = (port: number = default_port)
+:EitherAsync<string, Wallet[]> =>
+    EitherAsync( async ({ fromPromise }) => {
+        const url = '${home_addr}:${port}/wallets';
+        const res = fromPromise(fetch_or_err(url, { method: 'GET' }));
+    });
+*/
