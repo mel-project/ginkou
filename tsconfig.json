@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["mocha"],
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "./out",
