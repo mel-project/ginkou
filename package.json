@@ -16,6 +16,7 @@
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
     "chai": "^4.3.4",
+    "cross-fetch": "^3.1.4",
     "mocha": "^8.4.0",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
