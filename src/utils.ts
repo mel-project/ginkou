@@ -1,7 +1,6 @@
 import { EitherAsync } from 'purify-ts/EitherAsync';
 import { Either, Left, Right } from 'purify-ts/Either';
 import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
-import { is } from 'typescript-is';
 import fetch from 'cross-fetch';
 
 export type BlockHeight = number;
@@ -17,17 +16,66 @@ export interface Wallet {
     address: TxHash,
 }
 
-// Runtime-cast any type into an expected type or none
-function fromAny<T>(x: any): Maybe<T> {
-    return is<T>(x) ? Just(x) : Nothing;
+// Custom type guards
+// ----
+
+function isPrivateKey(x: any): x is Wallet {
+    return typeof(x) == 'string' ? true : false;
 }
 
-// Wrap fromAny in an Either, returning a cast error instead of Nothing
-function fromAnyEither<T>(x: any): Either<string, T> {
-    const t = fromAny<T>(x)
+function isWallet(x: any): x is Wallet {
+    if ('total_micromel' in x && typeof(x.total_micromel) == 'number'
+        && 'network' in x     && typeof(x.network) == 'number'
+        && 'address' in x     && typeof(x.address) == 'string')
+        return true;
+    else
+        return false;
+}
 
-    return t.caseOf({
-        Just: l => Right(l),
+
+// Casting functions
+// ----
+
+function intoWallet(x: any): Maybe<Wallet> {
+    return is<Wallet>(x) ? Just(x) : Nothing;
+}
+
+function intoListOf<T>(a: any, intoT: (a0: any) => Maybe<T>): Maybe<T[]> {
+    if ( Array.isArray(a) )
+        for (const x of a) {
+            if ( intoT(a).isNothing() )
+                return Nothing;
+        }
+
+    return Just(a as T[]);
+}
+
+/*
+function isListOf<T>(a: any, pred: (a0: any) => boolean): a is T[] {
+    if ( Array.isArray(a) )
+        for (const x of a) {
+            if ( !pred(a) )
+                return false;
+        }
+
+    return true;
+}
+*/
+
+/*
+function castAnyEither<T>(x: any, pred: (a: any) => boolean): Either<string, T> {
+    const t = pred(x)
+    if ( pred(x) )
+        return Right(x as T);
+    else
+        return Left('failed to cast object to expected type.');
+}
+*/
+
+// Give a string cast error if maybe is nothing
+function castEither<T>(m: Maybe<T>): Either<string, T> {
+    return m.caseOf({
+        Just: x => Right(x),
         Nothing: () => Left('failed to cast json to expected type'),
     });
 }
@@ -57,14 +105,14 @@ export const new_wallet = (wallet_name: string, use_testnet: boolean, port: numb
 : EitherAsync<string, PrivateKey> =>
     EitherAsync( async ({ liftEither, fromPromise }) => {
         const url = `${home_addr}:${port}/wallets/${wallet_name}`;
-        console.log(url)
         let res = await fromPromise(fetch_or_err(url, {
             method: 'PUT',
             body: JSON.stringify({ testnet : use_testnet }),
         }));
 
         // Response is a quoted string, so json parses to a string
-        return liftEither( fromAnyEither<PrivateKey>(res) );
+        return liftEither( castAnyEither<PrivateKey>(res, isPrivateKey) );
+        //return liftEither( fromAnyEither<PrivateKey>(res) );
     });
 
 export const confirm_tx = async (url: string, txhash: TxHash)
@@ -127,5 +175,5 @@ export const list_wallets = (port: number = default_port)
         const url = `${home_addr}:${port}/wallets`;
         const res = await fromPromise(fetch_or_err(url, { method: 'GET' }));
 
-        return liftEither( fromAnyEither(res) );
+        return liftEither(castEither<Wallet[]>(intoListOf<Wallet>(res, intoWallet)));
     });
