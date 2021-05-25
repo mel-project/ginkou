@@ -6,6 +6,8 @@ import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
 import autoPreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
+import ttypescript from 'ttypescript';
+import tsPlugin from 'rollup-plugin-typescript2';
 
 
 const production = !process.env.ROLLUP_WATCH;
@@ -40,6 +42,9 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
+        tsPlugin({
+            typescript: ttypescript
+        }),
 		svelte({
             preprocess: autoPreprocess(),
 			compilerOptions: {
