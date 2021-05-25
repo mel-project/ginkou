@@ -1,6 +1,7 @@
 import { EitherAsync } from 'purify-ts/EitherAsync';
 import { Either, Left, Right } from 'purify-ts/Either';
 import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
+import { is } from 'typescript-is';
 import fetch from 'cross-fetch';
 
 export type BlockHeight = number;
@@ -19,6 +20,7 @@ export interface Wallet {
 // Custom type guards
 // ----
 
+/*
 function isPrivateKey(x: any): x is Wallet {
     return typeof(x) == 'string' ? true : false;
 }
@@ -31,6 +33,7 @@ function isWallet(x: any): x is Wallet {
     else
         return false;
 }
+*/
 
 
 // Casting functions
@@ -38,6 +41,10 @@ function isWallet(x: any): x is Wallet {
 
 function intoWallet(x: any): Maybe<Wallet> {
     return is<Wallet>(x) ? Just(x) : Nothing;
+}
+
+function intoPrivateKey(x: any): Maybe<PrivateKey> {
+    return is<PrivateKey>(x) ? Just(x) : Nothing;
 }
 
 function intoListOf<T>(a: any, intoT: (a0: any) => Maybe<T>): Maybe<T[]> {
@@ -73,7 +80,7 @@ function castAnyEither<T>(x: any, pred: (a: any) => boolean): Either<string, T> 
 */
 
 // Give a string cast error if maybe is nothing
-function castEither<T>(m: Maybe<T>): Either<string, T> {
+function mToEither<T>(m: Maybe<T>): Either<string, T> {
     return m.caseOf({
         Just: x => Right(x),
         Nothing: () => Left('failed to cast json to expected type'),
@@ -111,8 +118,7 @@ export const new_wallet = (wallet_name: string, use_testnet: boolean, port: numb
         }));
 
         // Response is a quoted string, so json parses to a string
-        return liftEither( castAnyEither<PrivateKey>(res, isPrivateKey) );
-        //return liftEither( fromAnyEither<PrivateKey>(res) );
+        return liftEither( mToEither<PrivateKey>(intoPrivateKey(res)) );
     });
 
 export const confirm_tx = async (url: string, txhash: TxHash)
@@ -132,7 +138,6 @@ export const confirm_tx = async (url: string, txhash: TxHash)
 
 // TODO type annotation for wallet
 export const send_mel = (base_url: string, wallet_name: string, wallet: any, mel: number)
-//: Promise<Either<string, TxHash>> =>
 :EitherAsync<string, TxHash> =>
     EitherAsync( async ({ fromPromise }) => {
         const micromel = mel * 1000;
@@ -175,5 +180,7 @@ export const list_wallets = (port: number = default_port)
         const url = `${home_addr}:${port}/wallets`;
         const res = await fromPromise(fetch_or_err(url, { method: 'GET' }));
 
-        return liftEither(castEither<Wallet[]>(intoListOf<Wallet>(res, intoWallet)));
+        return liftEither(mToEither(
+            intoListOf(res, intoWallet)
+        ));
     });
