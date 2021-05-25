@@ -5,33 +5,30 @@ import { EitherAsync } from 'purify-ts/EitherAsync';
 
 describe('list wallets', () => {
     it('should return empty list', async () => {
-        await EitherAsync( async ({ fromPromise }) => {
-            const wallets: Wallet[] = await fromPromise( utils.list_wallets() );
-            assert.equal(wallets, []);
-        })
-        .run();
+        const res = await utils.list_wallets();
+
+        res
+            .ifRight( (wallets: Wallet[]) => {
+                //console.log(wallets);
+                //assert.equal(wallets, []);
+                assert.equal(Object.keys(wallets).length, 1);
+            })
+            .ifLeft( e => {
+                console.log(e);
+                assert(false);
+            });
     });
 });
+
 describe('new wallet', () => {
     it('create a wallet', async () => {
-        /*
-        await EitherAsync( async ({ fromPromise }) => {
-            const wallet_name = 'test';
-            const use_testnet = true;
-
-            const pk: PrivateKey = await fromPromise( utils.new_wallet(wallet_name, use_testnet) );
-        })
-        .run();
-        */
         const wallet_name = 'test';
         const use_testnet = true;
-        const res = await utils.new_wallet(wallet_name, use_testnet)
-            //.map( pk => assert(typeof(pk) === 'string') )
-            //.map( pk => assert(false) )
-            //.mapLeft( e => assert(false))
-            .run();
+        const res = await utils.new_wallet(wallet_name, use_testnet).run();
 
-        res.ifLeft( e => { console.log(e); assert(false) });
-        //assert.equal(res.ifLeft(
+        res.ifLeft( e => {
+            console.log(e);
+            assert(false)
+        });
     });
 });
