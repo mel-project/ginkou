@@ -6,7 +6,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
-    "test": "./node_modules/.bin/mocha -r ts-node/register ./tests/*.spec.ts"
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' ./node_modules/.bin/mocha -r ts-node/register ./tests/*.spec.ts"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
