@@ -39,6 +39,10 @@ function isWallet(x: any): x is Wallet {
 // Casting functions
 // ----
 
+function intoTxHash(x: any): Maybe<TxHash> {
+    return is<TxHash>(x) ? Just(x) : Nothing;
+}
+
 function intoWallet(x: any): Maybe<Wallet> {
     return is<Wallet>(x) ? Just(x) : Nothing;
 }
@@ -121,6 +125,8 @@ export const new_wallet = (wallet_name: string, use_testnet: boolean, port: numb
         return liftEither( mToEither<PrivateKey>(intoPrivateKey(res)) );
     });
 
+// Poll daemon to check tx until it is confirmed
+// TODO handle when daemon returns failed tx
 export const confirm_tx = async (url: string, txhash: TxHash)
 : Promise<Either<string, BlockHeight>> =>
     EitherAsync( async ({ liftEither, fromPromise }) => {
@@ -137,16 +143,21 @@ export const confirm_tx = async (url: string, txhash: TxHash)
     });
 
 // TODO type annotation for wallet
-export const send_mel = (base_url: string, wallet_name: string, wallet: any, mel: number)
+export const send_mel = (
+    wallet_name: string,
+    wallet: Wallet,
+    to: string,
+    mel: number,
+    port: number = default_port)
 :EitherAsync<string, TxHash> =>
-    EitherAsync( async ({ fromPromise }) => {
+    EitherAsync( async ({ liftEither, fromPromise }) => {
         const micromel = mel * 1000;
-        //const wallet   = wallets[wallet_name];
         const outputs  = [micromel, wallet.total_micromel - micromel];
-        const addr     = base_url + '/wallets/' + wallet_name;
+        const url_prepare_tx = `${home_addr}:${port}/wallets/${wallet_name}/prepare-tx`;
+        const url_send_tx    = `${home_addr}:${port}/wallets/${wallet_name}/send-tx`;
 
-        // Prepare tx
-        const res: Response = await fromPromise(fetch_or_err(addr + '/prepare-tx', {
+        // Prepare tx (get a json-encoded tx back)
+        const tx: any = await fromPromise(fetch_or_err(url_prepare_tx, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -158,11 +169,8 @@ export const send_mel = (base_url: string, wallet_name: string, wallet: any, mel
             }),
         }));
 
-        // Tx hash or throws
-        const tx: TxHash = await res.json();
-
         // Send tx
-        const send_res: Response = await fromPromise(fetch_or_err(addr + '/send-tx', {
+        const txhash: any = await fromPromise(fetch_or_err(url_send_tx, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -170,7 +178,8 @@ export const send_mel = (base_url: string, wallet_name: string, wallet: any, mel
             body: JSON.stringify(tx),
         }));
 
-        return send_res.text();
+        // Runtime type check and return
+        return liftEither(mToEither( intoTxHash(txhash) ));
     });
 
 // Get a list of all stored wallets

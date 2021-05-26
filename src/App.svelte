@@ -23,13 +23,11 @@
     // Current network being used (default main)
     let using_net: number = 1;
     // Current wallet being used
-    let using_wallet: string;
+    let active_wallet: string;
     // wallet name to info
     let wallets = {};
     // Network name to integer id
     let networks = {"Main" : 255, "Test" : 1};
-    // Amount to send in a tx
-    let send_amount: number = 0;
     // Name of a new wallet if being defined
     let new_wallet_name: string | undefined;
     // User-viewable error reporting
@@ -39,9 +37,12 @@
     // Top bar icon menu dropdown state
     let menu;
 
-    //const errorDispatcher = createEventDispatcher();
-
     function error_handler(event) {
+        error_msg = event.detail.text;
+    }
+
+    function sent_tx_handler(event) {
+        // TODO put events in a banner colored by type
         error_msg = event.detail.text;
     }
 
@@ -70,49 +71,20 @@
     <div class="view">
         <h1>Themelio wallet</h1>
 
-        <!-- Report errors to user-->
-        {#if error_msg != ''}
-            <p>{error_msg}</p>
-        {/if}
-
-        <Select bind:value={using_net} label="Network">
-        {#each Object.entries(networks) as net}
-            <Option value={net[1]}>{net[0]}</Option>
-        {/each}
-        </Select>
-
-        <Select bind:value={using_wallet} label="Wallet">
-        {#each Object.entries(wallets)
-                .filter(x => x[1].network == using_net)
-                .map(x => x[0]) as wallet}
-            <Option value={wallet}>{wallet}</Option>
-        {/each}
-        </Select>
-
         <!-- show faucet tx if using test net -->
         {#if using_net == 1}
-            <Button on:click={() => tap_faucet( faucet_url(using_wallet) ).run()}>Tap Faucet</Button>
+            <Button on:click={() => tap_faucet( faucet_url(active_wallet) ).run()}>Tap Faucet</Button>
         {/if}
 
-        <p>{JSON.stringify(wallets[using_wallet])}</p>
+        <p>{JSON.stringify(wallets[active_wallet])}</p>
 
         <!--<NewWallet bind:value={new_wallet_name} bind:value={using_net} />-->
         <Button on:click={() =>
             new_wallet(
-                create_wallet_url(using_wallet),
+                create_wallet_url(active_wallet),
                 using_net == networks["Test"] ? true : false)
                 .run()
             }>Tap Faucet</Button>
-
-        <!-- Send TXs -->
-        {#if using_wallet }
-            <Textfield bind:value={send_amount}
-                label="Amount"
-                type="number"
-                suffix="mel" />
-
-            <Button on:click={() => send_mel(using_wallet, send_amount)}>Send</Button>
-        {/if}
     </div>
     */
 </script>
@@ -135,7 +107,7 @@
                             {#each Object.entries(wallets)
                                     .filter(x => x[1].network == using_net)
                                     .map(x => x[0]) as wallet}
-                                <Item on:SMUI:action={() => (using_wallet = wallet)}>
+                                <Item on:SMUI:action={() => (active_wallet = wallet)}>
                                     <Text>{wallet}</Text>
                                 </Item>
                             {/each}
@@ -154,7 +126,7 @@
                     </Select>
 
                     <!-- Select wallet -->
-                    <Select bind:value={using_wallet} label="Wallet">
+                    <Select bind:value={active_wallet} label="Wallet">
                     {#each Object.entries(wallets)
                             .filter(x => x[1].network == using_net)
                             .map(x => x[0]) as wallet}
@@ -177,8 +149,14 @@
     </div>
 
     <div class="view">
+
+        <!-- Report errors to user-->
+        {#if error_msg != ''}
+            <p>{error_msg}</p>
+        {/if}
+
         {#if active_tab == "Send"}
-            <Send />
+            <Send on:sent-tx={sent_tx_handler} {active_wallet} {wallets} />
         {:else if active_tab == "Receive"}
             <p>WIP</p>
         {:else if active_tab == "Transactions"}
