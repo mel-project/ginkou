@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
-    "types": ["mocha"],
-    "module": "esnext",
+    //"types": ["mocha"],
+    "module": "es2020",
     "moduleResolution": "node",
     "outDir": "./out",
     "strict": true,
-    "target": "es6"
+    "target": "es6",
+    "plugins": [
+      { "transform": "typescript-is/lib/transform-inline/transformer" }
+    ]
   },
 
   "extends": "@tsconfig/svelte/tsconfig.json",
-  "include": ["src/**/*", "src/node_modules"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"]
 }

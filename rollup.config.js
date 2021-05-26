@@ -6,6 +6,7 @@ import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
 import autoPreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
+import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 
 const production = !process.env.ROLLUP_WATCH;
@@ -40,6 +41,7 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
+        nodePolyfills(),
 		svelte({
             preprocess: autoPreprocess(),
 			compilerOptions: {
@@ -61,7 +63,9 @@ export default {
 			browser: true,
 			dedupe: ['svelte']
 		}),
-		commonjs(),
+		commonjs({
+            include: 'node_modules/**'
+        }),
 
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated
