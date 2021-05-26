@@ -3,11 +3,15 @@
     import { EitherAsync } from 'purify-ts/EitherAsync';
     import { createEventDispatcher } from 'svelte';
     import { list_wallets } from './utils';
+    import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     import Select, { Option } from '@smui/select';
+    import IconButton from '@smui/icon-button';
     import Textfield from '@smui/textfield';
     import Tab, { Label } from '@smui/tab';
     import TabBar from '@smui/tab-bar';
     import Button from '@smui/button';
+    import Menu from '@smui/menu';
+    import List, { Item, Separator, Text } from '@smui/list';
     import { onMount } from 'svelte';
     import Send from './Send.svelte';
 
@@ -17,7 +21,7 @@
 
     export let name;
     // Current network being used (default main)
-    let using_net: number = 255;
+    let using_net: number = 1;
     // Current wallet being used
     let using_wallet: string;
     // wallet name to info
@@ -32,6 +36,8 @@
     let error_msg = '';
     // Active tab in UI
     let active_tab = 'Send';
+    // Top bar icon menu dropdown state
+    let menu;
 
     //const errorDispatcher = createEventDispatcher();
 
@@ -55,6 +61,10 @@
 
         console.log(wallets);
     });
+
+    const top_bar_style = {
+        background: '#000000',
+    };
 
     /*
     <div class="view">
@@ -108,21 +118,68 @@
 </script>
 
 <main>
-    <div class="top-bar-container">
-        <TabBar tabs={['Transactions', 'Send', 'Recieve']}
-                position="static"
-                let:tab
-                bind:active={active_tab}>
-            <Tab {tab}>
-                <Label>{tab}</Label>
-            </Tab>
-        </TabBar>
+    <div class="top-app-bar-container">
+        <TopAppBar
+            style={top_bar_style}
+            variant="static">
+            <Row>
+                <Section>
+                    <IconButton
+                        on:click={() => menu.setOpen(true)}
+                        class="material-icons">
+                        menu
+                    </IconButton>
+
+                    <Menu bind:this={menu}>
+                        <List>
+                            {#each Object.entries(wallets)
+                                    .filter(x => x[1].network == using_net)
+                                    .map(x => x[0]) as wallet}
+                                <Item on:SMUI:action={() => (using_wallet = wallet)}>
+                                    <Text>{wallet}</Text>
+                                </Item>
+                            {/each}
+                        </List>
+                    </Menu>
+
+                    <Title>Kousen</Title>
+                </Section>
+
+                <Section>
+                    <!-- Select network -->
+                    <Select bind:value={using_net} label="Network">
+                    {#each Object.entries(networks) as net}
+                        <Option value={net[1]}>{net[0]}</Option>
+                    {/each}
+                    </Select>
+
+                    <!-- Select wallet -->
+                    <Select bind:value={using_wallet} label="Wallet">
+                    {#each Object.entries(wallets)
+                            .filter(x => x[1].network == using_net)
+                            .map(x => x[0]) as wallet}
+                        <Option value={wallet}>{wallet}</Option>
+                    {/each}
+                    </Select>
+                </Section>
+            </Row>
+            <div class="tabs-container">
+                <TabBar tabs={['Transactions', 'Send', 'Receive']}
+                        position="static"
+                        let:tab
+                        bind:active={active_tab}>
+                    <Tab {tab}>
+                        <Label>{tab}</Label>
+                    </Tab>
+                </TabBar>
+            </div>
+        </TopAppBar>
     </div>
 
     <div class="view">
         {#if active_tab == "Send"}
             <Send />
-        {:else if active_tab == "Recieve"}
+        {:else if active_tab == "Receive"}
             <p>WIP</p>
         {:else if active_tab == "Transactions"}
             <p>WIP ;)</p>
@@ -131,6 +188,11 @@
 </main>
 
 <style>
+    .top-app-bar {
+        margin: 0;
+        background: #ffffff;
+    }
+
     .view {
         text-align: center;
         padding: 1em;
