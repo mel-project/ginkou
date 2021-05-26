@@ -1,8 +1,7 @@
 <script lang="typescript">
     import { tap_faucet, send_mel, confirm_tx, new_wallet } from './utils';
-    import NewWallet from './NewWallet.svelte';
+    //import NewWallet from './NewWallet.svelte';
     //import type {TxHash} from './utils';
-    //import { EitherAsync } from 'purify-ts/EitherAsync';
     import Select, { Option } from '@smui/select';
     import Button from '@smui/button';
     import Textfield from '@smui/textfield';
