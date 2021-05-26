@@ -3,21 +3,21 @@
     import { EitherAsync } from 'purify-ts/EitherAsync';
     import { createEventDispatcher } from 'svelte';
     import { list_wallets } from './utils';
-    //import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     import Select, { Option } from '@smui/select';
     import Textfield from '@smui/textfield';
     import Tab, { Label } from '@smui/tab';
     import TabBar from '@smui/tab-bar';
     import Button from '@smui/button';
     import { onMount } from 'svelte';
+    import Send from './Send.svelte';
 
     const walletd_addr = 'http://127.0.0.1:12345';
     const faucet_url = (wallet_name: string) => walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
     const create_wallet_url = (wallet_name: string) => walletd_addr + '/wallets/' + wallet_name;
 
     export let name;
-    // Current network being used
-    let using_net: number = 0;
+    // Current network being used (default main)
+    let using_net: number = 255;
     // Current wallet being used
     let using_wallet: string;
     // wallet name to info
@@ -33,7 +33,7 @@
     // Active tab in UI
     let active_tab = 'Send';
 
-    const errorDispatcher = createEventDispatcher();
+    //const errorDispatcher = createEventDispatcher();
 
     function error_handler(event) {
         error_msg = event.detail.text;
@@ -55,27 +55,8 @@
 
         console.log(wallets);
     });
-</script>
 
-<main>
-    <div class="top-bar-container">
-        <!--<TopAppBar
-            variant="static">
-            <Row>
-                <Section>-->
-                    <TabBar tabs={['Transactions', 'Send', 'Recieve']}
-                            position="static"
-                            let:tab
-                            bind:active={active_tab}>
-                        <Tab {tab}>
-                            <Label>{tab}</Label>
-                        </Tab>
-                    </TabBar>
-                <!--</Section>
-            </Row>
-        </TopAppBar>-->
-    </div>
-
+    /*
     <div class="view">
         <h1>Themelio wallet</h1>
 
@@ -121,6 +102,30 @@
                 suffix="mel" />
 
             <Button on:click={() => send_mel(using_wallet, send_amount)}>Send</Button>
+        {/if}
+    </div>
+    */
+</script>
+
+<main>
+    <div class="top-bar-container">
+        <TabBar tabs={['Transactions', 'Send', 'Recieve']}
+                position="static"
+                let:tab
+                bind:active={active_tab}>
+            <Tab {tab}>
+                <Label>{tab}</Label>
+            </Tab>
+        </TabBar>
+    </div>
+
+    <div class="view">
+        {#if active_tab == "Send"}
+            <Send />
+        {:else if active_tab == "Recieve"}
+            <p>WIP</p>
+        {:else if active_tab == "Transactions"}
+            <p>WIP ;)</p>
         {/if}
     </div>
 </main>
