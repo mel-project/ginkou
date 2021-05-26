@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    //"types": ["mocha"],
     "module": "es2020",
     "moduleResolution": "node",
     "outDir": "./out",
