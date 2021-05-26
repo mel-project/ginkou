@@ -1,10 +1,14 @@
 <script lang="typescript">
     import { tap_faucet, send_mel, confirm_tx, new_wallet } from './utils';
-    //import NewWallet from './NewWallet.svelte';
-    //import type {TxHash} from './utils';
+    import { EitherAsync } from 'purify-ts/EitherAsync';
+    import { createEventDispatcher } from 'svelte';
+    import { list_wallets } from './utils';
+    //import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     import Select, { Option } from '@smui/select';
-    import Button from '@smui/button';
     import Textfield from '@smui/textfield';
+    import Tab, { Label } from '@smui/tab';
+    import TabBar from '@smui/tab-bar';
+    import Button from '@smui/button';
     import { onMount } from 'svelte';
 
     const walletd_addr = 'http://127.0.0.1:12345';
@@ -24,59 +28,105 @@
     let send_amount: number = 0;
     // Name of a new wallet if being defined
     let new_wallet_name: string | undefined;
+    // User-viewable error reporting
+    let error_msg = '';
+    // Active tab in UI
+    let active_tab = 'Send';
+
+    const errorDispatcher = createEventDispatcher();
+
+    function error_handler(event) {
+        error_msg = event.detail.text;
+    }
 
     onMount(async () => {
-        const res = await fetch(walletd_addr + '/wallets');
-        wallets = await res.json();
+        // Fetch the list of wallets
+        const res = await list_wallets().run();
+        wallets = res
+            .ifLeft( e => {
+                /*
+                errorDispatcher('error', {
+                    text: e
+                });
+                */
+                error_msg = e;
+            })
+            .orDefault([]);
+
         console.log(wallets);
     });
 </script>
 
 <main>
-    <h1>Themelio wallet</h1>
+    <div class="top-bar-container">
+        <!--<TopAppBar
+            variant="static">
+            <Row>
+                <Section>-->
+                    <TabBar tabs={['Transactions', 'Send', 'Recieve']}
+                            position="static"
+                            let:tab
+                            bind:active={active_tab}>
+                        <Tab {tab}>
+                            <Label>{tab}</Label>
+                        </Tab>
+                    </TabBar>
+                <!--</Section>
+            </Row>
+        </TopAppBar>-->
+    </div>
 
-    <Select bind:value={using_net} label="Network">
-    {#each Object.entries(networks) as net}
-        <Option value={net[1]}>{net[0]}</Option>
-    {/each}
-    </Select>
+    <div class="view">
+        <h1>Themelio wallet</h1>
 
-    <Select bind:value={using_wallet} label="Wallet">
-    {#each Object.entries(wallets)
-            .filter(x => x[1].network == using_net)
-            .map(x => x[0]) as wallet}
-        <Option value={wallet}>{wallet}</Option>
-    {/each}
-    </Select>
+        <!-- Report errors to user-->
+        {#if error_msg != ''}
+            <p>{error_msg}</p>
+        {/if}
 
-    <!-- show faucet tx if using test net -->
-    {#if using_net == 1}
-        <Button on:click={() => tap_faucet( faucet_url(using_wallet) ).run()}>Tap Faucet</Button>
-    {/if}
+        <Select bind:value={using_net} label="Network">
+        {#each Object.entries(networks) as net}
+            <Option value={net[1]}>{net[0]}</Option>
+        {/each}
+        </Select>
 
-    <p>{JSON.stringify(wallets[using_wallet])}</p>
+        <Select bind:value={using_wallet} label="Wallet">
+        {#each Object.entries(wallets)
+                .filter(x => x[1].network == using_net)
+                .map(x => x[0]) as wallet}
+            <Option value={wallet}>{wallet}</Option>
+        {/each}
+        </Select>
 
-    <!--<NewWallet bind:value={new_wallet_name} bind:value={using_net} />-->
-    <Button on:click={() =>
-        new_wallet(
-            create_wallet_url(using_wallet),
-            using_net == networks["Test"] ? true : false)
-            .run()
-        }>Tap Faucet</Button>
+        <!-- show faucet tx if using test net -->
+        {#if using_net == 1}
+            <Button on:click={() => tap_faucet( faucet_url(using_wallet) ).run()}>Tap Faucet</Button>
+        {/if}
 
-    <!-- Send TXs -->
-    {#if using_wallet }
-        <Textfield bind:value={send_amount}
-            label="Amount"
-            type="number"
-            suffix="mel" />
+        <p>{JSON.stringify(wallets[using_wallet])}</p>
 
-        <Button on:click={() => send_mel(using_wallet, send_amount)}>Send</Button>
-    {/if}
+        <!--<NewWallet bind:value={new_wallet_name} bind:value={using_net} />-->
+        <Button on:click={() =>
+            new_wallet(
+                create_wallet_url(using_wallet),
+                using_net == networks["Test"] ? true : false)
+                .run()
+            }>Tap Faucet</Button>
+
+        <!-- Send TXs -->
+        {#if using_wallet }
+            <Textfield bind:value={send_amount}
+                label="Amount"
+                type="number"
+                suffix="mel" />
+
+            <Button on:click={() => send_mel(using_wallet, send_amount)}>Send</Button>
+        {/if}
+    </div>
 </main>
 
 <style>
-    main {
+    .view {
         text-align: center;
         padding: 1em;
         max-width: 240px;
