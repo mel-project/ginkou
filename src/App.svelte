@@ -54,7 +54,11 @@
 
     function sent_tx_handler(event) {
         // TODO put events in a banner colored by type
-        error_msg = event.detail.text;
+        add_error_msg(event.detail.text);
+    }
+
+    function add_error_msg(e: string) {
+        error_msg += e + '\n';
     }
 
     onMount(async () => {
@@ -67,11 +71,12 @@
                     text: e
                 });
                 */
-                error_msg = e;
+                add_error_msg(e);
             })
             .orDefault([]);
 
-        console.log(wallets);
+        if ( !localStorage )
+            add_error_msg("Unable to access storage, are cookies blocked?");
     });
 
     const top_bar_style = {
@@ -152,7 +157,7 @@
 
         <!-- Report errors to user-->
         {#if error_msg != ''}
-            <p>{error_msg}</p>
+            <div class="error-msg"><p>{error_msg}</p></div>
         {/if}
 
         {#if active_tab == "Send"}
@@ -168,6 +173,9 @@
 </main>
 
 <style>
+    .error-msg {
+        color: red;
+    }
     .top-app-bar {
         margin: 0;
         background: #ffffff;
