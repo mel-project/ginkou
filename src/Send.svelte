@@ -14,16 +14,36 @@
 
     const dispatcher = createEventDispatcher();
 
-    async function send_tx() {
-        const res = await send_mel(
-            active_wallet,
-            wallets[active_wallet],
-            to_addr,
-            send_amount).run();
+    function dsptch_err(msg) {
+        dispatcher('error', {
+            text: msg
+        })
+    }
 
-        dispatcher('sent-tx', {
-            text: JSON.stringify(res)
-        });
+    async function send_tx_handler() {
+        if (active_wallet == null) {
+            dsptch_err('Choose a wallet to send from')
+        } else {
+            const pk = localStorage.getItem(active_wallet);
+
+            if ( pk == null ) {
+                dsptch_err('No private key found for wallet "' + active_wallet + '"');
+            } else {
+                const res = await send_mel(
+                    active_wallet,
+                    wallets[active_wallet],
+                    to_addr,
+                    send_amount,
+                    pk)
+                    .ifLeft( err => dsptch_err(err) )
+                    .ifRight( res => {
+                        dispatcher('sent-tx', {
+                            text: JSON.stringify(res)
+                        });
+                    })
+                    .run();
+            }
+        }
     }
 </script>
 
@@ -36,7 +56,7 @@
         type="number"
         suffix="mel" />
 
-    <Button on:click={send_tx}>Send</Button>
+    <Button on:click={send_tx_handler}>Send</Button>
 {:else}
     <p>Choose a wallet first ;)</p>
 {/if}

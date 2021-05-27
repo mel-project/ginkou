@@ -84,7 +84,7 @@ function castAnyEither<T>(x: any, pred: (a: any) => boolean): Either<string, T> 
 */
 
 // Give a string cast error if maybe is nothing
-function mToEither<T>(m: Maybe<T>): Either<string, T> {
+function cast_to_either<T>(m: Maybe<T>): Either<string, T> {
     return m.caseOf({
         Just: x => Right(x),
         Nothing: () => Left('failed to cast json to expected type'),
@@ -122,7 +122,7 @@ export const new_wallet = (wallet_name: string, use_testnet: boolean, port: numb
         }));
 
         // Response is a quoted string, so json parses to a string
-        return liftEither( mToEither<PrivateKey>(intoPrivateKey(res)) );
+        return liftEither( cast_to_either<PrivateKey>(intoPrivateKey(res)) );
     });
 
 // Poll daemon to check tx until it is confirmed
@@ -142,12 +142,12 @@ export const confirm_tx = async (url: string, txhash: TxHash)
             //return liftEither(Left('not yet confirmed'));
     });
 
-// TODO type annotation for wallet
 export const send_mel = (
     wallet_name: string,
     wallet: Wallet,
     to: string,
     mel: number,
+    priv_key: PrivateKey,
     port: number = default_port)
 :EitherAsync<string, TxHash> =>
     EitherAsync( async ({ liftEither, fromPromise }) => {
@@ -164,8 +164,7 @@ export const send_mel = (
             },
             body: JSON.stringify({
                 outputs: outputs,
-                // TODO tmp dummy
-                signing_key: "cde6cb9f4850495201db80b884135870916850e3167e6eaaa8c70895e10f462a45567a851dbf93797099d0c9557494b896e0f4d9b9cc3feb93e353221ed0bffb",
+                signing_key: priv_key,
             }),
         }));
 
@@ -179,7 +178,7 @@ export const send_mel = (
         }));
 
         // Runtime type check and return
-        return liftEither(mToEither( intoTxHash(txhash) ));
+        return liftEither(cast_to_either( intoTxHash(txhash) ));
     });
 
 // Get a list of all stored wallets
@@ -189,7 +188,7 @@ export const list_wallets = (port: number = default_port)
         const url = `${home_addr}:${port}/wallets`;
         const res = await fromPromise(fetch_or_err(url, { method: 'GET' }));
 
-        return liftEither(mToEither(
+        return liftEither(cast_to_either(
             intoListOf(res, intoWallet)
         ));
     });
