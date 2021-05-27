@@ -114,7 +114,7 @@
                         </List>
                     </Menu>
 
-                    <Title>Kousen</Title>
+                    <Title>Ginko</Title>
                 </Section>
 
                 <Section>
