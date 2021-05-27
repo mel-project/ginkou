@@ -14,6 +14,7 @@
     import List, { Item, Separator, Text } from '@smui/list';
     import { onMount } from 'svelte';
     import Send from './Send.svelte';
+    import Settings from './Settings.svelte';
 
     const walletd_addr = 'http://127.0.0.1:12345';
     const faucet_url = (wallet_name: string) => walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
@@ -21,21 +22,31 @@
 
     export let name;
     // Current network being used (default main)
-    let using_net: number = 1;
+    let active_net: number = 1;
     // Current wallet being used
-    let active_wallet: string;
+    let active_wallet: string | null = null;
     // wallet name to info
     let wallets = {};
+    // Regenerate wallet list by the active network
+    $: wallets_by_net = Object.entries(wallets)
+                            .filter(x => x[1].network == active_net)
+                            .map(x => x[0]);
     // Network name to integer id
     let networks = {"Main" : 255, "Test" : 1};
     // Name of a new wallet if being defined
-    let new_wallet_name: string | undefined;
+    let new_wallet_name: string | null;
     // User-viewable error reporting
     let error_msg = '';
     // Active tab in UI
     let active_tab = 'Send';
     // Top bar icon menu dropdown state
     let menu;
+
+    // When active net changes, nullify the active wallet
+    $: {
+        active_net;
+        active_wallet = null;
+    };
 
     function error_handler(event) {
         error_msg = event.detail.text;
@@ -72,17 +83,17 @@
         <h1>Themelio wallet</h1>
 
         <!-- show faucet tx if using test net -->
-        {#if using_net == 1}
+        {#if active_net == 1}
             <Button on:click={() => tap_faucet( faucet_url(active_wallet) ).run()}>Tap Faucet</Button>
         {/if}
 
         <p>{JSON.stringify(wallets[active_wallet])}</p>
 
-        <!--<NewWallet bind:value={new_wallet_name} bind:value={using_net} />-->
+        <!--<NewWallet bind:value={new_wallet_name} bind:value={active_net} />-->
         <Button on:click={() =>
             new_wallet(
                 create_wallet_url(active_wallet),
-                using_net == networks["Test"] ? true : false)
+                active_net == networks["Test"] ? true : false)
                 .run()
             }>Tap Faucet</Button>
     </div>
@@ -104,9 +115,7 @@
 
                     <Menu bind:this={menu}>
                         <List>
-                            {#each Object.entries(wallets)
-                                    .filter(x => x[1].network == using_net)
-                                    .map(x => x[0]) as wallet}
+                            {#each wallets_by_net as wallet}
                                 <Item on:SMUI:action={() => (active_wallet = wallet)}>
                                     <Text>{wallet}</Text>
                                 </Item>
@@ -118,25 +127,16 @@
                 </Section>
 
                 <Section>
-                    <!-- Select network -->
-                    <Select bind:value={using_net} label="Network">
-                    {#each Object.entries(networks) as net}
-                        <Option value={net[1]}>{net[0]}</Option>
-                    {/each}
-                    </Select>
-
                     <!-- Select wallet -->
                     <Select bind:value={active_wallet} label="Wallet">
-                    {#each Object.entries(wallets)
-                            .filter(x => x[1].network == using_net)
-                            .map(x => x[0]) as wallet}
+                    {#each wallets_by_net as wallet}
                         <Option value={wallet}>{wallet}</Option>
                     {/each}
                     </Select>
                 </Section>
             </Row>
             <div class="tabs-container">
-                <TabBar tabs={['Transactions', 'Send', 'Receive']}
+                <TabBar tabs={['Transactions', 'Send', 'Receive', 'Settings']}
                         position="static"
                         let:tab
                         bind:active={active_tab}>
@@ -156,11 +156,13 @@
         {/if}
 
         {#if active_tab == "Send"}
-            <Send on:sent-tx={sent_tx_handler} {active_wallet} {wallets} />
+            <Send on:sent-tx={sent_tx_handler} bind:active_wallet {wallets} />
         {:else if active_tab == "Receive"}
             <p>WIP</p>
         {:else if active_tab == "Transactions"}
             <p>WIP ;)</p>
+        {:else if active_tab == "Settings"}
+            <Settings bind:active_net {networks} />
         {/if}
     </div>
 </main>

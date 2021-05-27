@@ -4,7 +4,7 @@
     import Textfield from '@smui/textfield';
     import Button from '@smui/button';
 
-    export let active_wallet: string;
+    export let active_wallet: string | null;
     export let wallets;
 
     // Amount to send in a tx
