@@ -6,7 +6,6 @@
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     import Select, { Option } from '@smui/select';
     import IconButton from '@smui/icon-button';
-    import Textfield from '@smui/textfield';
     import Tab, { Label } from '@smui/tab';
     import TabBar from '@smui/tab-bar';
     import Button from '@smui/button';
@@ -15,6 +14,7 @@
     import { onMount } from 'svelte';
     import Send from './Send.svelte';
     import Settings from './Settings.svelte';
+    import CreateWallet from './CreateWallet.svelte';
 
     const walletd_addr = 'http://127.0.0.1:12345';
     const faucet_url = (wallet_name: string) => walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
@@ -49,7 +49,8 @@
     };
 
     function error_handler(event) {
-        error_msg = event.detail.text;
+    console.log(event);
+        add_error_msg(event.detail.text);
     }
 
     function sent_tx_handler(event) {
@@ -161,21 +162,30 @@
         {/if}
 
         {#if active_tab == "Send"}
-            <Send on:sent-tx={sent_tx_handler} bind:active_wallet {wallets} />
+            <Send on:error={error_handler} on:sent-tx={sent_tx_handler} bind:active_wallet {wallets} />
         {:else if active_tab == "Receive"}
             <p>WIP</p>
         {:else if active_tab == "Transactions"}
             <p>WIP ;)</p>
         {:else if active_tab == "Settings"}
             <Settings bind:active_net {networks} />
+            <div class="create-wallet-container">
+                <h3>Create New Wallet</h3>
+                <CreateWallet on:error={error_handler} {networks} {active_net} />
+            </div>
         {/if}
     </div>
 </main>
 
 <style>
+    .create-wallet-container {
+        padding: 3em;
+    }
+
     .error-msg {
         color: red;
     }
+
     .top-app-bar {
         margin: 0;
         background: #ffffff;
@@ -184,7 +194,7 @@
     .view {
         text-align: center;
         padding: 1em;
-        max-width: 240px;
+        max-width: 360px;
         margin: 0 auto;
     }
 
