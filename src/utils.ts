@@ -112,11 +112,12 @@ export async function fetch_or_err(url: string, opts: any): Promise<Either<strin
 
 // Send faucet to given wallet. Returns a succesful request to walletd,
 // not a succesful transaction.
-export const tap_faucet = (url: string)
+export const tap_faucet = (wallet_name: string, port: number = default_port)
 : EitherAsync<string, TxHash> =>
-    EitherAsync( async ({ fromPromise }) => {
-        let res: Response = await fromPromise(fetch_or_err(url, { method: 'POST' }));
-        return await res.text();
+    EitherAsync( async ({ liftEither, fromPromise }) => {
+        const url = `${home_addr}:${port}/wallets/${wallet_name}/send-faucet`;
+        let res = await fromPromise(fetch_or_err(url, { method: 'POST' }));
+        return liftEither(cast_to_either(intoTxHash(res)));
     });
 
 // Creates a new wallet and returns a private key for the new wallet.

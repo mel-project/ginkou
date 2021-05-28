@@ -1,14 +1,13 @@
 <script lang="typescript">
     import { tap_faucet, send_mel, confirm_tx, new_wallet } from './utils';
+    import type { Wallet } from './utils';
     import { EitherAsync } from 'purify-ts/EitherAsync';
-    import { createEventDispatcher } from 'svelte';
     import { list_wallets } from './utils';
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     import Select, { Option } from '@smui/select';
     import IconButton from '@smui/icon-button';
     import Tab, { Label } from '@smui/tab';
     import TabBar from '@smui/tab-bar';
-    import Button from '@smui/button';
     import Menu from '@smui/menu';
     import List, { Item, Separator, Text } from '@smui/list';
     import { onMount } from 'svelte';
@@ -16,31 +15,28 @@
     import Settings from './Settings.svelte';
     import CreateWallet from './CreateWallet.svelte';
 
-    const walletd_addr = 'http://127.0.0.1:12345';
-    const faucet_url = (wallet_name: string) => walletd_addr + '/wallets/' + wallet_name + '/send-faucet';
-    const create_wallet_url = (wallet_name: string) => walletd_addr + '/wallets/' + wallet_name;
-
     export let name;
     // Current network being used (default main)
     let active_net: number = 1;
     // Current wallet being used
     let active_wallet: string | null = null;
     // wallet name to info
-    let wallets = {};
+    let wallets: { [key: string]: Wallet } = {};
     // Regenerate wallet list by the active network
     $: wallets_by_net = Object.entries(wallets)
                             .filter(x => x[1].network == active_net)
                             .map(x => x[0]);
     // Network name to integer id
     let networks = {"Main" : 255, "Test" : 1};
-    // Name of a new wallet if being defined
-    let new_wallet_name: string | null;
-    // User-viewable error reporting
-    let error_msg: string[] = [];
     // Active tab in UI
     let active_tab = 'Send';
     // Top bar icon menu dropdown state
     let menu;
+
+    // User-viewable error reporting
+    let error_chan: string[] = [];
+    // Channel to notify when a tx has been sent
+    let sent_tx_chan: string[] = [];
 
     // When active net changes, nullify the active wallet
     $: {
@@ -48,22 +44,31 @@
         active_wallet = null;
     };
 
-    function error_handler(event) {
-        add_error_msg(event.detail.text);
+    // Push a message to one of the main notification channels of this UI
+    // (error_chan, sent_tx_chan)
+    function notify_err_event(e) {
+        notify_err(e.detail.text);
     }
-
-    function sent_tx_handler(event) {
-        // TODO put events in a banner colored by type
-        add_error_msg(event.detail.text);
-    }
-
-    function add_error_msg(e: string) {
-        error_msg = [...error_msg, e];
+    function notify_err(msg: string) {
+        error_chan = [...error_chan, msg];
 
         // Remove message after 5 seconds
         setTimeout(() => {
             // lifo queue
-            error_msg = error_msg.slice(1);
+            error_chan = error_chan.slice(1);
+        }, 5000);
+    }
+
+    function notify_sent_tx_event(e) {
+        notify_sent_tx(e.detail.text);
+    }
+    function notify_sent_tx(msg: string) {
+        sent_tx_chan = [...sent_tx_chan, msg];
+
+        // Remove message after 5 seconds
+        setTimeout(() => {
+            // lifo queue
+            sent_tx_chan = sent_tx_chan.slice(1);
         }, 5000);
     }
 
@@ -72,39 +77,13 @@
         const res = await list_wallets().run();
         wallets = res
             .ifLeft( e => {
-                /*
-                errorDispatcher('error', {
-                    text: e
-                });
-                */
-                add_error_msg(e);
+                notify_err_event(e);
             })
             .orDefault([]);
 
         if ( !localStorage )
-            add_error_msg("Unable to access storage, are cookies blocked?");
+            notify_err("Unable to access storage, are cookies blocked?");
     });
-
-    /*
-    <div class="view">
-        <h1>Themelio wallet</h1>
-
-        <!-- show faucet tx if using test net -->
-        {#if active_net == 1}
-            <Button on:click={() => tap_faucet( faucet_url(active_wallet) ).run()}>Tap Faucet</Button>
-        {/if}
-
-        <p>{JSON.stringify(wallets[active_wallet])}</p>
-
-        <!--<NewWallet bind:value={new_wallet_name} bind:value={active_net} />-->
-        <Button on:click={() =>
-            new_wallet(
-                create_wallet_url(active_wallet),
-                active_net == networks["Test"] ? true : false)
-                .run()
-            }>Tap Faucet</Button>
-    </div>
-    */
 </script>
 
 <main>
@@ -156,26 +135,40 @@
 
     <div class="view">
 
+        <!-- Report sent-txs to user-->
+        {#if sent_tx_chan.length > 0}
+            <div class="sent-tx-notif-container">
+                {#each sent_tx_chan as msg}
+                    <p>{msg}</p>
+                {/each}
+            </div>
+        {/if}
+
         <!-- Report errors to user-->
-        {#if error_msg.length > 0}
-            <div class="error-msg">
-                {#each error_msg as msg}
+        {#if error_chan.length > 0}
+            <div class="error-notif-container">
+                {#each error_chan as msg}
                     <p>{msg}</p>
                 {/each}
             </div>
         {/if}
 
         {#if active_tab == "Send"}
-            <Send on:error={error_handler} on:sent-tx={sent_tx_handler} bind:active_wallet {wallets} />
+            <Send on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} bind:active_wallet {wallets} />
         {:else if active_tab == "Receive"}
             <p>WIP</p>
         {:else if active_tab == "Transactions"}
             <p>WIP ;)</p>
         {:else if active_tab == "Settings"}
-            <Settings bind:active_net {networks} />
+            <Settings
+                on:sent-tx={notify_sent_tx_event}
+                on:error={notify_err_event}
+                bind:active_net
+                {networks}
+                {active_wallet} />
             <div class="create-wallet-container">
                 <h3>Create New Wallet</h3>
-                <CreateWallet on:error={error_handler} {networks} {active_net} />
+                <CreateWallet on:error={notify_err_event} {networks} {active_net} />
             </div>
         {/if}
     </div>
@@ -186,8 +179,11 @@
         padding: 3em;
     }
 
-    .error-msg {
+    .error-notif-container {
         color: red;
+    }
+    .sent-tx-notif-container {
+        color: green;
     }
 
     .top-app-bar {
