@@ -80,10 +80,6 @@
             add_error_msg("Unable to access storage, are cookies blocked?");
     });
 
-    const top_bar_style = {
-        background: '#000000',
-    };
-
     /*
     <div class="view">
         <h1>Themelio wallet</h1>
@@ -109,7 +105,6 @@
 <main>
     <div class="top-app-bar-container">
         <TopAppBar
-            style={top_bar_style}
             variant="static">
             <Row>
                 <Section>
@@ -221,5 +216,6 @@
     <link rel="stylesheet" href="https://unpkg.com/@material/typography@11.0.0/dist/mdc.typography.css" />
 
     <!-- SMUI -->
-    <link rel="stylesheet" href="https://unpkg.com/svelte-material-ui/bare.css" />
+    <!--<link rel="stylesheet" href="https://unpkg.com/svelte-material-ui/bare.css" />-->
+    <link rel="stylesheet" href="/build/smui.css" />
 </svelte:head>
