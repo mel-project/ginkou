@@ -1,7 +1,7 @@
 import { EitherAsync } from 'purify-ts/EitherAsync';
 import { Either, Left, Right } from 'purify-ts/Either';
 import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
-import { is } from 'typescript-is';
+//import { is } from 'typescript-is';
 import fetch from 'cross-fetch';
 
 export type BlockHeight = number;
@@ -20,25 +20,32 @@ export interface Wallet {
 // Custom type guards
 // ----
 
-/*
-function isPrivateKey(x: any): x is Wallet {
-    return typeof(x) == 'string' ? true : false;
+//function isPrivateKey(x: any): x is Wallet {
+function intoPrivateKey(x: any): Maybe<PrivateKey> {
+    return typeof(x) == 'string' ? Just(x) : Nothing;
 }
 
-function isWallet(x: any): x is Wallet {
+function intoWallet(x: any): Maybe<Wallet> {
     if ('total_micromel' in x && typeof(x.total_micromel) == 'number'
         && 'network' in x     && typeof(x.network) == 'number'
         && 'address' in x     && typeof(x.address) == 'string')
-        return true;
+        return Just(x);
     else
-        return false;
+        return Nothing;
 }
-*/
+
+function intoTxHash(x: any): Maybe<TxHash> {
+    if (typeof(x) == 'string')// && x.length() == 256)
+        return Just(x);
+    else
+        return Nothing;
+}
 
 
 // Casting functions
 // ----
 
+/*
 function intoTxHash(x: any): Maybe<TxHash> {
     return is<TxHash>(x) ? Just(x) : Nothing;
 }
@@ -50,6 +57,7 @@ function intoWallet(x: any): Maybe<Wallet> {
 function intoPrivateKey(x: any): Maybe<PrivateKey> {
     return is<PrivateKey>(x) ? Just(x) : Nothing;
 }
+*/
 
 function intoListOf<T>(a: any, intoT: (a0: any) => Maybe<T>): Maybe<T[]> {
     if ( Array.isArray(a) )
