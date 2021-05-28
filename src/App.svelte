@@ -36,7 +36,7 @@
     // Name of a new wallet if being defined
     let new_wallet_name: string | null;
     // User-viewable error reporting
-    let error_msg = '';
+    let error_msg: string[] = [];
     // Active tab in UI
     let active_tab = 'Send';
     // Top bar icon menu dropdown state
@@ -49,7 +49,6 @@
     };
 
     function error_handler(event) {
-    console.log(event);
         add_error_msg(event.detail.text);
     }
 
@@ -59,7 +58,13 @@
     }
 
     function add_error_msg(e: string) {
-        error_msg += e + '\n';
+        error_msg = [...error_msg, e];
+
+        // Remove message after 5 seconds
+        setTimeout(() => {
+            // lifo queue
+            error_msg = error_msg.slice(1);
+        }, 5000);
     }
 
     onMount(async () => {
@@ -152,8 +157,12 @@
     <div class="view">
 
         <!-- Report errors to user-->
-        {#if error_msg != ''}
-            <div class="error-msg"><p>{error_msg}</p></div>
+        {#if error_msg.length > 0}
+            <div class="error-msg">
+                {#each error_msg as msg}
+                    <p>{msg}</p>
+                {/each}
+            </div>
         {/if}
 
         {#if active_tab == "Send"}
