@@ -4,6 +4,7 @@
     import { EitherAsync } from 'purify-ts/EitherAsync';
     import { list_wallets } from './utils';
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
+    import LayoutGrid, { Cell } from '@smui/layout-grid';
     import Select, { Option } from '@smui/select';
     import IconButton from '@smui/icon-button';
     import Tab, { Label } from '@smui/tab';
@@ -154,24 +155,46 @@
             </div>
         {/if}
 
-        {#if active_tab == "Send"}
-            <Send on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} bind:active_wallet {wallets} />
-        {:else if active_tab == "Receive"}
-            <p>WIP</p>
-        {:else if active_tab == "Transactions"}
-            <Transactions on:error={notify_err_event} {active_wallet} />
-        {:else if active_tab == "Settings"}
-            <Settings
-                on:sent-tx={notify_sent_tx_event}
-                on:error={notify_err_event}
-                bind:active_net
-                {networks}
-                {active_wallet} />
-            <div class="create-wallet-container">
-                <h3>Create New Wallet</h3>
-                <CreateWallet on:error={notify_err_event} {networks} {active_net} />
-            </div>
-        {/if}
+        <LayoutGrid>
+            {#if active_tab == "Send"}
+                <Cell>
+                    <div class="demo-cell">
+                        <Send on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} bind:active_wallet {wallets} />
+                    </div>
+                </Cell>
+            {:else if active_tab == "Receive"}
+                <Cell>
+                    <div class="demo-cell">
+                        <p>WIP</p>
+                    </div>
+                </Cell>
+            {:else if active_tab == "Transactions"}
+                <Cell>
+                    <div class="demo-cell">
+                        <Transactions on:error={notify_err_event} {active_wallet} />
+                    </div>
+                </Cell>
+            {:else if active_tab == "Settings"}
+                <Cell>
+                    <div class="demo-cell">
+                <Settings
+                    on:sent-tx={notify_sent_tx_event}
+                    on:error={notify_err_event}
+                    bind:active_net
+                    {networks}
+                    {active_wallet} />
+                    </div>
+                </Cell>
+                <Cell>
+                    <div class="demo-cell">
+                    <div class="create-wallet-container">
+                        <h3>Create New Wallet</h3>
+                        <CreateWallet on:error={notify_err_event} {networks} {active_net} />
+                    </div>
+                    </div>
+                </Cell>
+            {/if}
+        </LayoutGrid>
     </div>
 </main>
 
@@ -187,29 +210,10 @@
         color: green;
     }
 
-    .top-app-bar {
-        margin: 0;
-        background: #ffffff;
-    }
-
-    .view {
-        text-align: center;
-        padding: 1em;
-        max-width: 360px;
-        margin: 0 auto;
-    }
-
-    h1 {
-        color: #067b7f;
-        text-transform: uppercase;
-        font-size: 3em;
-        font-weight: 100;
-    }
-
-    @media (min-width: 640px) {
-        main {
-            max-width: none;
-        }
+    .demo-cell {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
 
