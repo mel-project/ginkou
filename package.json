@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@smui/button": "^4.2.0",
+    "@smui/data-table": "^4.2.0",
     "@smui/icon-button": "^4.2.0",
     "@smui/list": "^4.2.0",
     "@smui/menu": "^4.2.0",

@@ -1,6 +1,6 @@
 <script lang="typescript">
+    import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
     import { tx_history } from './utils';
-    import { EitherAsync } from 'purify-ts/EitherAsync';
     import type { TxHistory } from './utils';
     import { createEventDispatcher } from 'svelte';
 
@@ -14,21 +14,50 @@
         })
     }
 
-    //$: txs = async () =>
-    $: txs =
+    const display_hash = hash => `${hash.slice(0, 5)}..`;
+
+    let txs_promise: Promise<TxHistory> =
         tx_history(active_wallet)
             .ifLeft(e => dsptch_err(e))
             .orDefault({
                 tx_in_progress: [],
                 tx_confirmed: [],
-            });
-            //.run();
+            } as TxHistory);
 </script>
 
 {#if active_wallet}
-    {#await txs}
+    {#await txs_promise}
         <p>loading history..</p>
-    {:then txs_res}
-        <p>{JSON.stringify(txs_res)}</p>
+    {:then txs}
+        <DataTable stickyHeader table$aria-label="User list" style="width: 100%;">
+            <Head>
+                <Row>
+                    <!--<Cell numeric>#</Cell>-->
+                    <Cell>Hash</Cell>
+                    <!--<Cell style="width: 100%;">To</Cell>-->
+                    <Cell numeric>Value</Cell>
+                    <Cell>Confirmed</Cell>
+                </Row>
+            </Head>
+            <Body>
+                <!-- List unconfirmed txs -->
+                {#each Object.entries(txs.tx_in_progress) as [txhash, tx]}
+                    <Row>
+                        <Cell>{display_hash(txhash)}</Cell>
+                        <Cell>{tx.outputs[0].value}</Cell>
+                        <Cell>false</Cell>
+                    </Row>
+                {/each}
+
+                <!-- List confirmed txs -->
+                {#each Object.entries(txs.tx_confirmed) as [txhash, [tx, height]]}
+                    <Row>
+                        <Cell>{display_hash(txhash)}</Cell>
+                        <Cell>{tx.outputs[0].value}</Cell>
+                        <Cell>true</Cell>
+                    </Row>
+                {/each}
+            </Body>
+        </DataTable>
     {/await}
 {/if}
