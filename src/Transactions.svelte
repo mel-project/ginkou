@@ -32,7 +32,6 @@
         <DataTable stickyHeader table$aria-label="User list" style="width: 100%;">
             <Head>
                 <Row>
-                    <!--<Cell numeric>#</Cell>-->
                     <Cell>Hash</Cell>
                     <!--<Cell style="width: 100%;">To</Cell>-->
                     <Cell numeric>Value</Cell>
