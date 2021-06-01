@@ -24,9 +24,9 @@
         if (active_wallet == null) {
             dsptch_err('Choose a wallet to send from')
         } else {
-            const pk = localStorage.getItem(active_wallet);
+            const sk = localStorage.getItem(active_wallet);
 
-            if ( pk == null ) {
+            if ( sk == null ) {
                 dsptch_err('No private key found for wallet "' + active_wallet + '"');
             } else {
                 const res = await send_mel(
@@ -34,7 +34,7 @@
                     wallets[active_wallet],
                     to_addr,
                     send_amount,
-                    pk)
+                    sk)
                     .ifLeft( err => dsptch_err(err) )
                     .ifRight( res => {
                         dispatcher('sent-tx', {
