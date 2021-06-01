@@ -51,18 +51,8 @@ function intoTxHistory(x: any): Maybe<TxHistory> {
     if ('tx_in_progress' in x && 'tx_confirmed' in x) {
         const tx_in_progress = do_maybe(intoListOf<[TxHash, Transaction]>(x.tx_in_progress, intoTxTuple));
         const tx_confirmed = do_maybe(intoListOf<[TxHash, [Transaction, number]]>(x.tx_confirmed, intoCdhTuple));
-        /*
-        intoListOf<(TxHash, Transaction)>(x.tx_in_progress, )
-            .chain( tx_in_progress => (tx_in_progress, intoListOf<(TxHash, (Transaction, number))>(x.tx_confirmed, )) );
-        */
 
         return Just(x);
-        /*
-        return Just(TxHistory {
-            tx_in_progress,
-            tx_confirmed
-        });
-        */
     } else
         return Nothing;
 }
@@ -314,8 +304,13 @@ export const list_wallets = (port: number = default_port)
 export const tx_history = (wallet_name: string, port: number = default_port)
 :EitherAsync<string, TxHistory> =>
     EitherAsync( async ({ liftEither, fromPromise }) => {
-        const url = `${home_addr}:${port}/wallets/${wallet_name}/transactions`;
+        //const url = `${home_addr}:${port}/wallets/${wallet_name}/transactions`;
+        const url = `${home_addr}:${port}/wallets/${wallet_name}`;
         const res = await fromPromise(fetch_or_err(url, { method: 'GET' }));
 
-        return liftEither(cast_to_either(intoTxHistory(res)));
+        // TODO this is a patch until list txs is re-implemented
+        if ('full' in res)
+            return liftEither(cast_to_either(intoTxHistory(res.full)));
+        else
+            return liftEither(cast_to_either(Nothing as Maybe<TxHistory>));
     });
