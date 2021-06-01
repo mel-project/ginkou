@@ -25,9 +25,9 @@
         } else {
             await tap_faucet(active_wallet)
                 .ifLeft( err => dsptch_err(err) )
-                .ifRight( res => {
+                .ifRight( txhash => {
                     dispatcher('sent-tx', {
-                        text: JSON.stringify(res)
+                        text: `faucet transaction has been sent: ${txhash}`
                     });
                 })
                 .run();
