@@ -14,6 +14,7 @@
     import Send from './Send.svelte';
     import Settings from './Settings.svelte';
     import CreateWallet from './CreateWallet.svelte';
+    import Transactions from './Transactions.svelte';
 
     export let name;
     // Current network being used (default main)
@@ -158,7 +159,7 @@
         {:else if active_tab == "Receive"}
             <p>WIP</p>
         {:else if active_tab == "Transactions"}
-            <p>WIP ;)</p>
+            <Transactions on:error={notify_err_event} {active_wallet} />
         {:else if active_tab == "Settings"}
             <Settings
                 on:sent-tx={notify_sent_tx_event}
