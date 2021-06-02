@@ -1,7 +1,7 @@
 <script lang="typescript">
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
-    import { tx_history } from './utils';
-    import type { TxHistory } from './utils';
+    import { wallet_dump, wallet_dump_default, MEL } from './utils';
+    import type { CoinData } from './utils';
     import { createEventDispatcher } from 'svelte';
 
     export let active_wallet: string | null;
@@ -16,49 +16,53 @@
 
     const display_hash = (hash: string) => `${hash.slice(0, 5)}..`;
 
-    $: txs_promise = active_wallet == null ?
-        { // Default if no wallet active
-            tx_in_progress: [],
-            tx_confirmed: [],
-        } :
-        tx_history(active_wallet)
-            .ifLeft(e => dsptch_err(e))
-            .orDefault({
-                tx_in_progress: [],
-                tx_confirmed: [],
-            } as TxHistory);
+    // Compute total value flowing out of wallet from a list of coins
+    function net_spent(outputs: CoinData[], self_covhash: string): number {
+        return outputs
+            .filter(cd => cd.covhash != self_covhash)
+            .filter(cd => cd.denom == MEL)
+            .map(cd => cd.value)
+            .reduce( (a,b) => a+b )
+    }
+
+    $: wallet_dump_promise = active_wallet == null ?
+            wallet_dump_default:
+            wallet_dump(active_wallet)
+                .ifLeft(e => dsptch_err(e))
+                .orDefault(wallet_dump_default);
 </script>
 
-{#await txs_promise}
+{#await wallet_dump_promise}
     <p>loading history..</p>
-{:then txs}
+{:then wallet_dump}
     <DataTable stickyHeader table$aria-label="Transactions Table">
         <Head>
             <Row>
                 <Cell>Hash</Cell>
-                <!--<Cell style="width: 100%;">To</Cell>-->
-                <Cell numeric>Value</Cell>
-                <Cell>Confirmed</Cell>
+                <Cell numeric>Spent (mel)</Cell>
+                <Cell>Block Height</Cell>
             </Row>
         </Head>
         <Body>
             <!-- List unconfirmed txs -->
-            {#each Object.entries(txs.tx_in_progress) as [txhash, tx]}
+            {#each Object.entries(wallet_dump.full.tx_in_progress) as [txhash, tx]}
                 <Row>
                     <Cell>{display_hash(txhash)}</Cell>
-                    <Cell>{tx.outputs[0].value}</Cell>
-                    <Cell>false</Cell>
+                    <Cell>{net_spent(tx.outputs, wallet_dump.summary.address)}</Cell>
+                    <Cell>pending</Cell>
                 </Row>
             {/each}
 
             <!-- List confirmed txs -->
-            {#each Object.entries(txs.tx_confirmed) as [txhash, [tx, height]]}
+            {#each Object.entries(wallet_dump.full.tx_confirmed) as [txhash, [tx, height]]}
                 <Row>
                     <Cell>{display_hash(txhash)}</Cell>
                     <Cell>{tx.outputs[0].value}</Cell>
-                    <Cell>true</Cell>
+                    <Cell>{height}</Cell>
                 </Row>
             {/each}
         </Body>
     </DataTable>
+{:catch e}
+    <p>{e}</p>
 {/await}

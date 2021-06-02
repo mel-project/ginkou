@@ -8,6 +8,8 @@ export type BlockHeight = number;
 export type TxHash = string;
 export type PrivateKey = string;
 
+export const MEL = '6d';
+
 const home_addr = 'http://127.0.0.1';
 const default_port = 11773;
 
@@ -58,8 +60,26 @@ export interface WalletDump {
     full: {
         unspent_coins: [CoinID, CoinDataHeight][],
         spent_coins: [CoinID, CoinDataHeight][],
+        tx_in_progress: [TxHash, Transaction][],
+        tx_confirmed: [TxHash, [Transaction, number]][],
         my_covenant: string,
         network: number,
+    }
+}
+
+export const wallet_dump_default: WalletDump = {
+    summary: {
+        total_micromel: 0,
+        network: 1,
+        address: '',
+    },
+    full: {
+        unspent_coins: [],
+        spent_coins: [],
+        tx_in_progress: [],
+        tx_confirmed: [],
+        my_covenant: '',
+        network: 1,
     }
 }
 
@@ -277,7 +297,7 @@ export const send_mel = (
             {
                 covhash: to,
                 value: micromel,
-                denom: '6d',
+                denom: MEL,
                 additional_data: additional_data
             }
         ];

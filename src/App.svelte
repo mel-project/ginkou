@@ -123,7 +123,6 @@
         </TopAppBar>
     </div>
 
-    <div class="content-container">
     <div class="content">
         {#if wallet_menu_is_active}
         <div class="wallet-menu">
@@ -159,7 +158,7 @@
                         <p>WIP</p>
             {:else if active_tab == "Transactions"}
                         <Transactions on:error={notify_err_event} {active_wallet} />
-            {:else if active_tab == "Settings"}
+            {:else if active_tab == "More"}
                         <Settings
                             on:sent-tx={notify_sent_tx_event}
                             on:error={notify_err_event}
@@ -171,7 +170,6 @@
                         <CreateWallet on:error={notify_err_event} {networks} {active_net} />
                     </div>
             {/if}
-        </div>
         </div>
     </div>
 </main>
@@ -194,13 +192,6 @@
 
     .top-bar {
         display: flex;
-    }
-
-    .content-container {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        margin-bottom: auto;
     }
 
     .content {
