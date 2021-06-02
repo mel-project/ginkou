@@ -1,10 +1,8 @@
 <script lang="typescript">
-    import { tap_faucet, send_mel, confirm_tx, new_wallet } from './utils';
+    //import { tap_faucet, send_mel, confirm_tx, new_wallet } from './utils';
     import type { Wallet } from './utils';
-    import { EitherAsync } from 'purify-ts/EitherAsync';
     import { list_wallets } from './utils';
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
-    import LayoutGrid, { Cell } from '@smui/layout-grid';
     import Select, { Option } from '@smui/select';
     import IconButton from '@smui/icon-button';
     import Menu from '@smui/menu';
@@ -33,8 +31,6 @@
     let networks = {"Main" : 255, "Test" : 1};
     // Active tab in UI
     let active_tab = 'Send';
-    // Top bar icon menu dropdown state
-    let menu;
     // Indicates whether the side nav bar is active
     let wallet_menu_is_active = true;
 
@@ -106,38 +102,22 @@
                         menu
                     </IconButton>
 
-                    <Menu bind:this={menu}>
-                        <List>
-                            {#each wallets_by_net as wallet}
-                                <Item on:SMUI:action={() => (active_wallet = wallet)}>
-                                    <Text>{wallet}</Text>
-                                </Item>
-                            {/each}
-                        </List>
-                    </Menu>
-
-                    <Title>Ginko</Title>
+                    <Title>Ginkou</Title>
                 </Section>
 
                 <Section>
-                    <!-- Select wallet -->
-                    <Select bind:value={active_wallet} label="Wallet">
-                    {#each wallets_by_net as wallet}
-                        <Option value={wallet}>{wallet}</Option>
-                    {/each}
-                    </Select>
+                    <div class="tabs-container">
+                        <TabBar tabs={['Transactions', 'Send', 'Receive', 'Settings']}
+                                position="static"
+                                let:tab
+                                bind:active={active_tab}>
+                            <Tab {tab}>
+                                <Label>{tab}</Label>
+                            </Tab>
+                        </TabBar>
+                    </div>
                 </Section>
             </Row>
-            <div class="tabs-container">
-                <TabBar tabs={['Transactions', 'Send', 'Receive', 'Settings']}
-                        position="static"
-                        let:tab
-                        bind:active={active_tab}>
-                    <Tab {tab}>
-                        <Label>{tab}</Label>
-                    </Tab>
-                </TabBar>
-            </div>
         </TopAppBar>
     </div>
 
@@ -150,11 +130,11 @@
 
         <!-- Report sent-txs to user-->
         {#if sent_tx_chan.length > 0}
-            <div class="sent-tx-notif-container">
-                {#each sent_tx_chan as msg}
-                    <p>{msg}</p>
-                {/each}
-            </div>
+        <div class="sent-tx-notif-container">
+            {#each sent_tx_chan as msg}
+                <p>{msg}</p>
+            {/each}
+        </div>
         {/if}
 
         <!-- Report errors to user-->
@@ -183,6 +163,7 @@
                             bind:active_net
                             {networks}
                             {active_wallet} />
+
                     <div class="create-wallet-container">
                         <h3>Create New Wallet</h3>
                         <CreateWallet on:error={notify_err_event} {networks} {active_net} />

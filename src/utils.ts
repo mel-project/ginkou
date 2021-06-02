@@ -24,6 +24,11 @@ export interface CoinData {
     additional_data: string,
 }
 
+export interface CoinDataHeight {
+    coin_data: CoinData,
+    height: number,
+}
+
 export interface CoinID {
     txhash: TxHash,
     index: number,
@@ -42,6 +47,20 @@ export interface Transaction {
 export interface TxHistory {
     tx_in_progress: [TxHash, Transaction][],
     tx_confirmed: [TxHash, [Transaction, number]][],
+}
+
+export interface WalletDump {
+    summary: {
+        total_micromel: number,
+        network: number,
+        address: string,
+    },
+    full: {
+        unspent_coins: [CoinID, CoinDataHeight][],
+        spent_coins: [CoinID, CoinDataHeight][],
+        my_covenant: string,
+        network: number,
+    }
 }
 
 // Custom type guards
@@ -300,17 +319,21 @@ export const list_wallets = (port: number = default_port)
         ));
     });
 
+export const wallet_dump = (wallet_name: string, port: number = default_port)
+:EitherAsync<string, WalletDump> =>
+    EitherAsync( async ({ liftEither, fromPromise }) => {
+        const url = `${home_addr}:${port}/wallets/${wallet_name}`;
+        const res = await fromPromise(fetch_or_err(url, { method: 'GET' }));
+
+        // TODO cast this with runtime checks
+        return liftEither( Right(res as WalletDump) );
+    });
+
 // Get a TxHistory of a given wallet
 export const tx_history = (wallet_name: string, port: number = default_port)
 :EitherAsync<string, TxHistory> =>
     EitherAsync( async ({ liftEither, fromPromise }) => {
-        //const url = `${home_addr}:${port}/wallets/${wallet_name}/transactions`;
-        const url = `${home_addr}:${port}/wallets/${wallet_name}`;
-        const res = await fromPromise(fetch_or_err(url, { method: 'GET' }));
+        const dump = await fromPromise(wallet_dump(wallet_name, port));
 
-        // TODO this is a patch until list txs is re-implemented
-        if ('full' in res)
-            return liftEither(cast_to_either(intoTxHistory(res.full)));
-        else
-            return liftEither(cast_to_either(Nothing as Maybe<TxHistory>));
+        return liftEither(cast_to_either(intoTxHistory(dump.full)));
     });

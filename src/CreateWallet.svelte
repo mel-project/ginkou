@@ -39,12 +39,21 @@
     }
 </script>
 
-<Textfield bind:value={new_wallet_name} label="Wallet name" />
+<div class="create-wallet-view">
+    <Textfield bind:value={new_wallet_name} label="Wallet name" />
 
-<Button on:click={() => handle_create_wallet(new_wallet_name, active_net)}>
-    Create wallet
-</Button>
+    <Button on:click={() => handle_create_wallet(new_wallet_name, active_net)}>
+        Create wallet
+    </Button>
+</div>
 
 {#if create_wallet_result != null}
 <p>{create_wallet_result}</p>
 {/if}
+
+<style>
+    .create-wallet-view {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
