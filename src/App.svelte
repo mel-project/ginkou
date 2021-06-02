@@ -102,12 +102,14 @@
                         menu
                     </IconButton>
 
-                    <Title>Ginkou</Title>
+                    {#if active_wallet}
+                    <Title>{active_wallet}</Title>
+                    {/if}
                 </Section>
 
                 <Section>
                     <div class="tabs-container">
-                        <TabBar tabs={['Transactions', 'Send', 'Receive', 'Settings']}
+                        <TabBar tabs={['Transactions', 'Send', 'Receive', 'More']}
                                 position="static"
                                 let:tab
                                 bind:active={active_tab}>
@@ -121,6 +123,7 @@
         </TopAppBar>
     </div>
 
+    <div class="content-container">
     <div class="content">
         {#if wallet_menu_is_active}
         <div class="wallet-menu">
@@ -165,10 +168,10 @@
                             {active_wallet} />
 
                     <div class="create-wallet-container">
-                        <h3>Create New Wallet</h3>
                         <CreateWallet on:error={notify_err_event} {networks} {active_net} />
                     </div>
             {/if}
+        </div>
         </div>
     </div>
 </main>
@@ -193,6 +196,13 @@
         display: flex;
     }
 
+    .content-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        margin-bottom: auto;
+    }
+
     .content {
         display: flex;
         flex-direction: row;
@@ -201,18 +211,14 @@
     }
 
     .view-box {
-        padding-top: 30px;
+        border: 1px solid grey;
+        margin: 30px 5% 30px 5%;
+        padding: 30px 5% 30px 5%;
         display: flex;
+        background-color: #ededed;
         flex-grow: 1;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
-    }
-
-    .demo-cell {
-        display: flex;
-        justify-content: space-evenly;
-        flex-direction: column;
         align-items: center;
     }
 </style>
