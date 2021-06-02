@@ -7,15 +7,16 @@
     import LayoutGrid, { Cell } from '@smui/layout-grid';
     import Select, { Option } from '@smui/select';
     import IconButton from '@smui/icon-button';
+    import Menu from '@smui/menu';
+    import List, { Item, Text } from '@smui/list';
     import Tab, { Label } from '@smui/tab';
     import TabBar from '@smui/tab-bar';
-    import Menu from '@smui/menu';
-    import List, { Item, Separator, Text } from '@smui/list';
     import { onMount } from 'svelte';
     import Send from './Send.svelte';
     import Settings from './Settings.svelte';
     import CreateWallet from './CreateWallet.svelte';
     import Transactions from './Transactions.svelte';
+    import WalletMenu from './WalletMenu.svelte';
 
     export let name;
     // Current network being used (default main)
@@ -34,6 +35,8 @@
     let active_tab = 'Send';
     // Top bar icon menu dropdown state
     let menu;
+    // Indicates whether the side nav bar is active
+    let wallet_menu_is_active = true;
 
     // User-viewable error reporting
     let error_chan: string[] = [];
@@ -74,6 +77,9 @@
         }, 5000);
     }
 
+    function toggle_side_nav() {
+    }
+
     onMount(async () => {
         // Fetch the list of wallets
         const res = await list_wallets().run();
@@ -89,13 +95,13 @@
 </script>
 
 <main>
-    <div class="top-app-bar-container">
+    <div class="top-bar">
         <TopAppBar
             variant="static">
             <Row>
                 <Section>
                     <IconButton
-                        on:click={() => menu.setOpen(true)}
+                        on:click={() => (wallet_menu_is_active = !wallet_menu_is_active)}
                         class="material-icons">
                         menu
                     </IconButton>
@@ -135,7 +141,12 @@
         </TopAppBar>
     </div>
 
-    <div class="view">
+    <div class="content">
+        {#if wallet_menu_is_active}
+        <div class="wallet-menu">
+            <WalletMenu wallet_names={wallets_by_net} bind:active_wallet />
+        </div>
+        {/if}
 
         <!-- Report sent-txs to user-->
         {#if sent_tx_chan.length > 0}
@@ -155,46 +166,29 @@
             </div>
         {/if}
 
-        <LayoutGrid>
+        <div class="view-box">
             {#if active_tab == "Send"}
-                <Cell>
-                    <div class="demo-cell">
-                        <Send on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} bind:active_wallet {wallets} />
-                    </div>
-                </Cell>
+                        <Send on:error={notify_err_event}
+                              on:sent-tx={notify_sent_tx_event}
+                              {active_wallet}
+                              {wallets} />
             {:else if active_tab == "Receive"}
-                <Cell>
-                    <div class="demo-cell">
                         <p>WIP</p>
-                    </div>
-                </Cell>
             {:else if active_tab == "Transactions"}
-                <Cell>
-                    <div class="demo-cell">
                         <Transactions on:error={notify_err_event} {active_wallet} />
-                    </div>
-                </Cell>
             {:else if active_tab == "Settings"}
-                <Cell>
-                    <div class="demo-cell">
-                <Settings
-                    on:sent-tx={notify_sent_tx_event}
-                    on:error={notify_err_event}
-                    bind:active_net
-                    {networks}
-                    {active_wallet} />
-                    </div>
-                </Cell>
-                <Cell>
-                    <div class="demo-cell">
+                        <Settings
+                            on:sent-tx={notify_sent_tx_event}
+                            on:error={notify_err_event}
+                            bind:active_net
+                            {networks}
+                            {active_wallet} />
                     <div class="create-wallet-container">
                         <h3>Create New Wallet</h3>
                         <CreateWallet on:error={notify_err_event} {networks} {active_net} />
                     </div>
-                    </div>
-                </Cell>
             {/if}
-        </LayoutGrid>
+        </div>
     </div>
 </main>
 
@@ -210,9 +204,34 @@
         color: green;
     }
 
+    main {
+        height: 100%;
+    }
+
+    .top-bar {
+        display: flex;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .view-box {
+        padding-top: 30px;
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
     .demo-cell {
         display: flex;
-        justify-content: center;
+        justify-content: space-evenly;
+        flex-direction: column;
         align-items: center;
     }
 </style>
