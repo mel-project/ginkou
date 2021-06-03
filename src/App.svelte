@@ -126,33 +126,34 @@
         </TopAppBar>
     </div>
 
+    <div id="sent-tx-notification-banner">
+        <!-- Report sent-txs to user-->
+        {#if sent_tx_chan.length > 0}
+        <div class="sent-tx-notif-container">
+            {#each sent_tx_chan as msg}
+                <p>{msg}</p>
+            {/each}
+        </div>
+        {/if}
+    </div>
+
+    <div id="error-notification-banner">
+        <!-- Report errors to user-->
+        {#if error_chan.length > 0}
+            <div class="error-notif-container">
+                {#each error_chan as msg}
+                    <p>{msg}</p>
+                {/each}
+            </div>
+        {/if}
+    </div>
+
     <div class="content">
         {#if wallet_menu_is_active}
         <div class="wallet-menu">
             <WalletMenu wallet_names={wallets_by_net} bind:active_wallet />
         </div>
         {/if}
-
-        <!--<Banner open={sent_tx_chan.length > 0}>-->
-            <!-- Report sent-txs to user-->
-            {#if sent_tx_chan.length > 0}
-            <div class="sent-tx-notif-container">
-                {#each sent_tx_chan as msg}
-                    <p>{msg}</p>
-                {/each}
-            </div>
-            {/if}
-
-            <!-- Report errors to user-->
-            {#if error_chan.length > 0}
-                <div class="error-notif-container">
-                    {#each error_chan as msg}
-                        <p>{msg}</p>
-                    {/each}
-                </div>
-            {/if}
-        <!--</Banner>-->
-
         <div class="view-box">
             {#if active_tab == "Send"}
                 <Send on:error={notify_err_event}
@@ -191,12 +192,14 @@
         padding: 3em;
     }
 
+    /*
     .error-notif-container {
         color: red;
     }
     .sent-tx-notif-container {
         color: green;
     }
+    */
 
     main {
         height: 100%;
@@ -223,6 +226,21 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+    }
+
+    #sent-tx-notification-banner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #499348;
+        color: white;
+    }
+    #error-notification-banner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #db1a2d;
+        color: white;
     }
 </style>
 
