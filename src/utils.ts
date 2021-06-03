@@ -15,7 +15,7 @@ const default_port = 11773;
 export interface Wallet {
     total_micromel: number,
     network: number,
-    address: TxHash,
+    address: string,
 }
 
 export interface CoinData {
@@ -240,6 +240,15 @@ function cast_to_either<T>(m: Maybe<T>): Either<string, T> {
         Just: x => Right(x),
         Nothing: () => Left('failed to cast json to expected type'),
     });
+}
+
+// Compute total value flowing out of wallet from a list of coins
+export function net_spent(outputs: CoinData[], self_covhash: string): number {
+    return outputs
+        .filter(cd => cd.covhash != self_covhash)
+        .filter(cd => cd.denom == MEL)
+        .map(cd => cd.value)
+        .reduce( (a,b) => a+b )
 }
 
 /// Fetch a url endpoint and parse as json, error if the http response is not ok
