@@ -11,6 +11,7 @@
     import { onMount } from 'svelte';
 
     import Send from './Send.svelte';
+    import Receive from './Receive.svelte';
     import Settings from './Settings.svelte';
     import CreateWallet from './CreateWallet.svelte';
     import Transactions from './Transactions.svelte';
@@ -159,7 +160,7 @@
                       {active_wallet}
                       {wallets} />
             {:else if active_tab == "Receive"}
-                <p>WIP</p>
+                <Receive {wallets} {active_wallet} />
             {:else if active_tab == "Transactions"}
                 <Transactions on:error={notify_err_event} {active_wallet} />
             {:else if active_tab == "More"}
