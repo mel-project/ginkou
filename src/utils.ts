@@ -87,20 +87,18 @@ export const wallet_dump_default: WalletDump = {
 
 function intoTxHistory(x: any): Maybe<TxHistory> {
     if ('tx_in_progress' in x && 'tx_confirmed' in x) {
-        const tx_in_progress = do_maybe(intoListOf<[TxHash, Transaction]>(x.tx_in_progress, intoTxTuple));
-        const tx_confirmed = do_maybe(intoListOf<[TxHash, [Transaction, number]]>(x.tx_confirmed, intoCdhTuple));
-
-        return Just(x);
+        return intoListOf<[TxHash, Transaction]>(x.tx_in_progress, intoTxTuple)
+            .chain( _ => intoListOf<[TxHash, [Transaction, number]]>(x.tx_confirmed, intoCdhTuple))
+            .chain( _ => Just(x));
     } else
         return Nothing;
 }
 
 function intoTxTuple(x: any): Maybe<[TxHash, Transaction]> {
     if ( typeof(x) == 'object' ) {
-        const txhash = do_maybe( intoTxHash(x[0]) );
-        const tx     = do_maybe( intoTransaction(x[1]) );
-
-        return Just(x);
+        return intoTxHash(x[0])
+            .chain(_ => intoTransaction(x[1]))
+            .chain(_ => Just(x));
     }
     else
         return Nothing;
@@ -110,10 +108,9 @@ function intoCdhTuple(x: any): Maybe<[TxHash, [Transaction, number]]> {
     if ( typeof(x) == 'object'
          && typeof(x[1][1]) == 'number' )
     {
-        const txhash = do_maybe( intoTxHash(x[0]) );
-        const tx     = do_maybe( intoTransaction(x[1][0]) );
-
-        return Just(x);
+        return intoTxHash(x[0])
+            .chain(_ => intoTransaction(x[1][0]))
+            .chain(_ => Just(x));
     }
     else
         return Nothing;
@@ -128,12 +125,11 @@ function intoTransaction(x: any): Maybe<Transaction> {
         && 'data' in x && typeof(x.data) == 'string'
         && 'sigs' in x)
     {
-        const inputs  = do_maybe( intoListOf(x.inputs, intoCoinID) );
-        const output  = do_maybe( intoListOf(x.outputs, intoCoinData) );
-        const scripts = do_maybe( intoListOf<string>(x.scripts, JSON.parse) );
-        const sigs    = do_maybe( intoListOf<string>(x.sigs, JSON.parse) );
-
-        return Just(x);
+        return intoListOf(x.inputs, intoCoinID)
+            .chain(_ => intoListOf(x.outputs, intoCoinData))
+            .chain(_ => intoListOf<string>(x.scripts, intoString))
+            .chain(_ => intoListOf<string>(x.sigs, intoString))
+            .chain(_ => Just(x));
     }
     else return Nothing;
 }
@@ -142,9 +138,8 @@ function intoCoinID(x: any): Maybe<CoinID> {
     if ('txhash' in x
      && 'index' in x && typeof(x.index) == 'number')
     {
-        const txhash = do_maybe( intoTxHash(x.txhash) );
-
-        return Just(x);
+        return intoTxHash(x.txhash)
+            .chain(_ => Just(x));
     }
     else
         return Nothing;
@@ -180,16 +175,36 @@ function intoTxHash(x: any): Maybe<TxHash> {
         return Nothing;
 }
 
+function intoString(x: any): Maybe<string> {
+    return Just(x);
+}
+
 // Helpers
 
 // Return x in Just x or throw error on Nothing.
 // Convenient do-notation for maybe types.
+/*
 function do_maybe<T>(e: Maybe<T>): T {
     if ( e.isJust() )
         return e.extract();
     else
         throw e.extract();
 }
+*/
+
+// Do notation for EitherAsync
+/*
+async function do_ea<L,R>(ea: EitherAsync<L,R>): Promise<R> {
+    let e = await ea;
+    return do_either(e);
+}
+function do_either<L,R>(e: Either<L,R>): R {
+    if ( e.isRight() )
+        return e.extract();
+    else
+        throw e.extract();
+}
+*/
 
 
 // Casting functions
@@ -212,7 +227,7 @@ function intoPrivateKey(x: any): Maybe<PrivateKey> {
 function intoListOf<T>(a: any, intoT: (a0: any) => Maybe<T>): Maybe<T[]> {
     if ( Array.isArray(a) )
         for (const x of a) {
-            if ( intoT(a).isNothing() )
+            if ( intoT(x).isNothing() )
                 return Nothing;
         }
 
@@ -278,20 +293,39 @@ export const confirm_tx = async (url: string, txhash: TxHash)
             return await fromPromise(confirm_tx(url, txhash));
     });
 
-export const send_mel = (
+export const send_tx = (
     wallet_name: string,
-    wallet: Wallet,
-    to: string,
-    mel: number,
-    priv_key: PrivateKey,
-    additional_data: string = '',
+    transaction: Transaction,
     port: number = default_port)
 :EitherAsync<string, TxHash> =>
     EitherAsync( async ({ liftEither, fromPromise }) => {
-        const url_prepare_tx = `${home_addr}:${port}/wallets/${wallet_name}/prepare-tx`;
         const url_send_tx    = `${home_addr}:${port}/wallets/${wallet_name}/send-tx`;
 
-        const micromel = mel * 1000;
+        // Send tx
+        const e_txhash = await fromPromise(fetch_or_err(url_send_tx, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(transaction),
+        }));
+
+        // Runtime type check and return
+        return liftEither(cast_to_either( intoTxHash(e_txhash) ));
+    });
+
+export const prepare_mel_tx = (
+    wallet_name: string,
+    wallet: Wallet,
+    to: string,
+    micromel: number,
+    priv_key: PrivateKey,
+    additional_data: string = '',
+    port: number = default_port)
+:EitherAsync<string, Transaction> =>
+    EitherAsync( async ({ liftEither, fromPromise }) => {
+        const url_prepare_tx = `${home_addr}:${port}/wallets/${wallet_name}/prepare-tx`;
+
         const outputs: CoinData[]  = [
             {
                 covhash: to,
@@ -302,7 +336,7 @@ export const send_mel = (
         ];
 
         // Prepare tx (get a json-encoded tx back)
-        const tx: any = await fromPromise(fetch_or_err(url_prepare_tx, {
+        const tx: Either<string, any> = await fromPromise(fetch_or_err(url_prepare_tx, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -313,17 +347,32 @@ export const send_mel = (
             }),
         }));
 
-        // Send tx
-        const e_txhash = await fromPromise(fetch_or_err(url_send_tx, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(tx),
-        }));
-
         // Runtime type check and return
-        return liftEither(cast_to_either( intoTxHash(e_txhash) ));
+        return liftEither(cast_to_either( intoTransaction(tx) ));
+    });
+
+export const send_mel = (
+    wallet_name: string,
+    wallet: Wallet,
+    to: string,
+    mel: number,
+    priv_key: PrivateKey,
+    additional_data: string = '',
+    port: number = default_port)
+:EitherAsync<string, TxHash> =>
+    EitherAsync( async ({ liftEither, fromPromise }) => {
+        let tx_res = await prepare_mel_tx(
+            wallet_name,
+            wallet,
+            to,
+            mel,
+            priv_key,
+            additional_data,
+            port);
+
+        return liftEither(cast_to_either(intoTransaction(tx_res)))
+            .chain( tx => send_tx(wallet_name, tx))
+            .chain( txhash_str => liftEither(cast_to_either( intoTxHash(txhash_str) )));
     });
 
 // Get a list of all stored wallets
