@@ -70,6 +70,11 @@
             }
         }
     }
+
+    // Get a list of (covhash,amount) pairs from a list of outputs
+    function spends(outputs: CoinData[]): [string, number] {
+        return outputs.map(cd => [cd.covhash, cd.value]);
+    }
 </script>
 
 {#if prepared_tx}
@@ -79,13 +84,16 @@
   aria-describedby="simple-content"
 >
     <Label>Confirm Transaction</Label>
-        <p>Send 
-    <p>For {prepared_tx.fee} micromel</p>
-    <li>
-        <ul>{prepared_tx.fee}</ul>
-    </li>
 
-    <p>{JSON.stringify(prepared_tx)}</p>
+    {#each spends(prepared_tx.outputs)
+            .filter(([address,_]) => address != wallets[active_wallet].address)
+        as spend}
+        <p>Send {spend[1]} micromel</p>
+        <p>To address {spend[0]}</p>
+    {/each}
+
+    <p>For {prepared_tx.fee} micromel</p>
+
     <Button on:click={() => (open_confirmation=false)}>Cancel</Button>
 
     <!-- Send Tx -->

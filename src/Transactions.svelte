@@ -2,7 +2,7 @@
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
     import Button from '@smui/button';
-    import { wallet_dump, wallet_dump_default, MEL } from './utils';
+    import { wallet_dump, wallet_dump_default, net_spent } from './utils';
     import type { CoinData, Transaction } from './utils';
     import { createEventDispatcher } from 'svelte';
     import TransactionSummary from './TransactionSummary.svelte';
@@ -23,15 +23,6 @@
     }
 
     const display_hash = (hash: string) => `${hash.slice(0, 5)}..`;
-
-    // Compute total value flowing out of wallet from a list of coins
-    function net_spent(outputs: CoinData[], self_covhash: string): number {
-        return outputs
-            .filter(cd => cd.covhash != self_covhash)
-            .filter(cd => cd.denom == MEL)
-            .map(cd => cd.value)
-            .reduce( (a,b) => a+b )
-    }
 
     $: wallet_dump_promise = active_wallet == null ?
             wallet_dump_default:
