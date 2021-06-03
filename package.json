@@ -16,6 +16,7 @@
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.2.1",
     "@smui/banner": "^4.2.0",
+    "@smui/data-table": "^4.2.0",
     "@smui/tab": "^4.2.0",
     "@smui/tab-bar": "^4.2.0",
     "@smui/top-app-bar": "^4.2.0",
@@ -42,7 +43,7 @@
   },
   "dependencies": {
     "@smui/button": "^4.2.0",
-    "@smui/data-table": "^4.2.0",
+    "@smui/dialog": "^4.2.0",
     "@smui/icon-button": "^4.2.0",
     "@smui/layout-grid": "^4.2.0",
     "@smui/list": "^4.2.0",

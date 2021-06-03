@@ -1,7 +1,6 @@
 import { EitherAsync } from 'purify-ts/EitherAsync';
 import { Either, Left, Right } from 'purify-ts/Either';
 import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
-//import { is } from 'typescript-is';
 import fetch from 'cross-fetch';
 
 export type BlockHeight = number;
