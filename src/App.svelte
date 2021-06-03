@@ -111,7 +111,13 @@
                 </Section>
 
                 <Section>
-                    <div class="tabs-container">
+                    <div id="tabs-container">
+                        {#each ['Transactions', 'Send', 'Receive', 'More'] as tab}
+                            <div class="tab" on:click={() => (active_tab = tab)}>
+                                <Label>{tab}</Label>
+                            </div>
+                        {/each}
+                        <!--
                         <TabBar tabs={['Transactions', 'Send', 'Receive', 'More']}
                                 position="static"
                                 let:tab
@@ -120,6 +126,7 @@
                                 <Label>{tab}</Label>
                             </Tab>
                         </TabBar>
+                        -->
                     </div>
                 </Section>
             </Row>
@@ -150,7 +157,7 @@
 
     <div class="content">
         {#if wallet_menu_is_active}
-        <div class="wallet-menu">
+        <div id="wallet-menu">
             <WalletMenu wallet_names={wallets_by_net} bind:active_wallet />
         </div>
         {/if}
@@ -192,15 +199,6 @@
         padding: 3em;
     }
 
-    /*
-    .error-notif-container {
-        color: red;
-    }
-    .sent-tx-notif-container {
-        color: green;
-    }
-    */
-
     main {
         height: 100%;
     }
@@ -217,6 +215,7 @@
     }
 
     .view-box {
+        overflow-y: auto;
         border: 1px solid grey;
         margin: 30px 5% 30px 5%;
         padding: 30px 5% 30px 5%;
@@ -241,6 +240,17 @@
         align-items: center;
         background-color: #db1a2d;
         color: white;
+    }
+    #tabs-container {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: flex-end;
+        flex: 1;
+    }
+    .tab:hover {
+        color: black;
+    }
+    #wallet-menu {
     }
 </style>
 
