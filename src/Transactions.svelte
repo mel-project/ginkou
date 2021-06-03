@@ -1,10 +1,18 @@
 <script lang="typescript">
+    import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
+    import Button from '@smui/button';
     import { wallet_dump, wallet_dump_default, MEL } from './utils';
-    import type { CoinData } from './utils';
+    import type { CoinData, Transaction } from './utils';
     import { createEventDispatcher } from 'svelte';
+    import TransactionSummary from './TransactionSummary.svelte';
 
     export let active_wallet: string | null;
+
+    // Whether a summary window is open
+    let summary_open: boolean = false;
+    // Transaction to display in a summary window
+    let active_tx: Transaction | null = null;
 
     const dispatcher = createEventDispatcher();
 
@@ -32,6 +40,14 @@
                 .orDefault(wallet_dump_default);
 </script>
 
+<Dialog
+  bind:open={summary_open}
+  aria-labelledby="simple-title"
+  aria-describedby="simple-content"
+>
+    <TransactionSummary tx={active_tx} />
+</Dialog>
+
 {#await wallet_dump_promise}
     <p>loading history..</p>
 {:then wallet_dump}
@@ -46,7 +62,10 @@
         <Body>
             <!-- List unconfirmed txs -->
             {#each Object.entries(wallet_dump.full.tx_in_progress) as [txhash, tx]}
-                <Row>
+                <Row on:click={() => {
+                        summary_open = true;
+                        active_tx = tx;
+                }}>
                     <Cell>{display_hash(txhash)}</Cell>
                     <Cell>{net_spent(tx.outputs, wallet_dump.summary.address)}</Cell>
                     <Cell>pending</Cell>
@@ -55,7 +74,10 @@
 
             <!-- List confirmed txs -->
             {#each Object.entries(wallet_dump.full.tx_confirmed) as [txhash, [tx, height]]}
-                <Row>
+                    <Row on:click={() => {
+                            summary_open = true;
+                            active_tx = tx;
+                    }}>
                     <Cell>{display_hash(txhash)}</Cell>
                     <Cell>{tx.outputs[0].value}</Cell>
                     <Cell>{height}</Cell>

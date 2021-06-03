@@ -1,15 +1,15 @@
 <script lang="typescript">
-    //import { tap_faucet, send_mel, confirm_tx, new_wallet } from './utils';
     import type { Wallet } from './utils';
     import { list_wallets } from './utils';
+
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
-    import Select, { Option } from '@smui/select';
+    //import Banner from '@smui/banner';
     import IconButton from '@smui/icon-button';
-    import Menu from '@smui/menu';
-    import List, { Item, Text } from '@smui/list';
+    import Button from '@smui/button';
     import Tab, { Label } from '@smui/tab';
     import TabBar from '@smui/tab-bar';
     import { onMount } from 'svelte';
+
     import Send from './Send.svelte';
     import Settings from './Settings.svelte';
     import CreateWallet from './CreateWallet.svelte';
@@ -33,6 +33,8 @@
     let active_tab = 'Send';
     // Indicates whether the side nav bar is active
     let wallet_menu_is_active = true;
+    // Indicates whether secret key will be visible
+    let show_secret_key = false;
 
     // User-viewable error reporting
     let error_chan: string[] = [];
@@ -130,45 +132,54 @@
         </div>
         {/if}
 
-        <!-- Report sent-txs to user-->
-        {#if sent_tx_chan.length > 0}
-        <div class="sent-tx-notif-container">
-            {#each sent_tx_chan as msg}
-                <p>{msg}</p>
-            {/each}
-        </div>
-        {/if}
-
-        <!-- Report errors to user-->
-        {#if error_chan.length > 0}
-            <div class="error-notif-container">
-                {#each error_chan as msg}
+        <!--<Banner open={sent_tx_chan.length > 0}>-->
+            <!-- Report sent-txs to user-->
+            {#if sent_tx_chan.length > 0}
+            <div class="sent-tx-notif-container">
+                {#each sent_tx_chan as msg}
                     <p>{msg}</p>
                 {/each}
             </div>
-        {/if}
+            {/if}
+
+            <!-- Report errors to user-->
+            {#if error_chan.length > 0}
+                <div class="error-notif-container">
+                    {#each error_chan as msg}
+                        <p>{msg}</p>
+                    {/each}
+                </div>
+            {/if}
+        <!--</Banner>-->
 
         <div class="view-box">
             {#if active_tab == "Send"}
-                        <Send on:error={notify_err_event}
-                              on:sent-tx={notify_sent_tx_event}
-                              {active_wallet}
-                              {wallets} />
+                <Send on:error={notify_err_event}
+                      on:sent-tx={notify_sent_tx_event}
+                      {active_wallet}
+                      {wallets} />
             {:else if active_tab == "Receive"}
-                        <p>WIP</p>
+                <p>WIP</p>
             {:else if active_tab == "Transactions"}
-                        <Transactions on:error={notify_err_event} {active_wallet} />
+                <Transactions on:error={notify_err_event} {active_wallet} />
             {:else if active_tab == "More"}
-                        <Settings
-                            on:sent-tx={notify_sent_tx_event}
-                            on:error={notify_err_event}
-                            bind:active_net
-                            {networks}
-                            {active_wallet} />
+                <Settings
+                    on:sent-tx={notify_sent_tx_event}
+                    on:error={notify_err_event}
+                    bind:active_net
+                    {networks}
+                    {active_wallet} />
 
-                    <div class="create-wallet-container">
-                        <CreateWallet on:error={notify_err_event} {networks} {active_net} />
-                    </div>
+                <div class="create-wallet-container">
+                    <CreateWallet on:error={notify_err_event} {networks} {active_net} />
+                </div>
+
+                {#if active_wallet}
+                    <Button on:click={()=> (show_secret_key = !show_secret_key)}>Show Secret Key</Button>
+                    {#if show_secret_key}
+                        <textarea>{localStorage.getItem(active_wallet)}</textarea>
+                    {/if}
+                {/if}
             {/if}
         </div>
     </div>
@@ -223,6 +234,6 @@
     <link rel="stylesheet" href="https://unpkg.com/@material/typography@11.0.0/dist/mdc.typography.css" />
 
     <!-- SMUI -->
-    <!--<link rel="stylesheet" href="https://unpkg.com/svelte-material-ui/bare.css" />-->
-    <link rel="stylesheet" href="/build/smui.css" />
+    <link rel="stylesheet" href="https://unpkg.com/svelte-material-ui/bare.css" />
+    <!--<link rel="stylesheet" href="/build/smui.css" />-->
 </svelte:head>
