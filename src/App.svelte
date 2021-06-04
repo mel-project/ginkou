@@ -1,6 +1,8 @@
 <script lang="typescript">
     import type { Wallet } from './utils';
     import { list_wallets } from './utils';
+    import { get_wallet } from './storage';
+    import { derive_key, decrypt, buf_to_hex } from './crypto';
 
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     //import Banner from '@smui/banner';
@@ -76,7 +78,11 @@
         }, 5000);
     }
 
-    function toggle_side_nav() {
+    async function get_priv_key(active_wallet: string, password: string)
+    : Promise<ArrayBuffer> {
+        const data = get_wallet(active_wallet);
+        const key  = await derive_key(password, data.salt);
+        return decrypt(data.priv_key, key, data.iv);
     }
 
     onMount(async () => {
@@ -188,7 +194,15 @@
                 {#if active_wallet}
                     <Button on:click={()=> (show_secret_key = !show_secret_key)}>Show Secret Key</Button>
                     {#if show_secret_key}
-                        <textarea>{localStorage.getItem(active_wallet)}</textarea>
+                        <div id="private-key-view">
+                            {#await get_priv_key(active_wallet, window.prompt('Enter password'))}
+                                decrypting...
+                            {:then sk}
+                                {buf_to_hex(sk)}
+                            {:catch e}
+                                {e}
+                            {/await}
+                        </div>
                     {/if}
                 {/if}
             {/if}
@@ -258,6 +272,10 @@
     #wallet-title {
         max-width: 20vw;
         overflow: hidden;
+    }
+    #private-key-view {
+        width: 80%;
+        overflow: auto;
     }
 </style>
 

@@ -1,6 +1,6 @@
 <script lang="typescript">
-    //import { EitherAsync } from 'purify-ts/EitherAsync';
-    //import { Either, Left, Right } from 'purify-ts/Either';
+    import { derive_key, encrypt } from './crypto';
+    import { store_wallet } from './storage';
     import { createEventDispatcher } from 'svelte';
     import { confirm_tx, new_wallet } from './utils';
 
@@ -24,14 +24,24 @@
     }
 
     // Create a wallet and store the result on success, emit an event on failure
-    async function handle_create_wallet(wallet_name: string, network: number) {
+    async function handle_create_wallet(wallet_name: string) {
+        const salt = window.crypto.getRandomValues(new Uint8Array(16));
+        const iv   = window.crypto.getRandomValues(new Uint8Array(16));
+        const password = window.prompt("Choose a password");
+        const enc_key = await derive_key(password, salt);
+
         let res = await new_wallet(
             new_wallet_name,
             active_net == networks["Test"] ? true : false)
             .ifLeft( err => dispatch_failure(err) )
-            .ifRight( priv_key => {
+            .ifRight( async (priv_key) => {
                 // Write private key to storage
-                localStorage.setItem(wallet_name, priv_key);
+                const encrypted_priv_key = await encrypt(priv_key, enc_key, iv);
+                store_wallet(
+                    wallet_name,
+                    new Uint8Array(encrypted_priv_key),
+                    salt,
+                    iv);
                 // Notify user of success
                 create_wallet_result = "wallet created!";
             })
@@ -42,7 +52,7 @@
 <div class="create-wallet-view">
     <Textfield bind:value={new_wallet_name} label="Wallet name" />
 
-    <Button on:click={() => handle_create_wallet(new_wallet_name, active_net)}>
+    <Button on:click={() => handle_create_wallet(new_wallet_name)}>
         Create wallet
     </Button>
 </div>
