@@ -95,8 +95,8 @@
 
 <main>
     <div class="top-bar">
-        <TopAppBar
-            variant="static">
+        <!--<TopAppBar
+            variant="static">-->
             <Row>
                 <Section>
                     <IconButton
@@ -106,18 +106,21 @@
                     </IconButton>
 
                     {#if active_wallet}
-                    <Title>{active_wallet}</Title>
+                    <div id="wallet-title">
+                        <Title>{active_wallet}</Title>
+                    </div>
                     {/if}
                 </Section>
 
                 <Section>
                     <div id="tabs-container">
+                        <!--
                         {#each ['Transactions', 'Send', 'Receive', 'More'] as tab}
                             <div class="tab" on:click={() => (active_tab = tab)}>
                                 <Label>{tab}</Label>
                             </div>
                         {/each}
-                        <!--
+                        -->
                         <TabBar tabs={['Transactions', 'Send', 'Receive', 'More']}
                                 position="static"
                                 let:tab
@@ -126,11 +129,10 @@
                                 <Label>{tab}</Label>
                             </Tab>
                         </TabBar>
-                        -->
                     </div>
                 </Section>
             </Row>
-        </TopAppBar>
+        <!--</TopAppBar>-->
     </div>
 
     <div id="sent-tx-notification-banner">
@@ -204,12 +206,15 @@
     }
 
     .top-bar {
+        background-color: #086d4d;
         display: flex;
     }
 
     .content {
         display: flex;
         flex-direction: row;
+        align-items: stretch;
+        bottom: 0px;
         justify-content: flex-start;
         align-items: flex-start;
     }
@@ -220,7 +225,7 @@
         margin: 30px 5% 30px 5%;
         padding: 30px 5% 30px 5%;
         display: flex;
-        background-color: #ededed;
+        background-color: #e0e0e0;
         flex-grow: 1;
         flex-direction: column;
         justify-content: center;
@@ -250,7 +255,9 @@
     .tab:hover {
         color: black;
     }
-    #wallet-menu {
+    #wallet-title {
+        max-width: 20vw;
+        overflow: hidden;
     }
 </style>
 
