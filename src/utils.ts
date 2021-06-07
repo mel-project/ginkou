@@ -383,7 +383,7 @@ export const send_mel = (
             .chain( tx => send_tx(wallet_name, tx))
             .chain( txhash_str => liftEither(cast_to_either( intoTxHash(txhash_str) )));
     });
-
+ 
 // Get a list of all stored wallets
 export const list_wallets = (port: number = default_port)
 :EitherAsync<string, Wallet[]> =>
@@ -393,7 +393,7 @@ export const list_wallets = (port: number = default_port)
 
         return liftEither(cast_to_either(
             intoListOf(res, intoWallet)
-        ));
+        )); 
     });
 
 export const wallet_dump = (wallet_name: string, port: number = default_port)
