@@ -1,6 +1,8 @@
 import { EitherAsync } from 'purify-ts/EitherAsync';
 import { Either, Left, Right } from 'purify-ts/Either';
 import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
+import { get_wallet } from './storage';
+import { derive_key, decrypt } from './crypto';
 import fetch from 'cross-fetch';
 
 export type BlockHeight = number;
@@ -180,6 +182,13 @@ function intoString(x: any): Maybe<string> {
 }
 
 // Helpers
+
+export async function get_priv_key(active_wallet: string, password: string)
+: Promise<ArrayBuffer> {
+    const data = get_wallet(active_wallet);
+    const key  = await derive_key(password, data.salt);
+    return decrypt(data.priv_key, key, data.iv);
+}
 
 // Return x in Just x or throw error on Nothing.
 // Convenient do-notation for maybe types.

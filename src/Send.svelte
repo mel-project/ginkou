@@ -1,8 +1,9 @@
 <script lang="typescript">
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import { createEventDispatcher } from 'svelte';
-    import { send_tx, prepare_mel_tx } from './utils';
+    import { send_tx, prepare_mel_tx, get_priv_key } from './utils';
     import type { Wallet, Transaction } from './utils';
+    import { get_wallet } from './storage';
     import Textfield from '@smui/textfield';
     import Button, { Label } from '@smui/button';
 
@@ -29,16 +30,14 @@
         if (active_wallet == null) {
             dsptch_err('Choose a wallet to send from')
         } else {
-            const sk = localStorage.getItem(active_wallet);
-
-            if ( sk == null ) {
-                dsptch_err('No private key found for wallet "' + active_wallet + '"');
+            if ( prepared_tx == null ) {
+                dsptch_err('No transaction to send. This is likely a bug"' + active_wallet + '"');
             } else {
                 await send_tx(active_wallet, prepared_tx)
                     .ifLeft( err => dsptch_err(err) )
                     .ifRight( txhash => {
                         dispatcher('sent-tx', {
-                            text: JSON.stringify(txhash)
+                            text: `Transaction initiated with hash ${JSON.stringify(txhash)}`
                         });
                     })
                     .run();
@@ -50,7 +49,8 @@
         if (active_wallet == null) {
             dsptch_err('Choose a wallet to send from')
         } else {
-            const sk = localStorage.getItem(active_wallet);
+            const password = window.prompt('Enter password');
+            const sk = await get_priv_key(active_wallet, password);
 
             if ( sk == null ) {
                 dsptch_err('No private key found for wallet "' + active_wallet + '"');
@@ -60,7 +60,7 @@
                     wallets[active_wallet],
                     to_addr,
                     send_amount,
-                    sk)
+                    new TextDecoder().decode(sk))
                     .ifLeft( err => dsptch_err(err) )
                     .ifRight( tx => {
                         open_confirmation = true;

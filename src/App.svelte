@@ -1,8 +1,6 @@
 <script lang="typescript">
     import type { Wallet } from './utils';
-    import { list_wallets } from './utils';
-    import { get_wallet } from './storage';
-    import { derive_key, decrypt, buf_to_hex } from './crypto';
+    import { list_wallets, get_priv_key } from './utils';
 
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     //import Banner from '@smui/banner';
@@ -76,13 +74,6 @@
             // lifo queue
             sent_tx_chan = sent_tx_chan.slice(1);
         }, 5000);
-    }
-
-    async function get_priv_key(active_wallet: string, password: string)
-    : Promise<ArrayBuffer> {
-        const data = get_wallet(active_wallet);
-        const key  = await derive_key(password, data.salt);
-        return decrypt(data.priv_key, key, data.iv);
     }
 
     onMount(async () => {
@@ -198,7 +189,7 @@
                             {#await get_priv_key(active_wallet, window.prompt('Enter password'))}
                                 decrypting...
                             {:then sk}
-                                {buf_to_hex(sk)}
+                                {new TextDecoder().decode(sk)}
                             {:catch e}
                                 {e}
                             {/await}
