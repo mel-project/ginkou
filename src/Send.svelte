@@ -83,24 +83,31 @@
   aria-labelledby="simple-title"
   aria-describedby="simple-content"
 >
-    <Label>Confirm Transaction</Label>
+<div id="confirm-window">
+    <h1>Confirm Transaction</h1>
 
     {#each spends(prepared_tx.outputs)
             .filter(([address,_]) => address != wallets[active_wallet].address)
         as spend}
-        <p>Send {spend[1]} micromel</p>
-        <p>To address {spend[0]}</p>
+        <p>Send</p>
+        <div class="highlight">{spend[1]} micromel</div>
+        <p>To address</p>
+        <div class="highlight">{spend[0]}</div>
     {/each}
 
-    <p>For {prepared_tx.fee} micromel</p>
+    <p>For</p>
+    <div class="highlight">{prepared_tx.fee} micromel</div>
 
-    <Button on:click={() => (open_confirmation=false)}>Cancel</Button>
+    <div class="choice-buttons">
+        <Button on:click={() => (open_confirmation=false)}>Cancel</Button>
 
-    <!-- Send Tx -->
-    <Button on:click={() => {
-        open_confirmation = false;
-        send_tx_handler();
-    }}>Confirm</Button>
+        <!-- Send Tx -->
+        <Button on:click={() => {
+            open_confirmation = false;
+            send_tx_handler();
+        }}>Confirm</Button>
+    </div>
+</div>
 </Dialog>
 {/if}
 
@@ -116,3 +123,22 @@
 {:else}
     <p>Choose a wallet first ;)</p>
 {/if}
+
+<style>
+    #confirm-window {
+        display: flex;
+        padding: 10px;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .highlight {
+        font-weight: bold;
+    }
+
+    .choice-buttons {
+        display: flex;
+        justify-content: center;
+    }
+</style>
