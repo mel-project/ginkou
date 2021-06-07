@@ -58,7 +58,3 @@ Promise<ArrayBuffer> {
         ciphertext
     );
 }
-
-export function buf_to_hex(buf: ArrayBuffer): string {
-    return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, '0')).join('');
-}
