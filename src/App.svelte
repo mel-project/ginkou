@@ -206,8 +206,8 @@
   />
 
   <!-- SMUI -->
-  <link rel="stylesheet" href="https://unpkg.com/svelte-material-ui/bare.css" />
-  <!--<link rel="stylesheet" href="/build/smui.css" />-->
+  <!--<link rel="stylesheet" href="https://unpkg.com/svelte-material-ui/bare.css" />-->
+  <link rel="stylesheet" href="/build/smui.css" />
 </svelte:head>
 
 <style>
