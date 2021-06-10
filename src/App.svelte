@@ -181,7 +181,7 @@
           <CreateWallet on:error={notify_err_event} {networks} {active_net} />
         </div>
         {#if active_wallet}
-            <Button on:click={()=> (show_secret_key = !show_secret_key)}>Show Secret Key</Button>
+            <Button on:click={()=> (show_secret_key = ! show_secret_key)}>Show Secret Key</Button>
             {#if show_secret_key}
                 <div id="private-key-view">
                     {#await get_priv_key(active_wallet, window.prompt('Enter password'))}
@@ -241,7 +241,7 @@
     }
 
   .top-bar {
-    background-color: #086d4d;
+    /* background-color: #086d4d; */
     display: flex;
   }
 
