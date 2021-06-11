@@ -42,11 +42,11 @@
 {#await wallet_dump_promise}
     <p>loading history..</p>
 {:then wallet_dump}
-    <DataTable stickyHeader table$aria-label="Transactions Table">
+    <DataTable table$aria-label="Transactions Table" style="max-width: 100%">
         <Head>
             <Row>
-                <Cell>Hash</Cell>
-                <Cell numeric>Spent (mel)</Cell>
+                <Cell style="width: 50%">Hash</Cell>
+                <Cell>Spent (µMEL)</Cell>
                 <Cell>Block Height</Cell>
             </Row>
         </Head>
@@ -57,7 +57,7 @@
                         summary_open = true;
                         active_tx = tx;
                 }}>
-                    <Cell>{display_hash(txhash)}</Cell>
+                    <Cell style="overflow: hidden; text-overflow:ellipsis">{txhash}</Cell>
                     <Cell>{net_spent(tx.outputs, wallet_dump.summary.address)}</Cell>
                     <Cell>pending</Cell>
                 </Row>
@@ -69,7 +69,7 @@
                             summary_open = true;
                             active_tx = tx;
                     }}>
-                    <Cell>{display_hash(txhash)}</Cell>
+                    <Cell>{txhash}</Cell>
                     <Cell>{tx.outputs[0].value}</Cell>
                     <Cell>{height}</Cell>
                 </Row>
@@ -79,3 +79,9 @@
 {:catch e}
     <p>{e}</p>
 {/await}
+
+<style>
+    :global(table) {
+        width: 100%
+    }
+</style>
