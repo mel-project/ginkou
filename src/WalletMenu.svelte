@@ -1,26 +1,25 @@
 <script lang="typescript">
   import List, { Item, Text } from "@smui/list";
-  import type { Wallet } from "./utils";
+import { current_wallet, wallet_summaries } from "./store";
+  import type { WalletSummary } from "./utils";
   import WalletMenuItem from "./WalletMenuItem.svelte";
-
-  export let wallets: { [key: string]: Wallet };
-  export let active_wallet: string | null;
 </script>
 
 <div id="wallet-menu-inner">
-  {#each Object.entries(wallets) as [wlt, wlt_content]}
+  {#each Object.entries($wallet_summaries) as [wlt, wlt_content]}
     <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>
         <Text>{wlt}</Text>
       </Item> -->
-    <div on:click={() => (active_wallet = wlt)}>
+    <div on:click={() => ($current_wallet = wlt)}>
       <WalletMenuItem
         name={wlt}
         wallet={wlt_content}
-        selected={wlt === active_wallet}
+        selected={wlt === $current_wallet}
       />
     </div>
   {/each}
 </div>
 
 <style>
+
 </style>

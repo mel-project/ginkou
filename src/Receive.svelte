@@ -1,14 +1,13 @@
 <script lang="typescript">
     import { Label } from '@smui/button';
-
-    export let active_wallet: string | null;
-    export let wallets: { [key: string]: Wallet } = {};
+import { current_wallet_dump } from './store';
+import type { WalletSummary } from './utils';
 </script>
 
-{#if active_wallet}
+{#if $current_wallet_dump}
 <Label>Your Address</Label>
 <textarea rows="5" cols="30">
-    {wallets[active_wallet].address}
+    {$current_wallet_dump.summary.address}
 </textarea>
 {:else}
     <p>Choose a wallet first ;)</p>

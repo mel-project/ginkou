@@ -1,5 +1,5 @@
 <script lang="typescript">
-    import type { Wallet } from './utils';
+    import type { WalletSummary } from './utils';
     import { list_wallets, get_priv_key } from './utils';
 
   import TopAppBar, { Row, Section, Title } from "@smui/top-app-bar";
@@ -23,7 +23,7 @@
   // Current wallet being used
   let active_wallet: string | null = null;
   // wallet name to info
-  let wallets: { [key: string]: Wallet } = {};
+  let wallets: { [key: string]: WalletSummary } = {};
   // Regenerate wallet list by the active network
   $: wallets_by_net = Object.fromEntries(
     Object.entries(wallets).filter((x) => x[1].network == active_net)
@@ -153,7 +153,7 @@
   <div class="content">
     {#if wallet_menu_is_active}
       <div id="wallet-menu">
-        <WalletMenu wallets={wallets_by_net} bind:active_wallet />
+        <WalletMenu />
       </div>
     {/if}
     <div class="view-box">
@@ -165,7 +165,7 @@
           {wallets}
         />
       {:else if active_tab == "Receive"}
-        <Receive {wallets} {active_wallet} />
+        <Receive  />
       {:else if active_tab == "Transactions"}
         <Transactions on:error={notify_err_event} {active_wallet} />
       {:else if active_tab == "More"}
@@ -223,6 +223,7 @@
   #wallet-menu {
     width: 200px;
     height: 100%;
+    flex-shrink: 0;
   }
 
   .create-wallet-container {

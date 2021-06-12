@@ -1,8 +1,10 @@
 <script lang="typescript">
-  import type { Wallet } from "./utils";
+import type { WalletSummary } from "./utils";
+
+
 
   export let name: string;
-  export let wallet: Wallet;
+  export let wallet: WalletSummary;
   export let selected: boolean;
 </script>
 

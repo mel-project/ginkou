@@ -2,13 +2,14 @@
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import { createEventDispatcher } from 'svelte';
     import { send_tx, prepare_mel_tx, get_priv_key } from './utils';
-    import type { Wallet, Transaction } from './utils';
+    import type { WalletSummary, Transaction } from './utils';
     import { get_wallet } from './storage';
-    import Textfield from '@smui/textfield';
+    import Textfield from '@smui/textfield'; 
     import Button, { Label } from '@smui/button';
+import { current_wallet, current_wallet_dump } from './store';
 
-    export let active_wallet: string | null;
-    export let wallets: { [key: string]: Wallet } = {};
+    // export let active_wallet: string | null;
+    // export let wallets: { [key: string]: WalletSummary } = {};
 
     // Amount to send in a tx
     let send_amount: number = 0;
@@ -27,13 +28,13 @@
     }
 
     async function send_tx_handler() {
-        if (active_wallet == null) {
+        if ($current_wallet == null) {
             dsptch_err('Choose a wallet to send from')
         } else {
             if ( prepared_tx == null ) {
-                dsptch_err('No transaction to send. This is likely a bug"' + active_wallet + '"');
+                dsptch_err('No transaction to send. This is likely a bug"' + $current_wallet + '"');
             } else {
-                await send_tx(active_wallet, prepared_tx)
+                await send_tx($current_wallet, prepared_tx)
                     .ifLeft( err => dsptch_err(err) )
                     .ifRight( txhash => {
                         dispatcher('sent-tx', {
@@ -46,18 +47,17 @@
     }
 
     async function prepare_tx_handler() {
-        if (active_wallet == null) {
+        if ($current_wallet == null) {
             dsptch_err('Choose a wallet to send from')
         } else {
             const password = window.prompt('Enter password');
-            const sk = await get_priv_key(active_wallet, password);
+            const sk = await get_priv_key($current_wallet, password);
 
             if ( sk == null ) {
-                dsptch_err('No private key found for wallet "' + active_wallet + '"');
+                dsptch_err('No private key found for wallet "' + $current_wallet + '"');
             } else {
                 await prepare_mel_tx(
-                    active_wallet,
-                    wallets[active_wallet],
+                    $current_wallet,
                     to_addr,
                     send_amount,
                     new TextDecoder().decode(sk))
@@ -87,7 +87,7 @@
     <h1>Confirm Transaction</h1>
 
     {#each spends(prepared_tx.outputs)
-            .filter(([address,_]) => address != wallets[active_wallet].address)
+            .filter(([address,_]) => address != $current_wallet_dump.summary.address)
         as spend}
         <p>Send</p>
         <div class="highlight">{spend[1]} micromel</div>
@@ -111,7 +111,7 @@
 </Dialog>
 {/if}
 
-{#if active_wallet }
+{#if $current_wallet }
     <Textfield bind:value={to_addr}
         label="To" />
     <Textfield bind:value={send_amount}
