@@ -6,8 +6,9 @@
     import type { CoinData, Transaction } from './utils';
     import { createEventDispatcher } from 'svelte';
     import TransactionSummary from './TransactionSummary.svelte';
-
-    export let active_wallet: string | null;
+    import { current_wallet_dump } from './store';
+    import { derived } from 'svelte/store';
+    import type { Readable } from 'svelte/store';
 
     // Whether a summary window is open
     let summary_open: boolean = false;
@@ -22,13 +23,17 @@
         })
     }
 
-    const display_hash = (hash: string) => `${hash.slice(0, 5)}..`;
-
-    $: wallet_dump_promise = active_wallet == null ?
-            wallet_dump_default:
-            wallet_dump(active_wallet)
-                .ifLeft(e => dsptch_err(e))
-                .orDefault(wallet_dump_default);
+    const sorted_confirmed_txx: Readable<[string, [Transaction, number]][] | null> =  derived(current_wallet_dump, $dump => {
+        if ($dump) {
+            let txx = Object.entries($dump.full.tx_confirmed);
+            txx.sort((a, b) => a[1][1] - b[1][1]);
+            txx.reverse();
+            console.log(txx);
+            return txx
+        } else {
+            return null
+        }
+    });
 </script>
 
 <Dialog
@@ -39,9 +44,7 @@
     <TransactionSummary tx={active_tx} />
 </Dialog>
 
-{#await wallet_dump_promise}
-    <p>loading history..</p>
-{:then wallet_dump}
+{#if $current_wallet_dump && $sorted_confirmed_txx}
     <DataTable table$aria-label="Transactions Table" style="max-width: 100%">
         <Head>
             <Row>
@@ -52,33 +55,33 @@
         </Head>
         <Body>
             <!-- List unconfirmed txs -->
-            {#each Object.entries(wallet_dump.full.tx_in_progress) as [txhash, tx]}
+            {#each Object.entries($current_wallet_dump.full.tx_in_progress) as [txhash, tx]}
                 <Row on:click={() => {
                         summary_open = true;
                         active_tx = tx;
                 }}>
                     <Cell style="overflow: hidden; text-overflow:ellipsis">{txhash}</Cell>
-                    <Cell>{net_spent(tx.outputs, wallet_dump.summary.address)}</Cell>
+                    <Cell>{net_spent(tx, $current_wallet_dump.summary.address)}</Cell>
                     <Cell>pending</Cell>
                 </Row>
             {/each}
 
             <!-- List confirmed txs -->
-            {#each Object.entries(wallet_dump.full.tx_confirmed) as [txhash, [tx, height]]}
+            {#each $sorted_confirmed_txx as [txhash, [tx, height]]}
                     <Row on:click={() => {
                             summary_open = true;
                             active_tx = tx;
                     }}>
                     <Cell>{txhash}</Cell>
-                    <Cell>{tx.outputs[0].value}</Cell>
+                    <Cell>{net_spent(tx, $current_wallet_dump.summary.address)}</Cell>
                     <Cell>{height}</Cell>
                 </Row>
             {/each}
         </Body>
     </DataTable>
-{:catch e}
-    <p>{e}</p>
-{/await}
+    {:else}
+    <i>loading...</i>
+{/if}
 
 <style>
     :global(table) {
