@@ -50,8 +50,12 @@
     "@smui/menu": "^4.2.0",
     "@smui/select": "^4.2.0",
     "@smui/textfield": "^4.2.0",
+    "@types/json-bigint": "^1.0.0",
+    "add": "^2.0.6",
+    "json-bigint": "^1.0.0",
     "purify-ts": "^0.16.3",
     "sirv-cli": "^1.0.0",
-    "svelte-persistent-store": "^0.1.6"
+    "svelte-persistent-store": "^0.1.6",
+    "text-decoding": "^1.0.0"
   }
 }

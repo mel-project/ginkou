@@ -2,17 +2,19 @@
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
     import { createEventDispatcher } from 'svelte';
     import { send_tx, prepare_mel_tx, get_priv_key } from './utils';
-    import type { WalletSummary, Transaction } from './utils';
+    import type { WalletSummary, Transaction, CoinData } from './utils';
     import { get_wallet } from './storage';
     import Textfield from '@smui/textfield'; 
     import Button, { Label } from '@smui/button';
 import { current_wallet, current_wallet_dump } from './store';
+import BigNumber from "bignumber.js";
 
-    // export let active_wallet: string | null;
+
+    // export let active_wallet: string | null; 
     // export let wallets: { [key: string]: WalletSummary } = {};
 
-    // Amount to send in a tx
-    let send_amount: number = 0;
+    // Amount to send in a tx 
+    let send_amount: BigNumber = new BigNumber(0);
     // Account address to send to
     let to_addr: string = '';
     // Toggle confirmation window before sending a tx
@@ -21,7 +23,7 @@ import { current_wallet, current_wallet_dump } from './store';
 
     const dispatcher = createEventDispatcher();
 
-    function dsptch_err(msg) {
+    function dsptch_err(msg: any) {
         dispatcher('error', {
             text: msg
         })
@@ -50,7 +52,7 @@ import { current_wallet, current_wallet_dump } from './store';
         if ($current_wallet == null) {
             dsptch_err('Choose a wallet to send from')
         } else {
-            const password = window.prompt('Enter password');
+            const password = window.prompt('Enter password') ?? "";
             const sk = await get_priv_key($current_wallet, password);
 
             if ( sk == null ) {
@@ -72,7 +74,7 @@ import { current_wallet, current_wallet_dump } from './store';
     }
 
     // Get a list of (covhash,amount) pairs from a list of outputs
-    function spends(outputs: CoinData[]): [string, number] {
+    function spends(outputs: CoinData[]): [string, BigNumber][] {
         return outputs.map(cd => [cd.covhash, cd.value]);
     }
 </script>
@@ -87,7 +89,7 @@ import { current_wallet, current_wallet_dump } from './store';
     <h1>Confirm Transaction</h1>
 
     {#each spends(prepared_tx.outputs)
-            .filter(([address,_]) => address != $current_wallet_dump.summary.address)
+            .filter(([address,_]) => $current_wallet_dump && address != $current_wallet_dump.summary.address)
         as spend}
         <p>Send</p>
         <div class="highlight">{spend[1]} micromel</div>

@@ -7,7 +7,7 @@
     import Button from '@smui/button';
     import Textfield from '@smui/textfield';
 
-    export let networks;
+    export let networks: any;
     export let active_net: number;
 
     // Name of new wallet to be created
@@ -17,7 +17,7 @@
 
     const dispatcher = createEventDispatcher();
 
-    function dispatch_failure(err) {
+    function dispatch_failure(err: any) {
         dispatcher('error', {
             'text': err
         });
@@ -27,11 +27,11 @@
     async function handle_create_wallet(wallet_name: string) {
         const salt = window.crypto.getRandomValues(new Uint8Array(16));
         const iv   = window.crypto.getRandomValues(new Uint8Array(16));
-        const password = window.prompt("Choose a password");
+        const password = window.prompt("Choose a password") ?? "";
         const enc_key = await derive_key(password, salt);
 
         let res = await new_wallet(
-            new_wallet_name,
+            new_wallet_name, 
             active_net == networks["Test"] ? true : false)
             .ifLeft( err => dispatch_failure(err) )
             .ifRight( async (priv_key) => {

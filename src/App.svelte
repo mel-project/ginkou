@@ -11,24 +11,14 @@
   import { onMount } from "svelte";
 
   import Send from "./Send.svelte";
-  import Receive from "./Receive.svelte";
-  import Settings from "./Settings.svelte";
+  import Receive from "./Receive.svelte"; 
   import CreateWallet from "./CreateWallet.svelte";
   import Transactions from "./Transactions.svelte";
   import WalletMenu from "./WalletMenu.svelte";
-
+import { current_wallet } from './store';
+ 
   export let name;
-  // Current network being used (default main)
-  let active_net: number = 1;
-  // Current wallet being used
-  let active_wallet: string | null = null;
-  // wallet name to info
-  let wallets: { [key: string]: WalletSummary } = {};
-  // Regenerate wallet list by the active network
-  $: wallets_by_net = Object.fromEntries(
-    Object.entries(wallets).filter((x) => x[1].network == active_net)
-  );
-  // Network name to integer id
+
   let networks = { Main: 255, Test: 1 };
   // Active tab in UI
   let active_tab = "Send";
@@ -41,13 +31,6 @@
   let error_chan: string[] = [];
   // Channel to notify when a tx has been sent
   let sent_tx_chan: string[] = [];
-
-  // When active net changes, nullify the active wallet
-  $: {
-    active_net;
-    active_wallet = null;
-  }
-
   // Push a message to one of the main notification channels of this UI
   // (error_chan, sent_tx_chan)
   function notify_err_event(e: any) {
@@ -75,19 +58,6 @@
       sent_tx_chan = sent_tx_chan.slice(1);
     }, 5000);
   }
-
-    onMount(async () => {
-        // Fetch the list of wallets
-        const res = await list_wallets().run();
-        wallets = res
-            .ifLeft( e => {
-                notify_err_event(e);
-            })
-            .orDefault([]);
-
-        if ( !localStorage )
-            notify_err("Unable to access storage, are cookies blocked?");
-    });
 </script>
 
 <main>
@@ -96,9 +66,9 @@
             variant="static">-->
     <Row>
       <Section>
-        {#if active_wallet}
+        {#if $current_wallet}
           <div id="wallet-title">
-            <Title>{active_wallet}</Title>
+            <Title>{$current_wallet}</Title>
           </div>
         {/if}
       </Section>
@@ -161,37 +131,24 @@
         <Send
           on:error={notify_err_event}
           on:sent-tx={notify_sent_tx_event}
-          {active_wallet}
-          {wallets}
         />
       {:else if active_tab == "Receive"}
         <Receive  />
       {:else if active_tab == "Transactions"}
-        <Transactions on:error={notify_err_event} {active_wallet} />
+        <Transactions on:error={notify_err_event} />
       {:else if active_tab == "More"}
-        <Settings
-          on:sent-tx={notify_sent_tx_event}
-          on:error={notify_err_event}
-          bind:active_net
-          {networks}
-          {active_wallet}
-        />
-
-        <div class="create-wallet-container">
-          <CreateWallet on:error={notify_err_event} {networks} {active_net} />
-        </div>
-        {#if active_wallet}
+        {#if $current_wallet}
             <Button on:click={()=> (show_secret_key = ! show_secret_key)}>Show Secret Key</Button>
             {#if show_secret_key}
                 <div id="private-key-view">
-                    {#await get_priv_key(active_wallet, window.prompt('Enter password'))}
+                    {#await get_priv_key($current_wallet, window.prompt('Enter password') ?? "")}
                         decrypting...
                     {:then sk}
                         {new TextDecoder().decode(sk)}
                     {:catch e}
                         {e}
                     {/await}
-                </div>
+                </div> 
             {/if}
         {/if}
       {/if}
@@ -212,12 +169,13 @@
 
 <style>
   @import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900");
-  :root {
+  :global(:root) {
     --font-family: "Public Sans", sans-serif;
     --primary-color: "#006e54";
   }
-  * {
+  :global(*) {
     font-family: var(--font-family) !important;
+    letter-spacing: normal !important;
   }
 
   #wallet-menu {

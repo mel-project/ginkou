@@ -3,7 +3,9 @@ import { Either, Left, Right } from "purify-ts/Either";
 import { Maybe, Just, Nothing } from "purify-ts/Maybe";
 import { get_wallet } from "./storage";
 import { derive_key, decrypt } from "./crypto";
+import JSONbig from "json-bigint";
 import fetch from "cross-fetch";
+import BigNumber from "bignumber.js";
 
 export type BlockHeight = number;
 export type TxHash = string;
@@ -15,14 +17,46 @@ const home_addr = "http://127.0.0.1";
 const default_port = 11773;
 
 export interface WalletSummary {
-  total_micromel: number;
+  total_micromel: BigNumber;
   network: number;
   address: string;
 }
 
+export const kind2str = (kind: number) => {
+  if (kind === 0x00) {
+      return "Normal"
+  } else if (kind === 0x10) {
+      return "Stake"
+  } else if (kind === 0x50) {
+      return "DoscMint"
+  } else if (kind === 0x51) {
+      return "Swap"
+  } else if (kind === 0x52) {
+      return "LiqDeposit"
+  } else if (kind === 0x53) {
+      return "LiqWithdrawal"
+  } else if (kind === 0xff) {
+      return "Faucet"
+  } else {
+      throw "this should never happen"
+  }
+}
+
+export const denom2str = (denom: string) => {
+  if (denom === "6d") {
+    return "µMEL"
+  } else if (denom === "64") {
+    return "µnomDOSC"
+  } else if (denom === "73") {
+    return "µSYM"
+  } else {
+    return "other (" + denom + ")"
+  }
+};
+
 export interface CoinData {
   covhash: string;
-  value: number;
+  value: BigNumber;
   denom: string;
   additional_data: string;
 }
@@ -41,7 +75,7 @@ export interface Transaction {
   kind: number;
   inputs: CoinID[];
   outputs: CoinData[];
-  fee: number;
+  fee: BigNumber;
   scripts: string[];
   data: string;
   sigs: string[];
@@ -257,14 +291,13 @@ function cast_to_either<T>(m: Maybe<T>): Either<string, T> {
 }
 
 // Compute total value flowing out of wallet from a list of coins
-export function net_spent(tx: Transaction, self_covhash: string): number {
-  return (
-    tx.outputs
-      .filter((cd) => cd.covhash != self_covhash)
-      .filter((cd) => cd.denom == MEL)
-      .map((cd) => cd.value)
-      .reduce((a, b) => a + b, 0) + tx.fee
-  );
+export function net_spent(tx: Transaction, self_covhash: string): BigNumber {
+  return tx.outputs
+    .filter((cd) => cd.covhash != self_covhash)
+    .filter((cd) => cd.denom == MEL)
+    .map((cd) => cd.value)
+    .reduce((a, b) => a.plus(b), new BigNumber(0))
+    .plus(tx.fee);
 }
 
 /// Fetch a url endpoint and parse as json, error if the http response is not ok
@@ -276,7 +309,7 @@ export async function fetch_or_err(
   let res = await fetch(url, opts);
 
   if (!res.ok) return Left(res.statusText);
-  else return Right(await res.json());
+  else return Right(JSONbig.parse(await res.text()));
 }
 
 // Send faucet to given wallet. Returns a succesful request to walletd,
@@ -302,7 +335,7 @@ export const new_wallet = (
     let res = await fromPromise(
       fetch_or_err(url, {
         method: "PUT",
-        body: JSON.stringify({ testnet: use_testnet }),
+        body: JSONbig.stringify({ testnet: use_testnet }),
       })
     );
 
@@ -318,7 +351,7 @@ export const confirm_tx = async (
 ): Promise<Either<string, BlockHeight>> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
     let res: Response = await fromPromise(fetch_or_err(url, { method: "GET" }));
-    let json = await res.json();
+    let json = JSONbig.parse(await res.text());
     const height: BlockHeight | null = json.confirmed_height;
 
     if (height != null) return liftEither(Right(height as BlockHeight));
@@ -352,7 +385,7 @@ export const send_tx = (
 export const prepare_mel_tx = (
   wallet_name: string,
   to: string,
-  micromel: number,
+  micromel: BigNumber,
   priv_key: PrivateKey,
   additional_data: string = "",
   port: number = default_port
@@ -376,7 +409,7 @@ export const prepare_mel_tx = (
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
+        body: JSONbig.stringify({
           outputs: outputs,
           signing_key: priv_key,
         }),
@@ -391,7 +424,7 @@ export const send_mel = (
   wallet_name: string,
   wallet: WalletSummary,
   to: string,
-  mel: number,
+  mel: BigNumber,
   priv_key: PrivateKey,
   additional_data: string = "",
   port: number = default_port
