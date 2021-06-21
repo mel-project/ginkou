@@ -1,7 +1,9 @@
 { stdenv, pkgs, nodejs }:
 
 let
-  nodeDependencies = (pkgs.callPackage ./default.nix {}).shell.nodeDependencies;
+  nodeDependencies = (pkgs.callPackage ./default.nix {
+    nodejs = nodejs;
+  }).shell.nodeDependencies;
 in
 stdenv.mkDerivation {
   name = "ginkou";
