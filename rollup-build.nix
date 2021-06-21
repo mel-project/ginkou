@@ -12,7 +12,9 @@ stdenv.mkDerivation {
   buildCommand = ''
     cp -r $src/* .
     ln -s ${nodeDependencies}/lib/node_modules ./node_modules
-    #export PATH="${nodeDependencies}/bin:$PATH"
+
+    chmod 777 -R public
+    #chmod 777 public/build
 
     # Build and copy to drv out
     npm run build
