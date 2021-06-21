@@ -20,37 +20,38 @@ export interface WalletSummary {
   total_micromel: BigNumber;
   network: number;
   address: string;
+  locked: boolean;
 }
 
 export const kind2str = (kind: number) => {
   if (kind === 0x00) {
-      return "Normal"
+    return "Normal";
   } else if (kind === 0x10) {
-      return "Stake"
+    return "Stake";
   } else if (kind === 0x50) {
-      return "DoscMint"
+    return "DoscMint";
   } else if (kind === 0x51) {
-      return "Swap"
+    return "Swap";
   } else if (kind === 0x52) {
-      return "LiqDeposit"
+    return "LiqDeposit";
   } else if (kind === 0x53) {
-      return "LiqWithdrawal"
+    return "LiqWithdrawal";
   } else if (kind === 0xff) {
-      return "Faucet"
+    return "Faucet";
   } else {
-      throw "this should never happen"
+    throw "this should never happen";
   }
-}
+};
 
 export const denom2str = (denom: string) => {
   if (denom === "6d") {
-    return "µMEL"
+    return "µMEL";
   } else if (denom === "64") {
-    return "µnomDOSC"
+    return "µnomDOSC";
   } else if (denom === "73") {
-    return "µSYM"
+    return "µSYM";
   } else {
-    return "other (" + denom + ")"
+    return "other (" + denom + ")";
   }
 };
 
@@ -87,11 +88,7 @@ export interface TxHistory {
 }
 
 export interface WalletDump {
-  summary: {
-    total_micromel: number;
-    network: number;
-    address: string;
-  };
+  summary: WalletSummary;
   full: {
     unspent_coins: [CoinID, CoinDataHeight][];
     spent_coins: [CoinID, CoinDataHeight][];
@@ -104,9 +101,10 @@ export interface WalletDump {
 
 export const wallet_dump_default: WalletDump = {
   summary: {
-    total_micromel: 0,
+    total_micromel: new BigNumber(0),
     network: 1,
     address: "",
+    locked: true,
   },
   full: {
     unspent_coins: [],
@@ -300,7 +298,7 @@ export function net_spent(tx: Transaction, self_covhash: string): BigNumber {
     .plus(tx.fee);
 }
 
-/// Fetch a url endpoint and parse as json, error if the http response is not ok
+/// Fetch a url endpoint and parse as json, error if the HTTP response is not OK
 export async function fetch_or_err(
   url: string,
   opts: any
@@ -312,8 +310,8 @@ export async function fetch_or_err(
   else return Right(JSONbig.parse(await res.text()));
 }
 
-// Send faucet to given wallet. Returns a succesful request to walletd,
-// not a succesful transaction.
+// Send faucet to given wallet. Returns a successful request to melwalletd,
+// not a successful transaction.
 export const tap_faucet = (
   wallet_name: string,
   port: number = default_port
@@ -328,19 +326,20 @@ export const tap_faucet = (
 export const new_wallet = (
   wallet_name: string,
   use_testnet: boolean,
+  password: string,
   port: number = default_port
-): EitherAsync<string, PrivateKey> =>
+): EitherAsync<string, void> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
     const url = `${home_addr}:${port}/wallets/${wallet_name}`;
-    let res = await fromPromise(
+    await fromPromise(
       fetch_or_err(url, {
         method: "PUT",
-        body: JSONbig.stringify({ testnet: use_testnet }),
+        body: JSONbig.stringify({ testnet: use_testnet, password: password }),
       })
     );
 
     // Response is a quoted string, so json parses to a string
-    return liftEither(cast_to_either<PrivateKey>(intoPrivateKey(res)));
+    return liftEither(Right(undefined));
   });
 
 // Poll daemon to check tx until it is confirmed
@@ -386,7 +385,6 @@ export const prepare_mel_tx = (
   wallet_name: string,
   to: string,
   micromel: BigNumber,
-  priv_key: PrivateKey,
   additional_data: string = "",
   port: number = default_port
 ): EitherAsync<string, Transaction> =>
@@ -411,7 +409,6 @@ export const prepare_mel_tx = (
         },
         body: JSONbig.stringify({
           outputs: outputs,
-          signing_key: priv_key,
         }),
       })
     );
@@ -425,7 +422,6 @@ export const send_mel = (
   wallet: WalletSummary,
   to: string,
   mel: BigNumber,
-  priv_key: PrivateKey,
   additional_data: string = "",
   port: number = default_port
 ): EitherAsync<string, TxHash> =>
@@ -434,7 +430,6 @@ export const send_mel = (
       wallet_name,
       to,
       mel,
-      priv_key,
       additional_data,
       port
     );
