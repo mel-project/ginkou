@@ -5,7 +5,7 @@ let
 in
 stdenv.mkDerivation {
   name = "ginkou";
-  src = .;
+  src = ./.;
   buildInputs = [nodejs];
   buildPhase = ''
     ln -s ${nodeDependencies}/lib/node_modules ./node_modules
