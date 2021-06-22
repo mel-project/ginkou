@@ -1,5 +1,5 @@
 {
-  description = "Ginkou wallet javascript frontend"
+  description = "Ginkou wallet javascript frontend";
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-21.05";
   inputs.flake-utils.url = "github:numtide/flake-utils";
@@ -9,7 +9,7 @@
     nixpkgs,
     flake-utils
   }:
-  flake-utils.lib.defaultSystems (system:
+  flake-utils.lib.eachDefaultSystem (system:
     let
       pkgs = import nixpkgs { inherit system; };
       ginkou-pkg = pkgs.callPackage ./rollup-build.nix {
@@ -19,5 +19,5 @@
     in
       {
         defaultPackage = ginkou-pkg;
-      };
+      });
 }

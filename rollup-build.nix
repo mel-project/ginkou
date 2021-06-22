@@ -18,6 +18,7 @@ stdenv.mkDerivation {
 
     # Build and copy to drv out
     npm run build
+    npm run smui-theme-light
     cp -r public/build/ $out/
   '';
 }
