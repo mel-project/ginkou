@@ -12,12 +12,13 @@
   flake-utils.lib.eachDefaultSystem (system:
     let
       pkgs = import nixpkgs { inherit system; };
-      ginkou-pkg = pkgs.callPackage ./rollup-build.nix {
+      ginkou = pkgs.callPackage ./rollup-build.nix {
         nodejs = pkgs.nodejs-12_x;
         rollup = pkgs.nodePackages.rollup;
       };
     in
       {
-        defaultPackage = ginkou-pkg;
+        packages.ginkou = ginkou;
+        defaultPackage = ginkou;
       });
 }
