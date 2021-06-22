@@ -14,7 +14,6 @@ stdenv.mkDerivation {
     ln -s ${nodeDependencies}/lib/node_modules ./node_modules
 
     chmod 777 -R public
-    #chmod 777 public/build
 
     # Build and copy to drv out
     npm run build
