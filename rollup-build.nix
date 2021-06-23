@@ -14,10 +14,15 @@ stdenv.mkDerivation {
     ln -s ${nodeDependencies}/lib/node_modules ./node_modules
 
     chmod 777 -R public
-    #chmod 777 public/build
 
     # Build and copy to drv out
     npm run build
-    cp -r public/build/ $out/
+    npm run smui-theme-light
+
+    mkdir $out
+    mkdir $out/public
+    cp -r public/* $out/public
+    mkdir $out/node_modules
+    cp -r node_modules/* $out/node_modules
   '';
 }
