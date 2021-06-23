@@ -1,10 +1,13 @@
 import { derived, readable, Readable, Writable, writable } from "svelte/store";
 import { list_wallets, WalletSummary, WalletDump, wallet_dump } from "./utils";
-// import { writable as storedWritable } from "svelte-persistent-store/dist/local";
-// import { writable as storedWritable } from "svelte-persistent-store/local.js";
 
 /// Currently selected wallet. Persists to LocalStorage.
-export const current_wallet: Writable<string | null> = writable(null);
+export const current_wallet: Writable<string | null> = writable(
+  localStorage.getItem("current_wallet_name") || null
+);
+current_wallet.subscribe(
+  (val) => val && localStorage.setItem("current_wallet_name", val)
+);
 
 /// Current wallet dump. Automatically talks to the daemon.
 export const current_wallet_dump: Readable<WalletDump | null> = derived(

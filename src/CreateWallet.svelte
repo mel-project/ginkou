@@ -2,7 +2,7 @@
   import { derive_key, encrypt } from "./crypto";
   import { store_wallet } from "./storage";
   import { createEventDispatcher } from "svelte";
-  import { confirm_tx, new_wallet } from "./utils";
+  import { new_wallet } from "./utils";
 
   import Button from "@smui/button";
   import Textfield from "@smui/textfield";

@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@smui/button": "^4.2.0",
+    "@smui/chips": "^4.2.0",
     "@smui/dialog": "^4.2.0",
     "@smui/icon-button": "^4.2.0",
     "@smui/layout-grid": "^4.2.0",
@@ -53,7 +54,6 @@
     "json-bigint": "^1.0.0",
     "purify-ts": "^0.16.3",
     "sirv-cli": "^1.0.0",
-    "svelte-persistent-store": "^0.1.6",
     "text-decoding": "^1.0.0"
   }
 }
