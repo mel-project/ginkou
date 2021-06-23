@@ -299,15 +299,27 @@ export function net_spent(tx: Transaction, self_covhash: string): BigNumber {
 }
 
 /// Fetch a url endpoint and parse as json, error if the HTTP response is not OK
-export async function fetch_or_err(
+export async function fetch_json_or_err(
   url: string,
   opts: any
 ): Promise<Either<string, any>> {
   // Throws on a promise rejection, which will be caught by EitherAsync's run()
   let res = await fetch(url, opts);
 
-  if (!res.ok) return Left(res.statusText);
+  if (!res.ok) return Left("(" + res.status + ") " + (await res.text()));
   else return Right(JSONbig.parse(await res.text()));
+}
+
+/// Fetch a url endpoint and parse as json, error if the HTTP response is not OK
+export async function fetch_text_or_err(
+  url: string,
+  opts: any
+): Promise<Either<string, string>> {
+  // Throws on a promise rejection, which will be caught by EitherAsync's run()
+  let res = await fetch(url, opts);
+
+  if (!res.ok) return Left("(" + res.status + ") " + (await res.text()));
+  else return Right(await res.text());
 }
 
 // Send faucet to given wallet. Returns a successful request to melwalletd,
@@ -318,7 +330,7 @@ export const tap_faucet = (
 ): EitherAsync<string, TxHash> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
     const url = `${home_addr}:${port}/wallets/${wallet_name}/send-faucet`;
-    let res = await fromPromise(fetch_or_err(url, { method: "POST" }));
+    let res = await fromPromise(fetch_json_or_err(url, { method: "POST" }));
     return liftEither(cast_to_either(intoTxHash(res)));
   });
 
@@ -332,9 +344,25 @@ export const new_wallet = (
   EitherAsync(async ({ liftEither, fromPromise }) => {
     const url = `${home_addr}:${port}/wallets/${wallet_name}`;
     await fromPromise(
-      fetch_or_err(url, {
+      fetch_text_or_err(url, {
         method: "PUT",
         body: JSONbig.stringify({ testnet: use_testnet, password: password }),
+      })
+    );
+
+    return liftEither(Right(undefined));
+  });
+
+// Locks up a wallet.
+export const lock_wallet = (
+  wallet_name: string,
+  port: number = default_port
+): EitherAsync<string, void> =>
+  EitherAsync(async ({ liftEither, fromPromise }) => {
+    const url = `${home_addr}:${port}/wallets/${wallet_name}/lock`;
+    await fromPromise(
+      fetch_text_or_err(url, {
+        method: "POST",
       })
     );
 
@@ -342,21 +370,43 @@ export const new_wallet = (
     return liftEither(Right(undefined));
   });
 
-// Poll daemon to check tx until it is confirmed
-// TODO handle when daemon returns failed tx
-export const confirm_tx = async (
-  url: string,
-  txhash: TxHash
-): Promise<Either<string, BlockHeight>> =>
+// Unlocks a wallet.
+export const unlock_wallet = (
+  wallet_name: string,
+  password: string,
+  port: number = default_port
+): EitherAsync<string, void> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
-    let res: Response = await fromPromise(fetch_or_err(url, { method: "GET" }));
-    let json = JSONbig.parse(await res.text());
-    const height: BlockHeight | null = json.confirmed_height;
+    const url = `${home_addr}:${port}/wallets/${wallet_name}/unlock`;
+    await fromPromise(
+      fetch_text_or_err(url, {
+        method: "POST",
+        body: JSONbig.stringify({
+          password: password,
+        }),
+      })
+    );
 
-    if (height != null) return liftEither(Right(height as BlockHeight));
-    // Poll until tx is confirmed
-    else return await fromPromise(confirm_tx(url, txhash));
+    return liftEither(Right(undefined));
   });
+
+// // Poll daemon to check tx until it is confirmed
+// // TODO handle when daemon returns failed tx
+// export const confirm_tx = async (
+//   url: string,
+//   txhash: TxHash
+// ): Promise<Either<string, BlockHeight>> =>
+//   EitherAsync(async ({ liftEither, fromPromise }) => {
+//     let res: Response = await fromPromise(
+//       fetch_json_or_err(url, { method: "GET" })
+//     );
+//     let json = JSONbig.parse(await res.text());
+//     const height: BlockHeight | null = json.confirmed_height;
+
+//     if (height != null) return liftEither(Right(height as BlockHeight));
+//     // Poll until tx is confirmed
+//     else return await fromPromise(confirm_tx(url, txhash));
+//   });
 
 export const send_tx = (
   wallet_name: string,
@@ -368,7 +418,7 @@ export const send_tx = (
 
     // Send tx
     const e_txhash = await fromPromise(
-      fetch_or_err(url_send_tx, {
+      fetch_json_or_err(url_send_tx, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -402,7 +452,7 @@ export const prepare_mel_tx = (
 
     // Prepare tx (get a json-encoded tx back)
     const tx: Either<string, any> = await fromPromise(
-      fetch_or_err(url_prepare_tx, {
+      fetch_json_or_err(url_prepare_tx, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -447,7 +497,7 @@ export const list_wallets = (
 ): EitherAsync<string, WalletSummary[]> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
     const url = `${home_addr}:${port}/wallets`;
-    const res = await fromPromise(fetch_or_err(url, { method: "GET" }));
+    const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
 
     return liftEither(cast_to_either(intoListOf(res, intoWallet)));
   });
@@ -458,7 +508,7 @@ export const wallet_dump = (
 ): EitherAsync<string, WalletDump> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
     const url = `${home_addr}:${port}/wallets/${wallet_name}`;
-    const res = await fromPromise(fetch_or_err(url, { method: "GET" }));
+    const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
 
     // TODO cast this with runtime checks
     return liftEither(Right(res as WalletDump));
