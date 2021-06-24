@@ -48,6 +48,9 @@
   .wallet-name {
     font-size: 120%;
     font-weight: 500;
+    max-width: 5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .wallet-balance {
     font-size: 90%;

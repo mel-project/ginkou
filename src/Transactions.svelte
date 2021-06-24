@@ -63,7 +63,7 @@
 </Dialog>
 
 {#if $current_wallet_dump && $sorted_confirmed_txx}
-  <DataTable table$aria-label="Transactions Table" style="max-width: 100%">
+  <DataTable class="transactions" table$aria-label="Transactions Table" style="max-width: 100%">
     <Head>
       <Row>
         <Cell style="width: 50%">Hash</Cell>
