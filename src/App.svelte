@@ -184,6 +184,7 @@ import { current_wallet } from './store';
     flex-shrink: 0;
   }
 
+
   .create-wallet-container {
     padding: 3em;
   }
@@ -192,6 +193,7 @@ import { current_wallet } from './store';
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
     #private-key-view {
@@ -205,14 +207,10 @@ import { current_wallet } from './store';
   }
 
   .content {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    bottom: 0px;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-shrink: 0;
-    flex: 1;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: max-content;
+    grid-template-rows: calc(100vh - 3em);
   }
 
   .view-box {
@@ -220,7 +218,7 @@ import { current_wallet } from './store';
     border: 1px solid grey;
     margin: 30px 5% 30px 5%;
     padding: 30px 5% 30px 5%;
-    display: flex;
+    /* display: flex; */
     background-color: #e0e0e0;
     flex-grow: 1;
     flex-direction: column;

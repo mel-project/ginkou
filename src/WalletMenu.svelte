@@ -1,6 +1,6 @@
 <script lang="typescript">
   import List, { Item, Text } from "@smui/list";
-import { current_wallet, wallet_summaries } from "./store";
+  import { current_wallet, wallet_summaries } from "./store";
   import type { WalletSummary } from "./utils";
   import WalletMenuItem from "./WalletMenuItem.svelte";
 </script>
@@ -10,7 +10,7 @@ import { current_wallet, wallet_summaries } from "./store";
     <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>
         <Text>{wlt}</Text>
       </Item> -->
-    <div on:click={() => ($current_wallet = wlt)}>
+    <div class='menu-item' on:click={() => ($current_wallet = wlt)}>
       <WalletMenuItem
         name={wlt}
         wallet={wlt_content}
@@ -21,5 +21,15 @@ import { current_wallet, wallet_summaries } from "./store";
 </div>
 
 <style>
+  #wallet-menu-inner{
+    overflow: hidden;
+    overflow-y: scroll;
+    height: calc(100vh - 5em);
+    direction: rtl;
+    scrollbar-color: #00796b white ;
+  }
+  .menu-item{
+    direction: ltr;
+  }
 
 </style>
