@@ -16,7 +16,7 @@
   <div class="wallet-name">{name}</div>
   <div class="wallet-balance">{wallet.total_micromel} µMEL</div>
   <div
-    class="lock-status"
+    class="lock-status" class:locked="{wallet.locked}"
     on:click={async () => {
       if (wallet.locked) {
         unlocker_open = true;
@@ -68,5 +68,11 @@
     border-radius: 8px;
     font-size: 75%;
     font-weight: 500;
+    transition: background-color .9s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+  }
+  .lock-status:hover{
+    background: green;
+    cursor: pointer;
   }
 </style>
