@@ -8,15 +8,16 @@
   letter-spacing: normal !important;
 }
 
+$menu-height: 64px;
+
 #wallet-menu {
   transition: width 1s ease;
   width: 0px;
-  position: absolute;
   background: white;
   z-index: 100;
   &.active {
+    position: absolute;
     width: calc(100vw - 1em);
-    height: 100%;
   }
 }
 #wallet-title-section {
@@ -53,8 +54,8 @@ main {
 .content {
   display: grid;
   grid-auto-flow: column;
-  grid-template-columns: 1fr;
-  grid-template-rows: calc(100vh - 3em);
+  grid-template-columns: max-content 1fr;
+  grid-template-rows: calc(100vh - 64px);
 }
 
 .view-box {

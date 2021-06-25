@@ -24,8 +24,8 @@ export const current_wallet_dump: Readable<WalletDump | null> = derived(
         dump
           .ifLeft((e) => console.log(`error encountered in wallet_dump: ${e}`))
           .map((dump) => {
-            console.log("obtained wallet_dump");
-            console.log(dump);
+            // console.log("obtained wallet_dump");
+            // console.log(dump);
             set(dump);
           });
       };
@@ -47,7 +47,7 @@ export const wallet_summaries: Readable<{
     list
       .ifLeft((e) => console.log(`error encountered in list_wallets: ${e}`))
       .map((list) => {
-        console.log("obtained list_wallets");
+        // console.log("obtained list_wallets");
         set(list);
       });
   };
