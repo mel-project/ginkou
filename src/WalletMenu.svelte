@@ -83,8 +83,8 @@
   </Content>
 </Dialog>
 
-<style>
-  #wallet-menu-inner {
+<style type="text/scss">
+  #wallet-menu-inner{
     overflow: hidden;
     overflow-y: scroll;
     height: calc(100vh - 5em);
