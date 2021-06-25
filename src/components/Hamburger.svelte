@@ -1,20 +1,15 @@
 <script>
-  import { createEventDispatcher } from 'svelte'
-  const dispatch = createEventDispatcher()
-
   export let menuOpen = false
+  let menuClosed = !menuOpen
 
-  const dispatchChange = (ev) => { 
-    dispatch('hamburger', {
-      closed: menuOpen
-    })
+  const handleChange = ev => {
+    menuOpen = !menuClosed
   }
-
 </script>
 
 <div class="menu back menu">
   <label>
-    <input type="checkbox" style="display: none" bind:checked={menuOpen} on:change="{dispatchChange}"/>
+    <input type="checkbox" style="display: none" bind:checked={menuClosed} on:change={handleChange}/>
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="30" />
       <path class="line--1" d="M0 55l14-10c4.7-3.3 9-5 13-5h72" />
@@ -81,10 +76,7 @@
   .menu.menu .line--3 {
     --offset: -42.3506164551;
   }
-  .menu.dots .line--1,
-  .menu.dots .line--3 {
-    --offset: -54.3506164551;
-  }
+
   .menu .line--2 {
     --total-length: 99;
   }
