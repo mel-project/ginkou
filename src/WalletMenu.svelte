@@ -3,6 +3,7 @@
   import { current_wallet, wallet_summaries } from "./store";
   import type { WalletSummary } from "./utils";
   import WalletMenuItem from "./WalletMenuItem.svelte";
+
 </script>
 
 <div id="wallet-menu-inner">
@@ -20,7 +21,7 @@
   {/each}
 </div>
 
-<style>
+<style type="text/scss">
   #wallet-menu-inner{
     overflow: hidden;
     overflow-y: scroll;
