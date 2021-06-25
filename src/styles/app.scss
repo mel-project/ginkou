@@ -1,0 +1,95 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900");
+:global(:root) {
+  --font-family: "Public Sans", sans-serif;
+  --primary-color: "#006e54";
+}
+:global(*) {
+  font-family: var(--font-family) !important;
+  letter-spacing: normal !important;
+}
+
+#wallet-menu {
+  transition: width 1s ease;
+  width: 0px;
+  position: absolute;
+  background: white;
+  z-index: 100;
+  &.active {
+    width: calc(100vw - 1em);
+    height: 100%;
+  }
+}
+#wallet-title-section {
+  width: 20em;
+  max-width: 20em;
+  display: flex;
+  align-items: center;
+  #wallet-title {
+    overflow: hidden;
+  }
+}
+
+.create-wallet-container {
+  padding: 3em;
+}
+
+main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#private-key-view {
+  width: 80%;
+  overflow: auto;
+}
+
+.top-bar {
+  /* background-color: #086d4d; */
+  display: flex;
+}
+
+.content {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr;
+  grid-template-rows: calc(100vh - 3em);
+}
+
+.view-box {
+  overflow-y: auto;
+  border: 1px solid grey;
+  margin: 30px 5% 30px 5%;
+  padding: 30px 5% 30px 5%;
+  /* display: flex; */
+  background-color: #e0e0e0;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#sent-tx-notification-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #499348;
+  color: white;
+}
+#error-notification-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #db1a2d;
+  color: white;
+}
+#tabs-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  flex: 1;
+}
+.tab:hover {
+  color: black;
+}
