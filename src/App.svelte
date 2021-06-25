@@ -1,6 +1,6 @@
 <script lang="typescript">
-    import type { WalletSummary } from './utils';
-    import { list_wallets, get_priv_key } from './utils';
+  import type { WalletSummary } from "./utils";
+  import { list_wallets, get_priv_key } from "./utils";
 
   import TopAppBar, { Row, Section, Title } from "@smui/top-app-bar";
   //import Banner from '@smui/banner';
@@ -11,12 +11,14 @@
   import { onMount } from "svelte";
 
   import Send from "./Send.svelte";
-  import Receive from "./Receive.svelte"; 
+  import Receive from "./Receive.svelte";
   import CreateWallet from "./CreateWallet.svelte";
   import Transactions from "./Transactions.svelte";
   import WalletMenu from "./WalletMenu.svelte";
-import { current_wallet } from './store';
- 
+  import { current_wallet } from "./store";
+
+  import Hamburger from "./components/Hamburger.svelte";
+
   export let name;
 
   let networks = { Main: 255, Test: 1 };
@@ -66,11 +68,12 @@ import { current_wallet } from './store';
             variant="static">-->
     <Row>
       <Section>
-        {#if $current_wallet}
-          <div id="wallet-title">
-            <Title>{$current_wallet}</Title>
-          </div>
-        {/if}
+        <Hamburger
+          bind:menuOpen={wallet_menu_is_active}
+        />
+        <div id="wallet-title">
+          <Title>{$current_wallet}</Title>
+        </div>
       </Section>
 
       <Section>
@@ -121,37 +124,35 @@ import { current_wallet } from './store';
   </div>
 
   <div class="content">
-    {#if wallet_menu_is_active}
-      <div id="wallet-menu">
-        <WalletMenu />
-      </div>
-    {/if}
+    <div id="wallet-menu" class:active={wallet_menu_is_active}>
+      <WalletMenu />
+    </div>
     <div class="view-box">
       {#if active_tab == "Send"}
-        <Send
-          on:error={notify_err_event}
-          on:sent-tx={notify_sent_tx_event}
-        />
+        <Send on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} />
       {:else if active_tab == "Receive"}
-        <Receive  />
+        <Receive />
       {:else if active_tab == "Transactions"}
         <Transactions on:error={notify_err_event} />
       {:else if active_tab == "More"}
         {#if $current_wallet}
-            <Button on:click={()=> (show_secret_key = ! show_secret_key)}>Show Secret Key</Button>
-            {#if show_secret_key}
-                <div id="private-key-view">
-                    {#await get_priv_key($current_wallet, window.prompt('Enter password') ?? "")}
-                        decrypting...
-                    {:then sk}
-                        {new TextDecoder().decode(sk)}
-                    {:catch e}
-                        {e}
-                    {/await}
-                </div> 
-            {/if}
+          <Button on:click={() => (show_secret_key = !show_secret_key)}
+            >Show Secret Key</Button
+          >
+          {#if show_secret_key}
+            <div id="private-key-view">
+              {#await get_priv_key($current_wallet, window.prompt("Enter password") ?? "")}
+                decrypting...
+              {:then sk}
+                {new TextDecoder().decode(sk)}
+              {:catch e}
+                {e}
+              {/await}
+            </div>
+          {/if}
         {/if}
       {/if}
+    </div>
   </div>
 </main>
 
@@ -167,7 +168,7 @@ import { current_wallet } from './store';
   <link rel="stylesheet" href="/build/smui.css" />
 </svelte:head>
 
-<style>
+<style type="text/scss">
   @import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900");
   :global(:root) {
     --font-family: "Public Sans", sans-serif;
@@ -182,8 +183,11 @@ import { current_wallet } from './store';
     width: 200px;
     height: 100%;
     flex-shrink: 0;
+    transition: width 1s ease;
+    &.active{
+      width: 0px;
+    }
   }
-
 
   .create-wallet-container {
     padding: 3em;
@@ -196,10 +200,10 @@ import { current_wallet } from './store';
     overflow: hidden;
   }
 
-    #private-key-view {
-        width: 80%;
-        overflow: auto;
-    }
+  #private-key-view {
+    width: 80%;
+    overflow: auto;
+  }
 
   .top-bar {
     /* background-color: #086d4d; */

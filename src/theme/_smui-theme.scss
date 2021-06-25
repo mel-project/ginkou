@@ -2,6 +2,13 @@
 
 @use '@material/theme/color-palette';
 
+
+$primary: #00796b;
+$secondary: #a5d6a7;
+$surface: #fff;
+$background: #fff;
+$error: color-palette.$red-900;
+
 // Svelte Colors!
 @use '@material/theme/index' as theme with (
   $primary: #006e54,
