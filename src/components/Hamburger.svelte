@@ -1,15 +1,10 @@
 <script>
   export let menuOpen = false
-  let menuClosed = !menuOpen
-
-  const handleChange = ev => {
-    menuOpen = !menuClosed
-  }
 </script>
 
 <div class="menu back menu">
   <label>
-    <input type="checkbox" style="display: none" bind:checked={menuClosed} on:change={handleChange}/>
+    <input type="checkbox" style="display: none" bind:checked={menuOpen}/>
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="30" />
       <path class="line--1" d="M0 55l14-10c4.7-3.3 9-5 13-5h72" />
