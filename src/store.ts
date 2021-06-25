@@ -1,7 +1,7 @@
 import { derived, readable, Readable, Writable, writable } from "svelte/store";
 import { list_wallets, WalletSummary, WalletDump, wallet_dump } from "./utils";
 
-/// Currently selected wallet. Persists to LocalStorage.
+// Currently selected wallet. Persists to LocalStorage.
 export const current_wallet: Writable<string | null> = writable(
   localStorage.getItem("current_wallet_name") || null
 );
@@ -9,7 +9,7 @@ current_wallet.subscribe(
   (val) => val && localStorage.setItem("current_wallet_name", val)
 );
 
-/// Current wallet dump. Automatically talks to the daemon.
+// Current wallet dump. Automatically talks to the daemon.
 export const current_wallet_dump: Readable<WalletDump | null> = derived(
   current_wallet,
   ($name, set: (a0: any) => void) => {
@@ -37,7 +37,7 @@ export const current_wallet_dump: Readable<WalletDump | null> = derived(
   null
 );
 
-/// List of all wallets, both mainnet and testnet
+// List of all wallets, both mainnet and testnet
 export const wallet_summaries: Readable<{
   [key: string]: WalletSummary;
 }> = readable({}, (set) => {
