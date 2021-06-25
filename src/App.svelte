@@ -68,11 +68,11 @@
             variant="static">-->
     <Row>
       <Section>
-        <Hamburger
-          bind:menuOpen={wallet_menu_is_active}
-        />
-        <div id="wallet-title">
-          <Title>{$current_wallet}</Title>
+        <div id="wallet-title-section">
+          <Hamburger bind:menuOpen={wallet_menu_is_active} />
+          <span id="wallet-title">
+            <Title>{$current_wallet}</Title>
+          </span>
         </div>
       </Section>
 
@@ -180,15 +180,23 @@
   }
 
   #wallet-menu {
-    width: 200px;
-    height: 100%;
-    flex-shrink: 0;
     transition: width 1s ease;
-    &.active{
-      width: 0px;
+    width: 0px;
+    &.active {
+      width: 200px;
+      height: 100%;
+      flex-shrink: 0;
     }
   }
-
+  #wallet-title-section {
+    width: 20em;
+    max-width: 20em;
+    display: flex;
+    align-items: center;
+    #wallet-title {
+      overflow: hidden;
+    }
+  }
   .create-wallet-container {
     padding: 3em;
   }
@@ -253,8 +261,5 @@
   .tab:hover {
     color: black;
   }
-  #wallet-title {
-    max-width: 20vw;
-    overflow: hidden;
-  }
+
 </style>

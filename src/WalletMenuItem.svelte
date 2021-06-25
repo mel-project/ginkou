@@ -31,7 +31,9 @@
   <WalletUnlocker bind:name bind:open={unlocker_open} />
 </div>
 
-<style>
+<style type="text/scss">
+  @use "./theme/_smui-theme.scss" as theme;
+
   .wallet-menu-item {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -72,7 +74,8 @@
 
   }
   .lock-status:hover{
-    background: green;
+    background: theme.$primary;
     cursor: pointer;
+    color: white;
   }
 </style>
