@@ -1,6 +1,18 @@
-@media all and (min-width: 50em) {
+@media all and (min-width: 35em) {
   #wallet-menu.active {
-    position: static;
-    width: 15em;
+    width: min(15em, 30vw);
+  }
+  #wallet-title-section>:global(.hamburger-menu){
+    display: inherit;
   }
 }
+
+@media all and (min-width: 45em) {
+  #wallet-menu, #wallet-menu.active {
+    width: min(15em, 30vw);
+  }
+  .top-bar #wallet-title-section>:global(.hamburger-menu){
+    display: none;
+  }
+}
+

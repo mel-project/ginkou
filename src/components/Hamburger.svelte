@@ -1,8 +1,11 @@
 <script>
+  let _class = ""
+  export {_class as class}
   export let menuOpen = false
+  
 </script>
 
-<div class="menu back menu">
+<div class={`hamburger back ${_class}`}>
   <label>
     <input type="checkbox" style="display: none" bind:checked={menuOpen}/>
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -39,7 +42,7 @@
     transition: all 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
 
   }
-  .menu {
+  .hamburger {
     --length: 24;
     --offset: -38;
     direction: ltr;
@@ -63,26 +66,26 @@
   .back input:checked + svg .line--3 {
     --length: 8.602325267;
   }
-  .menu .line--1,
-  .menu .line--3 {
+  .hamburger .line--1,
+  .hamburger .line--3 {
     --total-length: 103.3506164551;
   }
-  .menu.menu .line--1,
-  .menu.menu .line--3 {
+  .hamburger .line--1,
+  .hamburger .line--3 {
     --offset: -42.3506164551;
   }
 
-  .menu .line--2 {
+  .hamburger .line--2 {
     --total-length: 99;
   }
-  .menu input:checked + svg path {
+  .hamburger input:checked + svg path {
     transform: translateX(31px);
   }
-  .menu input:checked + svg .line--1,
-  .menu input:checked + svg .line--3 {
+  .hamburger input:checked + svg .line--1,
+  .hamburger input:checked + svg .line--3 {
     --offset: -8.602325267;
   }
-  .menu input:checked + svg .line--2 {
+  .hamburger input:checked + svg .line--2 {
     --length: 24;
     --offset: -7;
   }

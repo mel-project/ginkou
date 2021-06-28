@@ -25,7 +25,7 @@
   // Active tab in UI
   let active_tab = "Send";
   // Indicates whether the side nav bar is active
-  let wallet_menu_is_active = true;
+  let wallet_menu_is_active = false;
   // Indicates whether secret key will be visible
   let show_secret_key = false;
 
@@ -69,7 +69,7 @@
     <Row>
       <Section>
         <div id="wallet-title-section">
-          <Hamburger bind:menuOpen={wallet_menu_is_active} />
+          <Hamburger class="hamburger-menu" bind:menuOpen={wallet_menu_is_active} />
           <span id="wallet-title">
             <Title>{$current_wallet}</Title>
           </span>
