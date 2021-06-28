@@ -84,12 +84,18 @@
 </Dialog>
 
 <style type="text/scss">
+  @use './theme/_smui-theme.scss' as theme;
   #wallet-menu-inner{
     overflow: hidden;
     overflow-y: scroll;
     height: calc(100vh - 5em);
     direction: rtl;
-    scrollbar-color: #00796b white;
+    scrollbar-color: theme.$primary white;
+
+  }
+  #wallet-menu-inner::-webkit-scrollbar{
+      // width: 5px;
+      // background-color: theme.$primary
   }
   .menu-item {
     direction: ltr;
