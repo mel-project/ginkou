@@ -11,15 +11,19 @@
 $menu-height: 64px;
 
 #wallet-menu {
-  transition: width 1s ease;
+  transition: width .7s ease;
   width: 0px;
   background: white;
-  z-index: 100;
+  z-index: 2;
   &.active {
-    position: absolute;
-    width: calc(100vw - 1em);
+    width: calc(100vw);
   }
 }
+
+.hamburger-menu {
+  display: none;
+}
+
 #wallet-title-section {
   width: 20em;
   max-width: 20em;
