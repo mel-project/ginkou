@@ -12,7 +12,16 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
+::-webkit-scrollbar{
+  width: .7em;
+}
+::-webkit-scrollbar-thumb{
+  background: #006e54;
+  border-radius: 1em;
+  border: .2em solid rgba(0,0,0,0);
+  background-clip: padding-box;
 
+}
 @font-face {
   font-family: "Material Icons";
   font-style: normal;
