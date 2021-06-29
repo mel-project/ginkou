@@ -1,6 +1,6 @@
 @media all and (min-width: 35em) {
   #wallet-menu.active {
-    width: min(15em, 30vw);
+    width: min(12em, 30vw);
   }
   #wallet-title-section>:global(.hamburger-menu){
     display: inherit;
@@ -9,7 +9,7 @@
 
 @media all and (min-width: 45em) {
   #wallet-menu, #wallet-menu.active {
-    width: min(15em, 30vw);
+    width: clamp(11em, 15em, 25vw);
   }
   .top-bar #wallet-title-section>:global(.hamburger-menu){
     display: none;
