@@ -7,7 +7,7 @@
   import IconButton from "@smui/icon-button";
   import Button from "@smui/button";
   import Tab, { Label } from "@smui/tab";
-  import TabBar from "@smui/tab-bar";
+  import TabBar from "./components/tabs/TabBar.svelte";
   import { onMount } from "svelte";
 
   import Send from "./Send.svelte";
@@ -18,8 +18,16 @@
   import { current_wallet } from "./store";
 
   import Hamburger from "./components/Hamburger.svelte";
+  import TransactionIcon from './res/icons/transactions.svg';
+  import SendIcon from './res/icons/send.svg';
+  import RecieveIcon from './res/icons/recieve.svg';
+  import SettingsIcon from './res/icons/settings.svg';
 
   export let name;
+
+
+  const tabs = ["Transactions", "Send", "Recieve", "Settings"]
+  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Recieve": RecieveIcon, "Settings": SettingsIcon}
 
   let networks = { Main: 255, Test: 1 };
   // Active tab in UI
@@ -28,7 +36,6 @@
   let wallet_menu_is_active = false;
   // Indicates whether secret key will be visible
   let show_secret_key = false;
-
   // User-viewable error reporting
   let error_chan: string[] = [];
   // Channel to notify when a tx has been sent
@@ -60,6 +67,7 @@
       sent_tx_chan = sent_tx_chan.slice(1);
     }, 5000);
   }
+  
 </script>
 
 <main>
@@ -86,13 +94,16 @@
                         {/each}
                         -->
           <TabBar
-            tabs={["Transactions", "Send", "Receive", "More"]}
-            position="static"
+            {tabs}
             let:tab
-            bind:active={active_tab}
+            bind:active_tab
           >
             <Tab {tab}>
-              <Label>{tab}</Label>
+              <Label>
+                <span class="icon">
+                  {@html tab_icons[tab]}
+                </span>
+              </Label>
             </Tab>
           </TabBar>
         </div>
@@ -171,4 +182,11 @@
 <style type="text/scss">
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
+.icon{
+  display: flex;
+  width: 1.5em;
+}
+#wallet-title-section{
+  width: inherit;
+}
 </style>

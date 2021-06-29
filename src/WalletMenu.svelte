@@ -91,11 +91,6 @@
     height: calc(100vh - 5em);
     direction: rtl;
     scrollbar-color: theme.$primary white;
-
-  }
-  #wallet-menu-inner::-webkit-scrollbar{
-      // width: 5px;
-      // background-color: theme.$primary
   }
   .menu-item {
     direction: ltr;
