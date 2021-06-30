@@ -95,11 +95,10 @@
                         -->
           <TabBar
             {tabs}
-            {active_tab}
-            {tab_elements}
+            bind:active_tab={active_tab}
             let:tab
           >
-            <Tab {tab} bind:this="{tab_elements[tab]}">
+            <Tab {tab}>
               <Label>
                 <span class="tab-content">
                   <span class="icon">
