@@ -16,6 +16,7 @@
     "@rollup/plugin-typescript": "^8.2.1",
     "@smui/banner": "^4.2.0",
     "@smui/data-table": "^4.2.0",
+    "@smui/snackbar": "^4.2.0",
     "@smui/tab": "^4.2.0",
     "@smui/tab-bar": "^4.2.0",
     "@smui/top-app-bar": "^4.2.0",
