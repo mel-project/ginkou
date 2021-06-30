@@ -193,6 +193,12 @@
 .tab-content>.text{
   display: none;
 }
+
+@media all and (max-width: 30em){
+  #wallet-title{
+    display: none;
+  }
+}
 @media all and (min-width: 45em){
   .tab-content{
     display: flex;
