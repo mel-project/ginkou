@@ -26,8 +26,8 @@
   export let name;
 
 
-  const tabs = ["Transactions", "Send", "Recieve", "Settings"]
-  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Recieve": RecieveIcon, "Settings": SettingsIcon}
+  const tabs = ["Transactions", "Send", "Receive", "Settings"]
+  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon, "Settings": SettingsIcon}
 
   let networks = { Main: 255, Test: 1 };
   // Active tab in UI
@@ -100,9 +100,13 @@
           >
             <Tab {tab}>
               <Label>
-                <span class="icon">
-                  {@html tab_icons[tab]}
+                <span class="tab-content">
+                  <span class="icon">
+                    {@html tab_icons[tab]}
+                  </span>
+                  <span class="text">{tab}</span>
                 </span>
+                
               </Label>
             </Tab>
           </TabBar>
@@ -145,7 +149,7 @@
         <Receive />
       {:else if active_tab == "Transactions"}
         <Transactions on:error={notify_err_event} />
-      {:else if active_tab == "More"}
+      {:else if active_tab == "Settings"}
         {#if $current_wallet}
           <Button on:click={() => (show_secret_key = !show_secret_key)}
             >Show Secret Key</Button
@@ -185,6 +189,19 @@
 .icon{
   display: flex;
   width: 1.5em;
+}
+.tab-content>.text{
+  display: none;
+}
+@media all and (min-width: 45em){
+  .tab-content{
+    display: flex;
+    line-height: 10em;
+    .text{
+      display: inherit;
+      margin-left: .5em;
+    }
+  }
 }
 #wallet-title-section{
   width: inherit;
