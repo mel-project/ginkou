@@ -408,6 +408,21 @@ export const unlock_wallet = (
 //     else return await fromPromise(confirm_tx(url, txhash));
 //   });
 
+export const add_coin = (
+  wallet_name: string,
+  coin_id_string: string,
+  port: number = default_port
+): EitherAsync<string, void> =>
+  EitherAsync(async ({ liftEither, fromPromise }) => {
+    const url_add_coin = `${home_addr}:${port}/wallets/${wallet_name}/coins/${coin_id_string}`;
+    await fromPromise(
+      fetch_text_or_err(url_add_coin, {
+        method: "PUT",
+        body: "",
+      })
+    );
+  });
+
 export const send_tx = (
   wallet_name: string,
   transaction: Transaction,
