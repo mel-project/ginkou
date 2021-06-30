@@ -1,10 +1,25 @@
 <script>
   import {onMount} from 'svelte'
+
   export let tabs = []
+  export let tab_elements = {}
   export let active_tab = tabs[0]
-  const refs = []
   let active_index = tabs.indexOf(active_tab)
-  
+  let mounted = false;
+
+  const getWidth = (tab) => {
+    if(!tab_elements[tab]) return 0
+    return tab_elements[tab].getElement().clientWidth
+  }
+  const getOffset = (tab) => {
+    const index = tabs.indexOf(tab)
+    console.log(Object.keys(tab_elements).slice(0,index).map(getWidth))
+    return Object.keys(tab_elements).slice(0,index).map(getWidth).reduce((i,j)=>i+j,0)
+  }
+  onMount(()=>{
+    mounted = true
+    // console.log(getOffset("Transactions"))
+  })
 </script>
 
 <template lang="pug">
@@ -13,8 +28,9 @@
         +each("tabs as tab, i")
           li.tab-button(class:active!="{active_tab == tab}"
           on:click!="{()=>{active_tab = tab; active_index = i;}}")
-            slot({tab}) {tab}
-      hr(style!="width: calc({100/tabs.length}% - 2px); margin-left: {100/tabs.length * active_index}%") 
+            slot({tab} {i}) {tab}
+      +if("mounted")
+        hr(style!="width: calc({getWidth(active_tab)}px - 2px); margin-left: {getOffset(active_tab)}px") 
 </template>
 
 <style lang="scss">
