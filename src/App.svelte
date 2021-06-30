@@ -28,7 +28,7 @@
 
   const tabs = ["Transactions", "Send", "Receive", "Settings"]
   const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon, "Settings": SettingsIcon}
-
+  const tab_elements = {}
   let networks = { Main: 255, Test: 1 };
   // Active tab in UI
   let active_tab = "Send";
@@ -95,10 +95,11 @@
                         -->
           <TabBar
             {tabs}
+            {active_tab}
+            {tab_elements}
             let:tab
-            bind:active_tab
           >
-            <Tab {tab}>
+            <Tab {tab} bind:this="{tab_elements[tab]}">
               <Label>
                 <span class="tab-content">
                   <span class="icon">
