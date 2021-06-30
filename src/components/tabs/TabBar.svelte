@@ -1,7 +1,10 @@
 <script>
+  import {onMount} from 'svelte'
   export let tabs = []
   export let active_tab = tabs[0]
-  let active_index = 0
+  const refs = []
+  let active_index = tabs.indexOf(active_tab)
+  
 </script>
 
 <template lang="pug">
@@ -9,7 +12,7 @@
       ul.tabs
         +each("tabs as tab, i")
           li.tab-button(class:active!="{active_tab == tab}"
-          on:click!="{()=>{active_tab = tab; active_index = i}}")
+          on:click!="{()=>{active_tab = tab; active_index = i;}}")
             slot({tab}) {tab}
       hr(style!="width: calc({100/tabs.length}% - 2px); margin-left: {100/tabs.length * active_index}%") 
 </template>
