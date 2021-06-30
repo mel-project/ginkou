@@ -21,7 +21,7 @@
         bind:value={password}
         label="Password"
       >
-        <HelperText slot="helper">{password}</HelperText>
+        <HelperText er slot="helper">{password}</HelperText>
       </Textfield>
     </div>
   </Content>
