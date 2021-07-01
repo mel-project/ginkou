@@ -27,9 +27,14 @@
   li{
     border-bottom: 0px;
     width: 100%;
-
+    transition: 60ms ease;
+    &:hover{
+      border-bottom: 3px solid theme.$secondary;
+    }
   }
-  .active{
+  li.active{
+    // background:  lighten(theme.$secondary, 10%);
+    transition: border-color 300ms cubic-bezier(.52,.23,.13,.93);
     border-bottom: 3px solid theme.$primary;
   }
 </style>
