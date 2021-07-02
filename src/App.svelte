@@ -26,6 +26,7 @@
 
   const tabs = ["Transactions", "Send", "Receive", "Settings"]
   const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon, "Settings": SettingsIcon}
+  const tab_components = Object.assign({},...[Transactions, Send, Receive, Settings].map((comp,i)=>({[tabs[i]]:comp})))
 
   
   // Active tab in UI
@@ -83,13 +84,6 @@
 
       <Section>
         <div id="tabs-container">
-          <!--
-                        {#each ['Transactions', 'Send', 'Receive', 'More'] as tab}
-                            <div class="tab" on:click={() => (active_tab = tab)}>
-                                <Label>{tab}</Label>
-                            </div>
-                        {/each}
-                        -->
           <TabBar class="tab-bar"
             {tabs}
             bind:active_tab={active_tab}
@@ -140,15 +134,9 @@
       <WalletMenu />
     </div>
     <div class="view-box">
-      {#if active_tab == "Send"}
-        <Send on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} />
-      {:else if active_tab == "Receive"}
-        <Receive />
-      {:else if active_tab == "Transactions"}
-        <Transactions on:error={notify_err_event} />
-      {:else if active_tab == "Settings"}
-        <Settings></Settings>
-      {/if}
+      <svelte:component this={tab_components[active_tab]}
+        on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} 
+      />
     </div>
   </div>
 </main>
