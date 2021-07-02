@@ -27,22 +27,25 @@
 
 {#if $current_wallet_dump}
   <div class="container">
-    <div class="box">
+    <div class="box row">
       <div class="box-label">Address</div>
-      <div class="box-inner">{$current_wallet_dump.summary.address}</div>
+      <div class="box-inner flex-text">{$current_wallet_dump.summary.address}</div>
       <Button class="box-button" on:click={copy_wallet_handler}>Copy</Button>
     </div>
-    <div class="box">
-      <div class="box-label">Add coin</div>
-      <div class="box-inner">
-        <Textfield bind:value={coin_id} class="box-textfield">
+    <div class="box column">
+      <div class="row">
+        <div class="box-label">Add coin</div>
+        <div class="flex-text box-inner">
+          <Textfield bind:value={coin_id} class="box-textfield" />
           <HelperText persistent slot="helper"
-            >in CoinID format, e.g.
-            deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef-1
-          </HelperText>
-        </Textfield>
+          >in CoinID format, e.g.
+          deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef-1
+        </HelperText>
+        </div>
+        <Button class="box-button" on:click={add_coin_handler}>Add</Button>
+        
       </div>
-      <Button class="box-button" on:click={add_coin_handler}>Add</Button>
+
     </div>
   </div>
 {:else}
@@ -50,6 +53,14 @@
 {/if}
 
 <style>
+  .row{
+    display: flex;
+    flex-direction: row !important;
+  }
+  .column{
+    display: flex;
+    flex-direction: column !important;
+  }
   .container {
     width: 100%;
     flex-direction: column;
@@ -59,8 +70,7 @@
 
   .box {
     margin: 8px;
-    flex-direction: row;
-    display: flex;
+    max-width: 100%;
     border: black solid 1px;
     border-radius: 4px;
     padding: 8px;
@@ -75,6 +85,11 @@
     font-weight: 400;
   }
 
+  .flex-text { 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
   .box-inner {
     opacity: 0.8;
   }
