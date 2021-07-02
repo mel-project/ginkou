@@ -2,18 +2,16 @@
   import type { WalletSummary } from "./utils";
   import { list_wallets, get_priv_key } from "./utils";
 
-  import TopAppBar, { Row, Section, Title } from "@smui/top-app-bar";
+  import { Row, Section, Title } from "@smui/top-app-bar";
   //import Banner from '@smui/banner';
-  import IconButton from "@smui/icon-button";
-  import Button from "@smui/button";
   import Tab, { Label } from "@smui/tab";
   import TabBar from "./components/tabs/TabBar.svelte";
-  import { onMount } from "svelte";
 
-  import Send from "./Send.svelte";
-  import Receive from "./Receive.svelte";
+  import Send from "./views/Send.svelte";
+  import Receive from "./views/Receive.svelte";
   import CreateWallet from "./CreateWallet.svelte";
-  import Transactions from "./Transactions.svelte";
+  import Transactions from "./views/Transactions.svelte";
+  import Settings from "./views/Settings.svelte"
   import WalletMenu from "./WalletMenu.svelte";
   import { current_wallet } from "./store";
 
@@ -28,14 +26,13 @@
 
   const tabs = ["Transactions", "Send", "Receive", "Settings"]
   const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon, "Settings": SettingsIcon}
-  const tab_elements = {}
-  let networks = { Main: 255, Test: 1 };
+
+  
   // Active tab in UI
   let active_tab = "Send";
   // Indicates whether the side nav bar is active
   let wallet_menu_is_active = false;
   // Indicates whether secret key will be visible
-  let show_secret_key = false;
   // User-viewable error reporting
   let error_chan: string[] = [];
   // Channel to notify when a tx has been sent
@@ -93,7 +90,7 @@
                             </div>
                         {/each}
                         -->
-          <TabBar
+          <TabBar class="tab-bar"
             {tabs}
             bind:active_tab={active_tab}
             let:tab
@@ -150,22 +147,7 @@
       {:else if active_tab == "Transactions"}
         <Transactions on:error={notify_err_event} />
       {:else if active_tab == "Settings"}
-        {#if $current_wallet}
-          <Button on:click={() => (show_secret_key = !show_secret_key)}
-            >Show Secret Key</Button
-          >
-          {#if show_secret_key}
-            <div id="private-key-view">
-              {#await get_priv_key($current_wallet, window.prompt("Enter password") ?? "")}
-                decrypting...
-              {:then sk}
-                {new TextDecoder().decode(sk)}
-              {:catch e}
-                {e}
-              {/await}
-            </div>
-          {/if}
-        {/if}
+        <Settings></Settings>
       {/if}
     </div>
   </div>
@@ -186,8 +168,18 @@
 <style type="text/scss">
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
-.icon{
+
+
+.tab-bar{
+  background: red;
+}
+div :global(.mdc-tab){
+  min-width: 1em;
+}
+.tab-content{
   display: flex;
+}
+.icon{
   width: 1.5em;
 }
 .tab-content>.text{
@@ -201,7 +193,6 @@
 }
 @media all and (min-width: 45em){
   .tab-content{
-    display: flex;
     line-height: 10em;
     .text{
       display: inherit;

@@ -1,7 +1,7 @@
 <script lang="typescript">
   import Button from "@smui/button";
-  import { current_wallet, current_wallet_dump } from "./store";
-  import { add_coin } from "./utils";
+  import { current_wallet, current_wallet_dump } from "@/store";
+  import { add_coin } from "@/utils";
   import Snackbar, { Actions, Label } from "@smui/snackbar";
   import Textfield from "@smui/textfield";
   import HelperText from "@smui/textfield/helper-text/index";

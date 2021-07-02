@@ -1,12 +1,12 @@
 <script lang="typescript">
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import { createEventDispatcher } from "svelte";
-  import { send_tx, prepare_mel_tx, get_priv_key } from "./utils";
-  import type { WalletSummary, Transaction, CoinData } from "./utils";
-  import { get_wallet } from "./storage";
+  import { send_tx, prepare_mel_tx, get_priv_key } from "@/utils";
+  import type { WalletSummary, Transaction, CoinData } from "@/utils";
+  import { get_wallet } from "@/storage";
   import Textfield from "@smui/textfield";
   import Button, { Label } from "@smui/button";
-  import { current_wallet, current_wallet_dump } from "./store";
+  import { current_wallet, current_wallet_dump } from "@/store";
   import BigNumber from "bignumber.js";
 
   // export let active_wallet: string | null;
@@ -110,20 +110,30 @@
 {/if}
 
 {#if $current_wallet}
-  <Textfield bind:value={to_addr} label="To" />
-  <Textfield
-    bind:value={send_amount}
-    label="Amount"
-    type="number"
-    suffix="micromel"
-  />
+  <div id="window">
 
-  <Button on:click={prepare_tx_handler}>Send</Button>
+    <Textfield bind:value={to_addr} label="To" />
+    <Textfield
+      bind:value={send_amount}
+      label="Amount"
+      type="number"
+      suffix="micromel"
+    />
+
+    <Button on:click={prepare_tx_handler}>Send</Button>
+        
+  </div>
 {:else}
   <p>Choose a wallet first ;)</p>
 {/if}
 
 <style>
+  #window {
+    display: flex;
+    flex-direction: column;
+    max-width: 40em;
+    justify-content: center;
+  }
   #confirm-window {
     display: flex;
     padding: 10px;
