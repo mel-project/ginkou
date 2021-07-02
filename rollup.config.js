@@ -9,7 +9,12 @@ import {pug} from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 import inlineSvg from 'rollup-plugin-inline-svg';
+import alias from '@rollup/plugin-alias';
+const path = require('path');
 
+const rootDir = path.resolve(__dirname, 'src')
+
+console.log(rootDir)
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -43,6 +48,13 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
+		alias({
+			resolve: ['.ts', '.js','.svelte'],
+			entries:{
+					'@': path.resolve(rootDir)
+				}
+			
+		}),
 		pug(),
 		inlineSvg(),
 		nodePolyfills(),

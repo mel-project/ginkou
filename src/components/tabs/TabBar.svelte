@@ -1,11 +1,13 @@
 <script>
   export let tabs = []
   export let active_tab = tabs[0]
+  let _class;
+  export {_class as class}
   let active_index = tabs.indexOf(active_tab)
 </script>
 
 <template lang="pug">
-    div
+    div(class!="{_class}")
       ul.tabs
         +each("tabs as tab, i")
           li.tab-button(class:active!="{active_tab == tab}"

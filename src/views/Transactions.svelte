@@ -2,11 +2,11 @@
   import Dialog, { Title, Content, Actions, Header } from "@smui/dialog";
   import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
   import Button, { Label } from "@smui/button";
-  import { wallet_dump, wallet_dump_default, net_spent } from "./utils";
-  import type { CoinData, Transaction } from "./utils";
+  import { wallet_dump, wallet_dump_default, net_spent } from "../utils";
+  import type { CoinData, Transaction } from "../utils";
   import { createEventDispatcher } from "svelte";
-  import TransactionSummary from "./TransactionSummary.svelte";
-  import { current_wallet_dump } from "./store";
+  import TransactionSummary from "../TransactionSummary.svelte";
+  import { current_wallet_dump } from "../store";
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
