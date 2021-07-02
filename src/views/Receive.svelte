@@ -37,10 +37,10 @@
         <div class="box-label">Add coin</div>
         <div class="flex-text box-inner">
           <Textfield bind:value={coin_id} class="box-textfield" />
-          <HelperText persistent slot="helper"
+          <!-- <HelperText persistent slot="helper"
           >in CoinID format, e.g.
           deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef-1
-        </HelperText>
+        </HelperText> -->
         </div>
         <Button class="box-button" on:click={add_coin_handler}>Add</Button>
         
@@ -85,7 +85,7 @@
     font-weight: 400;
   }
 
-  .flex-text { 
+  .flex-text, .flex-text :global(.box-textfield){ 
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;
