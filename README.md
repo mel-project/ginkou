@@ -13,6 +13,11 @@ npm install
 npm run dev
 ```
 
+## Build themes
+```bash
+npm run smui-theme-light
+```
+
 ## Run API tests
 ```bash
 npm run test
