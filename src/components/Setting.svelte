@@ -12,7 +12,7 @@ export let value = "";
     {value}
     {#if setting.type == "select"}
         {Object.keys(setting)}
-        <select name="" id="">
+        <select name="" id="" bind:value>
             {#each Object.entries(setting.value) as option}
                 <option value="{option[1]}">
                     {option[0]}
