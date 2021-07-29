@@ -8,10 +8,7 @@ import { get_store_value } from "svelte/internal";
 import Setting from "@/components/Setting.svelte";
 
 // assume it's possible to send an object as params
-let settings = [
-  {type: "select", value: {test: "test", main: "main"}},
-  {type: "text", value: "dark"},
-]
+export let settings;
 
 
 </script>
