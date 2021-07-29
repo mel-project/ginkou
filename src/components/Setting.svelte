@@ -1,33 +1,32 @@
 <script type="text/javascript">
 
-import { list_wallets, get_priv_key } from "@/utils";
-import { current_wallet } from "@/store";
-import Button from "@smui/button";
-import { encrypt } from "../crypto";
-import { get_store_value } from "svelte/internal";
-
-
+//need debug channels
 
 // assume it's possible to send an object as params
 export let setting = {}
-export let value;
+export let value = "";
 </script>
 
 <template>  
-    {setting.type}
+    <!-- {Object.keys(setting)} -->
+    {value}
     {#if setting.type == "select"}
-        <!-- <select name="" id="">
-            {#each Object.enctries(setting.options) as option}
-                <option>
-                    {option[0]},{option[1]}
+        {Object.keys(setting)}
+        <select name="" id="">
+            {#each Object.entries(setting.value) as option}
+                <option value="{option[1]}">
+                    {option[0]}
                 </option>
-            {/each} 
-        </select> -->
+             {/each}
+        </select>
+
     {:else}
-       <input type="{setting[0]}" noChange="{
+        <!-- bind input to value; event binding onchange? -->
+       <input type="{setting.type}" value="{value}" on:change="{
            (event) => {
-               value = event.target.value;
+               console.log(value, "testing")
            }
+           
        }"> 
     {/if}
 
