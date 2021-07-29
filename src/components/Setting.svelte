@@ -22,12 +22,7 @@ export let value = "";
 
     {:else}
         <!-- bind input to value; event binding onchange? -->
-       <input type="{setting.type}" value="{value}" on:change="{
-           (event) => {
-               console.log(value, "testing")
-           }
-           
-       }"> 
+       <input type="text" bind:value> 
     {/if}
 
 </template>
