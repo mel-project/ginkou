@@ -9,7 +9,7 @@ import Setting from "@/components/Setting.svelte";
 
 // assume it's possible to send an object as params
 let settings = [
-  {type: "select", options: {test: "test", main: "main"}},
+  {type: "select", value: {test: "test", main: "main"}},
   {type: "text", value: "dark"},
 ]
 
