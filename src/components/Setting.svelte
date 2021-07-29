@@ -1,8 +1,8 @@
 <script type="text/javascript">
 
-//need debug channels
+//!!need debug channels
 
-// assume it's possible to send an object as params
+//!!assume it's possible to send an object as params
 export let setting = {}
 export let value = "";
 </script>
@@ -21,7 +21,7 @@ export let value = "";
         </select>
 
     {:else}
-        <!-- bind input to value; event binding onchange? -->
+        <!-- !! bind input to value; event binding onchange? -->
        <input type="text" bind:value> 
     {/if}
 
