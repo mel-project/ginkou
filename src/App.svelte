@@ -30,7 +30,7 @@
 
   
   // Active tab in UI
-  let active_tab = "Send";
+  let active_tab = "Settings";
   // Indicates whether the side nav bar is active
   let wallet_menu_is_active = false;
   // Indicates whether secret key will be visible

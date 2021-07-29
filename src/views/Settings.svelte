@@ -3,27 +3,24 @@
 import { list_wallets, get_priv_key } from "@/utils";
 import { current_wallet } from "@/store";
 import Button from "@smui/button";
+import { encrypt } from "../crypto";
+import { get_store_value } from "svelte/internal";
+import Setting from "@/components/Setting.svelte";
 
-export let networks = { Main: 255, Test: 1 };
-export let show_secret_key = false;
+// assume it's possible to send an object as params
+let settings = [
+  {type: "select", options: {test: "test", main: "main"}},
+  {type: "text", value: "dark"},
+]
+
 
 </script>
 
 <template>
-  {#if $current_wallet}
-    <Button on:click={() => (show_secret_key = !show_secret_key)}
-      >Show Secret Key</Button
-    >
-    {#if show_secret_key}
-      <div id="private-key-view">
-        {#await get_priv_key($current_wallet, window.prompt("Enter password") ?? "")}
-          decrypting...
-        {:then sk}
-          {new TextDecoder().decode(sk)}
-        {:catch e}
-          {e}
-        {/await}
-      </div>
-    {/if}
+  {#if $current_wallet || true}
+    {#each settings as setting}
+      <Setting bind:setting>
+      </Setting>
+     {/each}
   {/if}
 </template>
