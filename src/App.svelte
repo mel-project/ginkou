@@ -26,7 +26,14 @@
 
   const tabs = ["Transactions", "Send", "Receive", "Settings"]
   const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon, "Settings": SettingsIcon}
+
+  // change this cuz wtf
   const tab_components = Object.assign({},...[Transactions, Send, Receive, Settings].map((comp,i)=>({[tabs[i]]:comp})))
+
+  const settings = [
+    {type: "select", value: {test: "test", main: "main"}},
+    {type: "text", value: "dark"},
+  ] 
 
   
   // Active tab in UI
@@ -136,6 +143,7 @@
     <div class="view-box">
       <svelte:component this={tab_components[active_tab]}
         on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} 
+        settings={settings}
       />
     </div>
   </div>
