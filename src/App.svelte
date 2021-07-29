@@ -33,6 +33,7 @@
   const settings = [
     {type: "select", value: {test: "test", main: "main"}},
     {type: "text", value: "dark"},
+    {type: "text", value: current_wallet}
   ] 
 
   
