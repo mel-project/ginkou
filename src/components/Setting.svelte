@@ -1,9 +1,20 @@
-<script type="text/javascript">
+<script type="text/typescript">
+
+
+
+interface Setting {
+    type: String,
+    value: String | Object
+}
+
+/**
+ * Setting should support at least these variants
+ * select, input, label, 
+ */
 
 //!!need debug channels
 
-//!!assume it's possible to send an object as params
-export let setting = {}
+export let setting: Setting;
 export let value = "";
 </script>
 
