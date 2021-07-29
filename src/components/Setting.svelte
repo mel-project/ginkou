@@ -15,7 +15,7 @@ interface Setting {
 //!!need debug channels
 
 export let setting: Setting;
-export let value = "";
+export let value = setting.value;
 </script>
 
 <template>  
