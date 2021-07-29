@@ -31,9 +31,9 @@
   const tab_components = Object.assign({},...[Transactions, Send, Receive, Settings].map((comp,i)=>({[tabs[i]]:comp})))
 
   const settings = [
-    {type: "select", value: {test: "test", main: "main"}},
-    {type: "text", value: "dark"},
-    {type: "text", value: current_wallet}
+    {name: "network", type: "select", value: {test: "test", main: "main"}},
+    {name: "theme", type: "text", value: "dark"},
+    {name: "wallet name", type: "text", value: current_wallet}
   ] 
 
   

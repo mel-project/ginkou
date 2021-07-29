@@ -3,8 +3,9 @@
 
 
 interface Setting {
-    type: String,
-    value: String | Object
+    name: string,
+    type: string,
+    value: string | Object
 }
 
 /**
@@ -15,15 +16,15 @@ interface Setting {
 //!!need debug channels
 
 export let setting: Setting;
-export let value = setting.value;
+export let value: string | Object = setting.value;
 </script>
 
 <template>  
     <!-- {Object.keys(setting)} -->
-    {value}
+    <label for={setting.name}>{setting.name}</label>
     {#if setting.type == "select"}
-        {Object.keys(setting)}
-        <select name="" id="" bind:value>
+        <!-- {Object.keys(setting)} -->
+        <select name={setting.name} id="" bind:value>
             {#each Object.entries(setting.value) as option}
                 <option value="{option[1]}">
                     {option[0]}
@@ -33,7 +34,8 @@ export let value = setting.value;
 
     {:else}
         <!-- !! bind input to value; event binding onchange? -->
-       <input type="text" bind:value> 
+        <!-- !! whats this error -->
+       <input name={setting.name} type="text" bind:value> 
     {/if}
 
 </template>
