@@ -140,6 +140,7 @@
     <div id="wallet-menu" class:active={wallet_menu_is_active}>
       <WalletMenu />
     </div>
+    <!-- !!two way settings bindings -->
     <div class="view-box">
       <svelte:component this={tab_components[active_tab]}
         on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} 

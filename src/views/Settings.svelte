@@ -7,7 +7,7 @@ import { encrypt } from "../crypto";
 import { get_store_value } from "svelte/internal";
 import Setting from "@/components/Setting.svelte";
 
-// assume it's possible to send an object as params
+//! assume it's possible to send an object as params
 export let settings;
 
 
