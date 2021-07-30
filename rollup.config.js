@@ -60,7 +60,7 @@ export default {
 		nodePolyfills(),
 		svelte({
 			preprocess: autoPreprocess(),
-			compilerOptions: {
+				compilerOptions: {
 				// enable run-time checks when not in production
 				dev: !production
 			}
