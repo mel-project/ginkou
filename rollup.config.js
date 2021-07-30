@@ -49,7 +49,7 @@ export default {
 	},
 	plugins: [
 		alias({
-			resolve: ['.ts', '.js','.svelte'],
+			resolve: ['.ts', '.js','.svelte','.scss'],
 			entries:{
 					'@': path.resolve(rootDir)
 				}

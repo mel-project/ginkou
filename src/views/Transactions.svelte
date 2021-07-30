@@ -5,7 +5,7 @@
   import { wallet_dump, wallet_dump_default, net_spent } from "../utils";
   import type { CoinData, Transaction } from "../utils";
   import { createEventDispatcher } from "svelte";
-  import TransactionSummary from "../TransactionSummary.svelte";
+  import TransactionSummary from "../components/TransactionSummary.svelte";
   import { current_wallet_dump } from "../store";
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";

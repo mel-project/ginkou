@@ -9,10 +9,10 @@
 
   import Send from "./views/Send.svelte";
   import Receive from "./views/Receive.svelte";
-  import CreateWallet from "./CreateWallet.svelte";
+  import CreateWallet from "./components/CreateWallet.svelte";
   import Transactions from "./views/Transactions.svelte";
   import Settings from "./views/Settings.svelte"
-  import WalletMenu from "./WalletMenu.svelte";
+  import WalletMenu from "./components/WalletMenu.svelte";
   import { current_wallet } from "./store";
 
   import Hamburger from "./components/Hamburger.svelte";
