@@ -5,8 +5,18 @@
 interface Setting {
     name: string,
     type: string,
-    value: string | Object
 }
+
+interface Select extends Setting{
+    options: Object
+
+}
+
+const get_store = (name: string): string => {
+    return name
+}
+
+
 
 /**
  * Setting should support at least these variants
@@ -16,7 +26,7 @@ interface Setting {
 //!!need debug channels
 
 export let setting: Setting;
-export let value: string | Object = setting.value;
+export let value: any = get_store(setting.name);
 </script>
 
 <template>  
@@ -25,7 +35,7 @@ export let value: string | Object = setting.value;
     {#if setting.type == "select"}
         <!-- {Object.keys(setting)} -->
         <select name={setting.name} id="" bind:value>
-            {#each Object.entries(setting.value) as option}
+            {#each Object.entries(setting.options) as option}
                 <option value="{option[1]}">
                     {option[0]}
                 </option>
