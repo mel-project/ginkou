@@ -25,11 +25,11 @@
   export let name;
 
 
-  const tabs = ["Transactions", "Send", "Receive", "Settings"]
-  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon, "Settings": SettingsIcon}
+  const tabs = ["Transactions", "Send", "Receive"]
+  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon}
 
   // change this cuz wtf
-  const tab_components = Object.assign({},...[Transactions, Send, Receive, Settings].map((comp,i)=>({[tabs[i]]:comp})))
+  const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
 
   const settings = [
     {name: "network", type: "select", options: {test: "test", main: "main"}},
