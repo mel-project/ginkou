@@ -7,10 +7,7 @@ interface Setting {
     type: string,
 }
 
-interface Select extends Setting{
-    options: Object
 
-}
 
 const get_store = (name: string): string => {
     return name
