@@ -20,6 +20,7 @@
   import SendIcon from './res/icons/send.svg';
   import RecieveIcon from './res/icons/recieve.svg';
   import SettingsIcon from './res/icons/settings.svg';
+  import Modal from "./components/Modal.svelte";
 
   export let name;
 
@@ -77,6 +78,9 @@
 </script>
 
 <main>
+  <Modal>
+    <Settings settings={settings}></Settings>
+  </Modal>
   <div class="top-bar">
     <!--<TopAppBar
             variant="static">-->
