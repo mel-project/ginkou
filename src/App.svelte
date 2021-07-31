@@ -78,8 +78,10 @@
 </script>
 
 <main>
-  <Modal>
-    <Settings settings={settings}></Settings>
+  <Modal class="modal">
+    <div class="container">
+      <Settings settings={settings}></Settings>
+    </div>
   </Modal>
   <div class="top-bar">
     <!--<TopAppBar
@@ -170,39 +172,4 @@
 <style type="text/scss">
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
-
-
-.tab-bar{
-  background: red;
-}
-div :global(.mdc-tab){
-  min-width: 1em;
-}
-.tab-content{
-  display: flex;
-}
-.icon{
-  width: 1.5em;
-}
-.tab-content>.text{
-  display: none;
-}
-
-@media all and (max-width: 30em){
-  #wallet-title{
-    display: none;
-  }
-}
-@media all and (min-width: 45em){
-  .tab-content{
-    line-height: 10em;
-    .text{
-      display: inherit;
-      margin-left: .5em;
-    }
-  }
-}
-#wallet-title-section{
-  width: inherit;
-}
 </style>
