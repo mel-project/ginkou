@@ -9,10 +9,6 @@ interface Setting {
 
 
 
-const get_store = (name: string): string => {
-    return name
-}
-
 
 
 /**
@@ -24,6 +20,18 @@ const get_store = (name: string): string => {
 
 export let setting: Setting;
 export let value: any = get_store(setting.name);
+
+
+
+const get_store = (name: string): string => {
+    return name
+}
+
+const default_update = (ev) => {
+    value = ev.target.value
+    console.log(ev.target.value)
+}
+
 </script>
 
 <template>  
@@ -42,7 +50,7 @@ export let value: any = get_store(setting.name);
     {:else}
         <!-- !! bind input to value; event binding onchange? -->
         <!-- !! whats this error -->
-       <input name={setting.name} type="text" bind:value> 
+       <input name={setting.name} type={setting.type} {value} on:input={default_update}> 
     {/if}
 
 </template>
