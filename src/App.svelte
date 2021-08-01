@@ -47,7 +47,7 @@
   const settings = getContext("settings")
 
   settings.subscribe((i)=>{
-    console.log(i)
+    // console.log(i)
   })
 
   // Active tab in UI
