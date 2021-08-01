@@ -14,27 +14,24 @@ export let setting_types;
 let settings_context = getContext("settings") // load default settings
 $settings_context = JSON.parse(localStorage.getItem("settings") ||'{}') // override defaults with local storage
 
-// let settings = $settings
-// console.log(settings)
-// commit changes to localStorage
-// settings.subscribe((change)=>{
-//   // iterate over all entries in the new state
-//   Object.entries(change).map((item)=>{
-//     let name = item[0]
-//     let value = item[1]
-//     $settings[name] = value
-//     // save settings to localstorage
-//     localStorage.setItem("settings", JSON.stringify($settings))
-//   })
-//   console.log($settings)
-// })
+//commit changes to localStorage
+settings_context.subscribe((change)=>{
+  // iterate over all entries in the new state
+  Object.entries(change).map((item)=>{
+    let name = item[0]
+    let value = item[1]
+    // save settings to localstorage
+    localStorage.setItem("settings", JSON.stringify($settings_context))
+  })
+  console.log($settings_context)
+})
 
 </script>
 
 <template>
   {#if $current_wallet || true}
     {#each setting_types as setting}
-      <!-- <input type="text" bind:value={$settings[setting.name]} >  -->
+      <Setting type="text" bind:setting={setting} bind:value={$settings_context[setting.name]} ></Setting>
       <br/>
      {/each}
   {/if}
