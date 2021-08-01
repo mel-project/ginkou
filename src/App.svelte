@@ -36,19 +36,12 @@
 
   const setting_types= [
     {name: "network", type: "select", options: {test: "test", main: "main"}},
-    {name: "theme", type: "text", value: "dark"},
-    {name: "wallet name", type: "text", value: current_wallet}
   ] 
-  const defaults = {network: "test", notreal:"setting"}
-  // create settings state object
+  const defaults = {network: "test"}
 
-
+  // create settings state object with default values
   setContext("settings", writable(defaults))
-  const settings = getContext("settings")
-
-  settings.subscribe((i)=>{
-    // console.log(i)
-  })
+  
 
   // Active tab in UI
   let active_tab = "Settings";
@@ -90,11 +83,9 @@
 </script>
 
 <main>
-  <Modal class="modal">
-    <div class="container">
+  <Modal>
       <Settings setting_types={setting_types}
       ></Settings>
-    </div>
   </Modal>
   <div class="top-bar">
     <!--<TopAppBar
@@ -185,7 +176,4 @@
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
 
-.modal > .container{
-  background: white;
-}
 </style>

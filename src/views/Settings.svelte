@@ -29,10 +29,23 @@ settings_context.subscribe((change)=>{
 </script>
 
 <template>
-  {#if $current_wallet || true}
-    {#each setting_types as setting}
-      <Setting bind:setting={setting} bind:value={$settings_context[setting.name]} ></Setting>
-      <br/>
-     {/each}
-  {/if}
+  <div class="settings-menu">
+    {#if $current_wallet || true}
+      {#each setting_types as setting}
+        <div class="setting">
+          <Setting bind:setting={setting} bind:value={$settings_context[setting.name]} ></Setting>
+        </div>
+        <br/>
+      {/each}
+    {/if}
+  </div>
+  
 </template>
+
+
+<style lang="scss">
+  .settings-menu {
+    background: white;
+    height: 100%;
+  }
+</style>
