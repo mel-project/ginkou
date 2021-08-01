@@ -44,7 +44,11 @@
 
 
   setContext("settings", writable(defaults))
+  const settings = getContext("settings")
 
+  settings.subscribe((i)=>{
+    console.log(i)
+  })
 
   // Active tab in UI
   let active_tab = "Settings";
