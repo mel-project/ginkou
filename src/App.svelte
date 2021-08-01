@@ -1,7 +1,7 @@
 <script lang="typescript">
   import type { WalletSummary } from "./utils";
   import { list_wallets, get_priv_key } from "./utils";
-  import {setContext} from 'svelte'
+  import {setContext, getContext} from 'svelte'
   import {writable} from 'svelte/store'
 
   import { Row, Section, Title } from "@smui/top-app-bar";
@@ -34,15 +34,18 @@
   // change this cuz wtf
   const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
 
-  const settings = [
+  const setting_types= [
     {name: "network", type: "select", options: {test: "test", main: "main"}},
     {name: "theme", type: "text", value: "dark"},
     {name: "wallet name", type: "text", value: current_wallet}
   ] 
   const defaults = {network: "test", notreal:"setting"}
   // create settings state object
+
+
   setContext("settings", writable(defaults))
-  
+
+
   // Active tab in UI
   let active_tab = "Settings";
   // Indicates whether the side nav bar is active
@@ -85,7 +88,8 @@
 <main>
   <Modal class="modal">
     <div class="container">
-      <Settings></Settings>
+      <Settings setting_types={setting_types}
+      ></Settings>
     </div>
   </Modal>
   <div class="top-bar">
@@ -156,7 +160,6 @@
     <div class="view-box">
       <svelte:component this={tab_components[active_tab]}
         on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} 
-        settings={settings}
       />
     </div>
   </div>
