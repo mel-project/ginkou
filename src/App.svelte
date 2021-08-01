@@ -39,9 +39,9 @@
     {name: "theme", type: "text", value: "dark"},
     {name: "wallet name", type: "text", value: current_wallet}
   ] 
-
+  const defaults = {network: "test", notreal:"setting"}
   // create settings state object
-  setContext("settings", writable(settings));
+  setContext("settings", writable(defaults))
   
   // Active tab in UI
   let active_tab = "Settings";
@@ -85,7 +85,7 @@
 <main>
   <Modal class="modal">
     <div class="container">
-      <Settings settings={settings}></Settings>
+      <Settings></Settings>
     </div>
   </Modal>
   <div class="top-bar">

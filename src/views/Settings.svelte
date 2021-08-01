@@ -6,18 +6,20 @@ import Button from "@smui/button";
 import { encrypt } from "../crypto";
 import { get_store_value } from "svelte/internal";
 import Setting from "@/components/Setting.svelte";
+import {getContext} from 'svelte';
 
 //! assume it's possible to send an object as params
-export let settings;
+let settings = getContext("settings")
+console.log(settings)
+// let value = settings[setting.name]
 
 
 </script>
 
 <template>
   {#if $current_wallet || true}
-    {#each settings as setting}
-      <Setting bind:setting>
-      </Setting>
+    {#each Object.entries($settings) as setting}
+      {setting}
      {/each}
   {/if}
 </template>
