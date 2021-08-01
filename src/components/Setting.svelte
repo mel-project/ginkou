@@ -19,17 +19,10 @@ interface Setting {
 //!!need debug channels
 
 export let setting: Setting;
-export let value: any = get_store(setting.name);
+export let value: any;
 
-
-
-const get_store = (name: string): string => {
-    return name
-}
-
-const default_update = (ev) => {
+const default_update = (ev: any) => {
     value = ev.target.value
-    console.log(ev.target.value)
 }
 
 </script>
@@ -38,7 +31,7 @@ const default_update = (ev) => {
     <!-- {Object.keys(setting)} -->
     <label for={setting.name}>{setting.name}</label>
     {#if setting.type == "select"}
-        <!-- {Object.keys(setting)} -->
+        <!-- {assume setting is type Select -->
         <select name={setting.name} id="" bind:value>
             {#each Object.entries(setting.options) as option}
                 <option value="{option[1]}">
