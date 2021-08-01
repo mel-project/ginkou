@@ -1,6 +1,8 @@
 <script lang="typescript">
   import type { WalletSummary } from "./utils";
   import { list_wallets, get_priv_key } from "./utils";
+  import {setContext} from 'svelte'
+  import {writable} from 'svelte/store'
 
   import { Row, Section, Title } from "@smui/top-app-bar";
   //import Banner from '@smui/banner';
@@ -22,6 +24,7 @@
   import SettingsIcon from './res/icons/settings.svg';
   import Modal from "./components/Modal.svelte";
 
+
   export let name;
 
 
@@ -37,6 +40,8 @@
     {name: "wallet name", type: "text", value: current_wallet}
   ] 
 
+  // create settings state object
+  setContext("settings", writable(settings));
   
   // Active tab in UI
   let active_tab = "Settings";
@@ -172,4 +177,8 @@
 <style type="text/scss">
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
+
+.modal > .container{
+  background: white;
+}
 </style>
