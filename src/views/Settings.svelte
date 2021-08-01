@@ -31,7 +31,7 @@ settings_context.subscribe((change)=>{
 <template>
   {#if $current_wallet || true}
     {#each setting_types as setting}
-      <Setting type="text" bind:setting={setting} bind:value={$settings_context[setting.name]} ></Setting>
+      <Setting bind:setting={setting} bind:value={$settings_context[setting.name]} ></Setting>
       <br/>
      {/each}
   {/if}
