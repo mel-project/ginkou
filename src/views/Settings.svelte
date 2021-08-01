@@ -14,14 +14,25 @@ export let setting_types;
 //! assume it's possible to send an object as params
 let settings = getContext("settings")
 
-const a = (settings)=>settings.network = "helloworld"
-a($settings)
+console.log(settings)
+
+$settings = JSON.parse(localStorage.getItem("settings") ||'{}') // override defaults with local storage
+
+settings.subscribe((change)=>{
+  let p_settings = localStorage.getItem("settings") || {}
+  console.log(p_settings)
+  Object.entries(change).map((item)=>{
+    let name = item[0]
+    let value = item[1]
+    settings[name] = value
+    localStorage.setItem("settings", JSON.stringify(settings))
+  })
+})
 
 </script>
 
 <template>
   {#if $current_wallet || true}
-    {Object.values($settings)}
     {#each setting_types as setting}
       <input type="text" bind:value={$settings[setting.name]} >
       <br/>
