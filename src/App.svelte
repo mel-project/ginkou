@@ -92,6 +92,8 @@
         ></Settings>
     </Modal>
   {/if}
+  <input type="button" class="open-settings"
+    on:click={()=>modal_view=true} value="Settings">
   <div class="top-bar">
     <!--<TopAppBar
             variant="static">-->
@@ -181,4 +183,9 @@
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
 
+.open-settings{
+  position: absolute;
+  bottom: 3em;
+  right: 3em;
+}
 </style>
