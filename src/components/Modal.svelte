@@ -1,18 +1,22 @@
 <script type="text/javascript">
+    import { createEventDispatcher } from "svelte";
 
+    const dispatch = createEventDispatcher();
 
-    const close = () => {}
-
+    const close = () => {
+        console.log('closing',dispatch)
+        dispatch('closeModal')
+    };
 </script>
-    
+
 <template lang="pug">
-    div(class="modal")
+    div(class="modal" on:click|self!="{close}")
         .content
             slot(close!="{close}")
 </template>
 
 <style lang="scss">
-    .modal{
+    .modal {
         position: absolute;
         z-index: 100;
         background-color: #44444444;
@@ -21,12 +25,10 @@
         display: grid;
         align-content: center;
         justify-content: center;
-        &>.content {
+        & > .content {
             width: 80vw;
-            height:80vh;
+            height: 80vh;
             position: relative;
-
         }
     }
 </style>
-    

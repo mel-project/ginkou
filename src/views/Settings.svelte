@@ -6,6 +6,7 @@ import Button from "@smui/button";
 import { encrypt } from "../crypto";
 import { get_store_value } from "svelte/internal";
 import Setting from "@/components/Setting.svelte";
+
 import {getContext} from 'svelte';
 
 
@@ -13,16 +14,9 @@ export let setting_types;
 
 let settings_context = getContext("settings") // load default settings
 $settings_context = JSON.parse(localStorage.getItem("settings") ||'{}') // override defaults with local storage
-
 //commit changes to localStorage
-settings_context.subscribe((change)=>{
-  // iterate over all entries in the new state
-  Object.entries(change).map((item)=>{
-    let name = item[0]
-    let value = item[1]
-    // save settings to localstorage
-    localStorage.setItem("settings", JSON.stringify($settings_context))
-  })
+settings_context.subscribe(()=>{
+  localStorage.setItem("settings", JSON.stringify($settings_context))
   console.log($settings_context)
 })
 
@@ -30,7 +24,7 @@ settings_context.subscribe((change)=>{
 
 <template>
   <div class="settings-menu">
-    <h1>Settings</h1>
+    <h3>Settings</h3>
     <div class="settings-list">
       {#if $current_wallet || true}
         {#each setting_types as setting}
@@ -53,13 +47,16 @@ settings_context.subscribe((change)=>{
     background: white;
     height: 100%;
     flex-direction: column;
+    padding: 2em;
+
   }
-  h1{
+  h3{
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: left;
   }
-  .setting{
+  .settings-list{
+    padding-left: 5em;
   }
 
 </style>

@@ -36,15 +36,18 @@
 
   const setting_types= [
     {name: "network", type: "select", options: {test: "test", main: "main"}},
+    {name: "network2", type: "select", options: {test: "test", main: "main"}},
+    {name: "network3", type: "select", options: {test: "test", main: "main"}},
+    {name: "network4", type: "select", options: {test: "test", main: "main"}},
   ] 
   const defaults = {network: "test"}
 
   // create settings state object with default values
   setContext("settings", writable(defaults))
   
-
+  let modal_view = true;
   // Active tab in UI
-  let active_tab = "Settings";
+  let active_tab = "Transactions";
   // Indicates whether the side nav bar is active
   let wallet_menu_is_active = false;
   // Indicates whether secret key will be visible
@@ -83,10 +86,12 @@
 </script>
 
 <main>
-  <Modal>
-      <Settings setting_types={setting_types}
-      ></Settings>
-  </Modal>
+  {#if modal_view}
+    <Modal on:closeModal="{()=>{modal_view=false}}">
+        <Settings setting_types={setting_types}
+        ></Settings>
+    </Modal>
+  {/if}
   <div class="top-bar">
     <!--<TopAppBar
             variant="static">-->
