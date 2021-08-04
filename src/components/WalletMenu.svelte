@@ -2,8 +2,7 @@
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import List, { Item, Text } from "@smui/list";
   import { wallet_summaries } from "@/store";  
-  import { settings } from "@/store";
-  $: ({current_wallet} = settings)
+  import {_settings as settings} from "@/store";
   import { new_wallet } from "@/utils";
   import WalletMenuItem from "@/components/WalletMenuItem.svelte";
   import Button, { Label, Icon } from "@smui/button";
@@ -42,11 +41,11 @@
     <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>
         <Text>{wlt}</Text>
       </Item> -->
-    <div class="menu-item" on:click={() => ($current_wallet = wlt)}>
+    <div class="menu-item" on:click={() => ($settings.current_wallet = wlt)}>
       <WalletMenuItem
         name={wlt}
         wallet={wlt_content}
-        selected={wlt === $current_wallet}
+        selected={wlt === $settings.current_wallet}
       />
     </div>
   {/each}
