@@ -1,7 +1,7 @@
 <script lang="typescript">
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import List, { Item, Text } from "@smui/list";
-  import { wallet_summaries } from "@/store";  
+  import { wallet_summaries } from "@/store";
   import {_settings as settings} from "@/store";
   import { new_wallet } from "@/utils";
   import WalletMenuItem from "@/components/WalletMenuItem.svelte";
