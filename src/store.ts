@@ -5,8 +5,17 @@ import JSONbig from "json-bigint";
 
 
 // settings 
-export const _settings: Writable<{[key: string]: string} | null> = writable(null, (set) =>{
-  set(JSONbig.parse(localStorage.getItem('_settings')) || {});
+export const _settings: Writable<{[key: string]: string} | null> = writable({}, (set) =>{
+  const persistant_settings = localStorage.getItem('_settings');
+
+  if(persistant_settings){
+    set(JSONbig.parse(persistant_settings));
+  }
+  else{
+    const default_settings = {network: "main"};
+    set(default_settings);
+  }
+  
 });
 
 _settings.subscribe((value)=>{
@@ -18,29 +27,34 @@ _settings.subscribe((value)=>{
 // create read only interface for _settings
 export const settings = (() => {
 
+  let read_only_settings: {[key: string]: Readable<string>} = {};
+  // create inital map from Object<string> to Object<Readable<String>>
+  // call immediately after to unsubscribe
+  const do_once_and_unsubscribe = _settings.subscribe(($settings)=>{
+    // map _setting entries to readables
+    Object.entries($settings).map((s: any) => {
+      const setting_name = s[0]
+      const setting_value = s[1]
+      read_only_settings[setting_name] = readable(setting_value, watchSetting(_settings, setting_name))
+    })
+  });
+  do_once_and_unsubscribe()
+  
   // subscribe to changes in _settings and alter this readable from within
-  function watchSetting(store: Writable<{[key: string]: string} | null>,name: string){
+  function watchSetting(store: Writable<{[key: string]: string} | null>,field_name: string){
     return (set: any)=>{
-      store.subscribe(($value: {[key: string]: string} | null)=>{
+      store.subscribe(($store_value: {[key: string]: string} | null)=>{
         // if value: readables[name] = $value[name]
         // what is readables?
-        // readables is a mapping from _settings: {string: string} => > {string: Readable<string>} 
-        console.log(name, $value[name])
-        $value && set($value[name])
+        // readables is a mapping from _settings: {string: string} => {string: Readable<string>} 
+        if($store_value){
+          console.log(field_name, $store_value[field_name])
+          set($store_value[field_name])
+        }
       })
     }
   }
-  let r_settings: {[key: string]: Readable<string>} = {};
-  // create inital map from Object<string> to Object<Readable<String>>
-  // call immediately after to unsubscribe
-  (_settings.subscribe(($settings)=>{
-    // map _setting entries to readables
-    Object.entries($settings).map((s: any) => 
-      r_settings[s[0]] = readable(s[1], watchSetting(_settings, s[0])))
-
-  }))();
-
-  return r_settings;
+  return read_only_settings;
 
 
 })();
