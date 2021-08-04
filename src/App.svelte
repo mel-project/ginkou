@@ -15,7 +15,8 @@
   import Transactions from "./views/Transactions.svelte";
   import Settings from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { current_wallet } from "./store";
+  import { settings } from "./store";
+  $: ({current_wallet} = settings)
 
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from './res/icons/transactions.svg';
@@ -27,7 +28,6 @@
 
   export let name;
 
-
   const tabs = ["Transactions", "Send", "Receive"]
   const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon}
 
@@ -38,7 +38,7 @@
     {name: "network", type: "select", options: {test: "test", main: "main"}},
     {name: "network2", type: "select", options: {test: "test", main: "main"}},
     {name: "network3", type: "select", options: {test: "test", main: "main"}},
-    {name: "current_wallet_name", type: "input", options: {test: "test", main: "main"}},
+    {name: "current_wallet", type: "input", options: {test: "test", main: "main"}},
   ] 
   const defaults = {network: "test"}
   

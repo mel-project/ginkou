@@ -1,12 +1,9 @@
 <script type="text/javascript">
 
-import { list_wallets, get_priv_key } from "@/utils";
-import { current_wallet } from "@/store";
-import Button from "@smui/button";
-import { encrypt } from "../crypto";
-import { get_store_value } from "svelte/internal";
 import Setting from "@/components/Setting.svelte";
 import {_settings as settings} from '@/store'
+
+$: ({current_wallet} = settings)
 
 
 export let setting_types;

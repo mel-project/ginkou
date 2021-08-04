@@ -1,7 +1,9 @@
 <script lang="typescript">
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import List, { Item, Text } from "@smui/list";
-  import { current_wallet, wallet_summaries } from "@/store";
+  import { wallet_summaries } from "@/store";  
+  import { settings } from "@/store";
+  $: ({current_wallet} = settings)
   import { new_wallet } from "@/utils";
   import WalletMenuItem from "@/components/WalletMenuItem.svelte";
   import Button, { Label, Icon } from "@smui/button";

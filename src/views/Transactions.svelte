@@ -6,7 +6,9 @@
   import type { CoinData, Transaction } from "../utils";
   import { createEventDispatcher } from "svelte";
   import TransactionSummary from "../components/TransactionSummary.svelte";
-  import { current_wallet_dump } from "../store";
+  import { settings } from "../store";
+  $: ({current_wallet_dump} = settings)
+
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
