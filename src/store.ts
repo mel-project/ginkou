@@ -1,6 +1,6 @@
 import { derived, readable, Readable, Writable, writable } from "svelte/store";
 import { list_wallets, WalletSummary, WalletDump, wallet_dump } from "./utils";
-
+import JSONbig from "json-bigint";
 // Currently selected wallet. Persists to LocalStorage.
 export const current_wallet: Writable<string | null> = writable(
   localStorage.getItem("current_wallet_name") || null
@@ -55,3 +55,14 @@ export const wallet_summaries: Readable<{
   refresh();
   return () => clearInterval(interval);
 });
+
+
+// settings 
+export const settings: Writable<string | null> = writable(null, (set) =>{
+  set(JSONbig.parse(localStorage.getItem('settings')) || {});
+});
+
+settings.subscribe((value)=>{
+  localStorage.setItem("settings", JSONbig.stringify(value))
+  console.log(value)
+})

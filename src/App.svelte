@@ -34,11 +34,11 @@
   // change this cuz wtf
   const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
 
-  const setting_types= [
+  const setting_types = [
     {name: "network", type: "select", options: {test: "test", main: "main"}},
     {name: "network2", type: "select", options: {test: "test", main: "main"}},
     {name: "network3", type: "select", options: {test: "test", main: "main"}},
-    {name: "network4", type: "select", options: {test: "test", main: "main"}},
+    {name: "network4", type: "input", options: {test: "test", main: "main"}},
   ] 
   const defaults = {network: "test"}
 
