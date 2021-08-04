@@ -38,12 +38,9 @@
     {name: "network", type: "select", options: {test: "test", main: "main"}},
     {name: "network2", type: "select", options: {test: "test", main: "main"}},
     {name: "network3", type: "select", options: {test: "test", main: "main"}},
-    {name: "network4", type: "input", options: {test: "test", main: "main"}},
+    {name: "current_wallet_name", type: "input", options: {test: "test", main: "main"}},
   ] 
   const defaults = {network: "test"}
-
-  // create settings state object with default values
-  setContext("settings", writable(defaults))
   
   let modal_view = true;
   // Active tab in UI
