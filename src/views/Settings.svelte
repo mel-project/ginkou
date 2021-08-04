@@ -6,8 +6,7 @@ import Button from "@smui/button";
 import { encrypt } from "../crypto";
 import { get_store_value } from "svelte/internal";
 import Setting from "@/components/Setting.svelte";
-import {settings} from '@/store'
-import {getContext} from 'svelte';
+import {_settings as settings} from '@/store'
 
 
 export let setting_types;
