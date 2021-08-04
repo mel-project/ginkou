@@ -9,7 +9,7 @@
   import Textfield from "@smui/textfield";
   import HelperText from "@smui/textfield/helper-text/index";
 
-  let add_new_open = false;
+  let add_new_open = false; 
   let new_name = "";
   let new_password = "";
   let new_testnet = false;
