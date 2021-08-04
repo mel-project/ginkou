@@ -5,8 +5,9 @@
   import BigNumber from "bignumber.js";
   import LayoutGrid, { Cell } from "@smui/layout-grid";
   import { xlink_attr } from "svelte/internal";
-  import { current_wallet, current_wallet_dump } from "../store";
-
+  import {current_wallet_dump } from "../store";
+  import { settings } from "@/store";
+  $: ({current_wallet} = settings)
   // Transaction to display
   export let tx: Transaction;
   export let txhash: string;

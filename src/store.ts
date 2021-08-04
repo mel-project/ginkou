@@ -25,6 +25,7 @@ export const settings = (() => {
         // if value: readables[name] = $value[name]
         // what is readables?
         // readables is a mapping from _settings: {string: string} => > {string: Readable<string>} 
+        console.log(name, $value[name])
         $value && set($value[name])
       })
     }
@@ -93,5 +94,5 @@ export const wallet_summaries: Readable<{
 });
 
 
-settings.subscribe((v)=>{})
+// settings.subscribe((v)=>{})
 _settings.subscribe((v)=>{})

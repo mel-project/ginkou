@@ -6,7 +6,9 @@
   import { get_wallet } from "@/storage";
   import Textfield from "@smui/textfield";
   import Button, { Label } from "@smui/button";
-  import { current_wallet, current_wallet_dump } from "@/store";
+  import { settings } from "@/store";
+  $: ({current_wallet, current_wallet_dump} = settings)
+
   import BigNumber from "bignumber.js";
 
   // export let active_wallet: string | null;
