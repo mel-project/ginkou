@@ -1,7 +1,7 @@
 <script type="text/javascript">
 
 import Setting from "@/components/Setting.svelte";
-import {_settings as settings} from '@/store'
+import {writable_settings as settings} from '@/store'
 
 $: ({current_wallet} = settings)
 

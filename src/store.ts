@@ -5,8 +5,8 @@ import JSONbig from "json-bigint";
 
 
 // settings 
-export const _settings: Writable<{[key: string]: string} | null> = writable({}, (set) =>{
-  const persistant_settings = localStorage.getItem('_settings');
+export const writable_settings: Writable<{[key: string]: string} | null> = writable({}, (set) =>{
+  const persistant_settings = localStorage.getItem('writable_settings');
 
   if(persistant_settings){
     set(JSONbig.parse(persistant_settings));
@@ -18,8 +18,8 @@ export const _settings: Writable<{[key: string]: string} | null> = writable({}, 
   
 });
 
-_settings.subscribe((value)=>{
-  localStorage.setItem("_settings", JSONbig.stringify(value))
+writable_settings.subscribe((value)=>{
+  localStorage.setItem("writable_settings", JSONbig.stringify(value))
   console.log(value)
 })
 
@@ -30,26 +30,25 @@ export const settings = (() => {
   let read_only_settings: {[key: string]: Readable<string>} = {};
   // create inital map from Object<string> to Object<Readable<String>>
   // call immediately after to unsubscribe
-  const do_once_and_unsubscribe = _settings.subscribe(($settings)=>{
+  const do_once_and_unsubscribe = writable_settings.subscribe(($settings)=>{
     // map _setting entries to readables
     Object.entries($settings).map((s: any) => {
       const setting_name = s[0]
       const setting_value = s[1]
-      read_only_settings[setting_name] = readable(setting_value, watchSetting(_settings, setting_name))
+      read_only_settings[setting_name] = readable(setting_value, watchSetting(setting_name))
     })
   });
   do_once_and_unsubscribe()
   
-  // subscribe to changes in _settings and alter this readable from within
-  function watchSetting(store: Writable<{[key: string]: string} | null>,field_name: string){
+  // subscribe to changes in writable_settings and alter this readable from within
+  function watchSetting(field_name: string){
     return (set: any)=>{
-      store.subscribe(($store_value: {[key: string]: string} | null)=>{
-        // if value: readables[name] = $value[name]
+      writable_settings.subscribe(($setting: {[key: string]: string} | null)=>{
+        // if store_value: readables[name] = $store_value[name]
         // what is readables?
-        // readables is a mapping from _settings: {string: string} => {string: Readable<string>} 
-        if($store_value){
-          console.log(field_name, $store_value[field_name])
-          set($store_value[field_name])
+        // readables is a mapping from writable_settings: {string: string} => {string: Readable<string>} 
+        if($setting){
+          set($setting[field_name])
         }
       })
     }
@@ -109,4 +108,3 @@ export const wallet_summaries: Readable<{
 
 
 // settings.subscribe((v)=>{})
-_settings.subscribe((v)=>{})
