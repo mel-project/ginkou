@@ -1,17 +1,53 @@
 import { derived, readable, Readable, Writable, writable } from "svelte/store";
 import { list_wallets, WalletSummary, WalletDump, wallet_dump } from "./utils";
 import JSONbig from "json-bigint";
-// Currently selected wallet. Persists to LocalStorage.
-export const current_wallet: Writable<string | null> = writable(
-  localStorage.getItem("current_wallet_name") || null
-);
-current_wallet.subscribe(
-  (val) => val && localStorage.setItem("current_wallet_name", val)
-);
+
+
+
+// settings 
+export const _settings: Writable<{[key: string]: string} | null> = writable(null, (set) =>{
+  set(JSONbig.parse(localStorage.getItem('_settings')) || {});
+});
+
+_settings.subscribe((value)=>{
+  localStorage.setItem("_settings", JSONbig.stringify(value))
+  console.log(value)
+})
+
+
+// create read only interface for _settings
+export const settings = (() => {
+
+  // subscribe to changes in _settings and alter this readable from within
+  function watchSetting(store: Writable<{[key: string]: string} | null>,name: string){
+    return (set: any)=>{
+      store.subscribe(($value: {[key: string]: string} | null)=>{
+        // if value: readables[name] = $value[name]
+        // what is readables?
+        // readables is a mapping from _settings: {string: string} => > {string: Readable<string>} 
+        $value && set($value[name])
+      })
+    }
+  }
+  let r_settings: {[key: string]: Readable<string>} = {};
+  // create inital map from Object<string> to Object<Readable<String>>
+  // call immediately after to unsubscribe
+  (_settings.subscribe(($settings)=>{
+    // map _setting entries to readables
+    Object.entries($settings).map((s: any) => 
+      r_settings[s[0]] = readable(s[1], watchSetting(_settings, s[0])))
+
+  }))();
+
+  return r_settings;
+
+
+})();
+
 
 // Current wallet dump. Automatically talks to the daemon.
 export const current_wallet_dump: Readable<WalletDump | null> = derived(
-  current_wallet,
+  settings.current_wallet,
   ($name, set: (a0: any) => void) => {
     console.log("ENTERING");
     if ($name == null) {
@@ -57,33 +93,5 @@ export const wallet_summaries: Readable<{
 });
 
 
-// settings 
-
-export const _settings: Writable<{[key: string]: string} | null> = writable(null, (set) =>{
-  set(JSONbig.parse(localStorage.getItem('_settings')) || {});
-});
-
-_settings.subscribe((value)=>{
-  localStorage.setItem("_settings", JSONbig.stringify(value))
-  console.log(value)
-})
-
-export const settings = readable({}, (set) => {
-  // create inital map from Object<string> to Object<Readable<String>>
-  // call immediately after to unsubscribe
-  (_settings.subscribe(($settings)=>{
-    let r_settings: {[key: string]: Readable<string>} = {};
-    Object.entries($settings).map((s: any) => r_settings[s[0]] = readable(s[1], ()=>{}))
-    set(r_settings)
-  }))();
-  const unsub = _settings.subscribe(($settings) => {
-    
-  })
-  return ()=>{
-    unsub()
-  }
-
-
-});
-
-settings.subscribe((v)=>{console.log(v)})
+settings.subscribe((v)=>{})
+_settings.subscribe((v)=>{})
