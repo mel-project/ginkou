@@ -58,11 +58,32 @@ export const wallet_summaries: Readable<{
 
 
 // settings 
-export const settings: Writable<string | null> = writable(null, (set) =>{
-  set(JSONbig.parse(localStorage.getItem('settings')) || {});
+
+export const _settings: Writable<{[key: string]: string} | null> = writable(null, (set) =>{
+  set(JSONbig.parse(localStorage.getItem('_settings')) || {});
 });
 
-settings.subscribe((value)=>{
-  localStorage.setItem("settings", JSONbig.stringify(value))
+_settings.subscribe((value)=>{
+  localStorage.setItem("_settings", JSONbig.stringify(value))
   console.log(value)
 })
+
+export const settings = readable({}, (set) => {
+  // create inital map from Object<string> to Object<Readable<String>>
+  // call immediately after to unsubscribe
+  (_settings.subscribe(($settings)=>{
+    let r_settings: {[key: string]: Readable<string>} = {};
+    Object.entries($settings).map((s: any) => r_settings[s[0]] = readable(s[1], ()=>{}))
+    set(r_settings)
+  }))();
+  const unsub = _settings.subscribe(($settings) => {
+    
+  })
+  return ()=>{
+    unsub()
+  }
+
+
+});
+
+settings.subscribe((v)=>{console.log(v)})
