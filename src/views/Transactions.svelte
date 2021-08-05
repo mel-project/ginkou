@@ -6,8 +6,7 @@
   import type { CoinData, Transaction } from "../utils";
   import { createEventDispatcher } from "svelte";
   import TransactionSummary from "../components/TransactionSummary.svelte";
-  import { settings } from "../store";
-  $: ({current_wallet_dump} = settings)
+  import { settings, current_wallet_dump } from "../store";
 
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
@@ -55,6 +54,7 @@
       txhash={selected_tx[0]}
       tx={selected_tx[1]}
       height={selected_tx[2]}
+      current_wallet_dump={$current_wallet_dump}
     />
   {/if}
   <Actions>
