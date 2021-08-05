@@ -58,9 +58,8 @@ export const settings = (() => {
 
 })();
 
-
 // Current wallet dump. Automatically talks to the daemon.
-export const current_wallet_dump: Readable<WalletDump | null> = derived(
+export const current_wallet_dump = derived(
   settings.current_wallet,
   ($name, set: (a0: any) => void) => {
     console.log("ENTERING");

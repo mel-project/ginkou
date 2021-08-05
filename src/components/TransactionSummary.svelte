@@ -5,13 +5,11 @@
   import BigNumber from "bignumber.js";
   import LayoutGrid, { Cell } from "@smui/layout-grid";
   import { xlink_attr } from "svelte/internal";
-  import {current_wallet_dump } from "../store";
-  import { settings } from "@/store";
-  $: ({current_wallet} = settings)
   // Transaction to display
   export let tx: Transaction;
   export let txhash: string;
   export let height: number | null;
+  export let current_wallet_dump: any;
 
   const total_output: { [key: string]: BigNumber } = (() => {
     let toret: { [key: string]: BigNumber } = {};
@@ -28,7 +26,7 @@
   const table_val_style: string =
     "color: black; overflow: hidden; text-overflow:ellipsis";
   const melscan_url = () =>
-    $current_wallet_dump && $current_wallet_dump.summary.network == 0x01
+    current_wallet_dump && current_wallet_dump.summary.network == 0x01
       ? "https://scan-testnet.themelio.org"
       : "https://scan.themelio.org";
 </script>
