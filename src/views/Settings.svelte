@@ -24,7 +24,7 @@
     <div class="settings-list">
       {#if $current_wallet || true}
         {#each setting_types as setting}
-          {#if setting.type != "hidden"}
+          {#if setting.visible != false}
             <div class="setting">
               <Setting
                 bind:setting
