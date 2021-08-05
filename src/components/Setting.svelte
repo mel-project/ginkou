@@ -1,4 +1,5 @@
 <script type="text/typescript">
+    import { onMount } from "svelte";
     interface Setting {
         name: string;
         type: string;
@@ -14,9 +15,6 @@
     export let setting: Setting;
     export let value: any;
 
-    const default_update = (ev: any) => {
-        value = ev.target.value;
-    };
 </script>
 
 <template>
@@ -31,6 +29,13 @@
                 </option>
             {/each}
         </select>
+    {:else if setting.type == "checkbox"}
+        <input
+            name={setting.name}
+            type={setting.type}
+            checked={value}
+            on:change={(event) => (value = event.target.checked)}
+        />
     {:else}
         <!-- !! bind input to value; event binding onchange? -->
         <!-- !! whats this error -->
@@ -38,7 +43,7 @@
             name={setting.name}
             type={setting.type}
             {value}
-            on:input={default_update}
+            on:input={(event) => (value = event.target.value)}
         />
     {/if}
 </template>
