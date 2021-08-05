@@ -20,7 +20,6 @@ export const writable_settings: Writable<{[key: string]: string} | null> = writa
 
 writable_settings.subscribe((value)=>{
   localStorage.setItem("writable_settings", JSONbig.stringify(value))
-  console.log(value)
 })
 
 
