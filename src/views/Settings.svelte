@@ -8,6 +8,17 @@ $: ({current_wallet} = settings)
 
 export let setting_types;
 
+const flatten = (settings, dependencies) => {
+  // console.log(settings,dependencies)
+  return !Object.entries(dependencies).reduce((reduced, dep)=>{
+
+    const dep_name = dep[0];
+    const dep_value = dep[1];
+    console.log(reduced, dep, settings[dep_name])
+
+    return reduced && settings[dep_name] == dep_value;
+  },true)
+}
 </script>
 
 <template>
@@ -17,7 +28,7 @@ export let setting_types;
       {#if $current_wallet || true}
         {#each setting_types as setting}
           <div class="setting">
-            <Setting bind:setting={setting} bind:value={$settings[setting.name]} ></Setting>
+            <Setting bind:setting={setting} bind:value={$settings[setting.name]} disabled={setting.depends && flatten($settings,setting.depends)}></Setting>
           </div>
           <br/>
         {/each}
