@@ -1,8 +1,7 @@
 <script lang="typescript">
   import type { WalletSummary } from "./utils";
   import { list_wallets, get_priv_key } from "./utils";
-  import {setContext, getContext} from 'svelte'
-  import {writable} from 'svelte/store'
+  import {onMount} from 'svelte'
 
   import { Row, Section, Title } from "@smui/top-app-bar";
   //import Banner from '@smui/banner';
@@ -15,8 +14,8 @@
   import Transactions from "./views/Transactions.svelte";
   import Settings from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { settings } from "./store";
-  $: ({current_wallet} = settings)
+  import { settings, writable_settings } from "./store";
+  $: ({current_wallet, default_tab, last_tab, persistent_tabs} = settings)
 
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from './res/icons/transactions.svg';
@@ -36,17 +35,17 @@
 
   const setting_types = [
     {name: "network", type: "select", options: {test: "test", main: "main"}},
-    {name: "network2", type: "select", options: {test: "test", main: "main"}},
     {name: "persistent_tabs", type: "checkbox"},
-    {name: "default_tab" ,type: "select", options: {Transactions: "Transactions", Send: "Send", Recieve: "Recieve"}, depends: {persistent_tabs: false}},
+    {name: "default_tab" ,type: "select", options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, depends: {persistent_tabs: false}},
+    {name: "last_tab", type: "hidden"},
     {name: "current_wallet", type: "input", options: {test: "test", main: "main"}},
-    {name: "shane_wallet", type: "input", depends: {current_wallet: "shane"}},
   ] 
   const defaults = {network: "test"}
   
-  let modal_view = true;
+  // Indicates whether modal is open: true or closed: false
+  let modal_is_active = true;
   // Active tab in UI
-  let active_tab = "Transactions";
+  let active_tab: string;
   // Indicates whether the side nav bar is active
   let wallet_menu_is_active = false;
   // Indicates whether secret key will be visible
@@ -81,18 +80,26 @@
       sent_tx_chan = sent_tx_chan.slice(1);
     }, 5000);
   }
-  
+  onMount(()=>{
+
+    if($persistent_tabs){
+      active_tab = "Transactions"
+    }
+    else{
+      active_tab = $default_tab;
+    }
+  })
 </script>
 
 <main>
-  {#if modal_view}
-    <Modal on:closeModal="{()=>{modal_view=false}}">
+  {#if modal_is_active}
+    <Modal on:closeModal="{()=>{modal_is_active=false}}">
         <Settings setting_types={setting_types}
         ></Settings>
     </Modal>
   {/if}
   <input type="button" class="open-settings"
-    on:click={()=>modal_view=true} value="Settings">
+    on:click={()=>modal_is_active=true} value="Settings">
   <div class="top-bar">
     <!--<TopAppBar
             variant="static">-->
