@@ -1,24 +1,21 @@
 <script type="text/javascript">
+  import Setting from "@/components/Setting.svelte";
+  import { writable_settings as settings } from "@/store";
 
-import Setting from "@/components/Setting.svelte";
-import {writable_settings as settings} from '@/store'
+  $: ({ current_wallet } = settings);
 
-$: ({current_wallet} = settings)
+  export let setting_types;
 
+  const flatten = (settings, dependencies) => {
+    // console.log(settings,dependencies)
+    return !Object.entries(dependencies).reduce((reduced, dep) => {
+      const dep_name = dep[0];
+      const dep_value = dep[1];
+      console.log(reduced, dep, settings[dep_name]);
 
-export let setting_types;
-
-const flatten = (settings, dependencies) => {
-  // console.log(settings,dependencies)
-  return !Object.entries(dependencies).reduce((reduced, dep)=>{
-
-    const dep_name = dep[0];
-    const dep_value = dep[1];
-    console.log(reduced, dep, settings[dep_name])
-
-    return reduced && settings[dep_name] == dep_value;
-  },true)
-}
+      return reduced && settings[dep_name] == dep_value;
+    }, true);
+  };
 </script>
 
 <template>
@@ -27,18 +24,21 @@ const flatten = (settings, dependencies) => {
     <div class="settings-list">
       {#if $current_wallet || true}
         {#each setting_types as setting}
-          <div class="setting">
-            <Setting bind:setting={setting} bind:value={$settings[setting.name]} disabled={setting.depends && flatten($settings,setting.depends)}></Setting>
-          </div>
-          <br/>
+          {#if setting.type != "hidden"}
+            <div class="setting">
+              <Setting
+                bind:setting
+                bind:value={$settings[setting.name]}
+                disabled={setting.depends &&
+                  flatten($settings, setting.depends)}
+              />
+            </div>
+          {/if}
         {/each}
       {/if}
     </div>
-    
   </div>
-  
 </template>
-
 
 <style lang="scss">
   .settings-menu {
@@ -47,15 +47,13 @@ const flatten = (settings, dependencies) => {
     height: 100%;
     flex-direction: column;
     padding: 2em;
-
   }
-  h3{
+  h3 {
     width: 100%;
     display: flex;
     justify-content: left;
   }
-  .settings-list{
+  .settings-list {
     padding-left: 5em;
   }
-
 </style>
