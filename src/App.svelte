@@ -37,7 +37,8 @@
   const setting_types = [
     {name: "network", type: "select", options: {test: "test", main: "main"}},
     {name: "network2", type: "select", options: {test: "test", main: "main"}},
-    {name: "persistent tabs", type: "checkbox", options: {test: "test", main: "main"}},
+    {name: "persistent_tabs", type: "checkbox"},
+    {name: "default_tab" ,type: "select", options: {Transactions: "Transactions", Send: "Send", Recieve: "Recieve"}, depends: {"persistent_tabs": false}},
     {name: "current_wallet", type: "input", options: {test: "test", main: "main"}},
   ] 
   const defaults = {network: "test"}
