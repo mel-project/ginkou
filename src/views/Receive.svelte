@@ -1,7 +1,7 @@
 <script lang="typescript">
   import Button from "@smui/button";
-  import { settings } from "@/store";
-  $: ({current_wallet, current_wallet_dump} = settings)
+  import { settings, current_wallet_dump } from "@/store";
+  $: ({current_wallet} = settings)
 
   import { add_coin } from "@/utils";
   import Snackbar, { Actions, Label } from "@smui/snackbar";
