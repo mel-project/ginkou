@@ -64,6 +64,9 @@ label{
     // color: theme.$primary;
     display: inline;
     padding-right: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 
 }
 .setting{
