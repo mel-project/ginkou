@@ -35,7 +35,7 @@
   const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
 
   const setting_types = [
-    {name: "Network", type: "select", options: {test: "Test", main: "Main"}},
+    {name: "Network", type: "select", options: {Test: "test", Main: "main"}},
     {name: "persistent_tabs", type: "checkbox", visible: false},
     {name: "default_tab" ,label: "Default Tab", type: "select", options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, depends: {}},
     {name: "last_tab", visible: false},
