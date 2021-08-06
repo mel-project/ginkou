@@ -25,10 +25,10 @@
         display: grid;
         align-content: center;
         justify-content: center;
-        & > .content {
-            width: 80vw;
-            height: 80vh;
-            position: relative;
-        }
+        // & > .content {
+        //     width: 80vw;
+        //     height: 80vh;
+        //     position: relative;
+        // }
     }
 </style>
