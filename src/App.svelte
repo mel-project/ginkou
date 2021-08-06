@@ -14,7 +14,7 @@
   import Transactions from "./views/Transactions.svelte";
   import Settings from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { settings, writable_settings } from "./store";
+  import { settings } from "./store";
   $: ({current_wallet, default_tab, last_tab, persistent_tabs} = settings)
 
   import Hamburger from "./components/Hamburger.svelte";
@@ -22,6 +22,7 @@
   import SendIcon from './res/icons/send.svg';
   import RecieveIcon from './res/icons/recieve.svg';
   import SettingsIcon from './res/icons/settings.svg';
+
   import Modal from "./components/Modal.svelte";
 
 
@@ -38,7 +39,6 @@
     {name: "persistent_tabs", type: "checkbox", visible: false},
     {name: "default_tab" ,type: "select", options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, depends: {}},
     {name: "last_tab", visible: false},
-    {name: "current_wallet", type: "input", options: {test: "test", main: "main"}},
   ] 
   const defaults = {network: "test"}
   
@@ -82,7 +82,10 @@
   }
   onMount(()=>{
 
+
     if($persistent_tabs){
+      //TODO implement $last_tab setting
+      // should capture the last visited tab to automatically load that tab on startup
       active_tab = "Transactions"
     }
     else{
@@ -92,17 +95,19 @@
 </script>
 
 <main>
+
   {#if modal_is_active}
     <Modal on:closeModal="{()=>{modal_is_active=false}}">
         <Settings setting_types={setting_types}
         ></Settings>
     </Modal>
   {/if}
-  <input type="button" class="open-settings"
+  <div type="button" class="open-settings"
     on:click={()=>modal_is_active=true} value="Settings">
+    {@html SettingsIcon}
+  </div>
+
   <div class="top-bar">
-    <!--<TopAppBar
-            variant="static">-->
     <Row>
       <Section>
         <div id="wallet-title-section">
@@ -186,12 +191,22 @@
 </svelte:head>
 
 <style type="text/scss">
+@use "./theme/_smui-theme.scss" as theme;
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
 
+
 .open-settings{
+  
   position: absolute;
   bottom: 3em;
   right: 3em;
+  border-radius: 100%;
+  width: 2em;
+  height: 2em;
+  background: theme.$primary;
+  padding: .5em;
+  cursor: pointer;
+  fill: white;
 }
 </style>
