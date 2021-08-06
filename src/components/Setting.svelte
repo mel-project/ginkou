@@ -3,6 +3,7 @@
     interface Setting {
         name: string;
         type: string;
+        label?: string;
     }
 
     /**
@@ -19,7 +20,7 @@
 
 <template>
     <div class="setting">
-        <label for={setting.name}>{setting.name}</label>
+        <label for={setting.name}>{setting.label || setting.name}</label>
         {#if setting.type == "select"}
             <!-- {assume setting is type Select -->
             <select name={setting.name} id="" bind:value {disabled}>
