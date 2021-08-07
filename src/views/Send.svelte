@@ -1,13 +1,14 @@
 <script lang="typescript">
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, getContext } from "svelte";
   import { send_tx, prepare_mel_tx, get_priv_key } from "@/utils";
   import type { WalletSummary, Transaction, CoinData } from "@/utils";
   import { get_wallet } from "@/storage";
   import Textfield from "@smui/textfield";
   import Button, { Label } from "@smui/button";
-  import { settings } from "@/store";
-  $: ({current_wallet, current_wallet_dump} = settings)
+  
+  const {current_wallet} = getContext("settings")
+  const {current_wallet_dump} = getContext("store")
 
   import BigNumber from "bignumber.js";
 

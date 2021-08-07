@@ -3,14 +3,15 @@
   import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
   import Button, { Label } from "@smui/button";
   import { wallet_dump, wallet_dump_default, net_spent } from "../utils";
-  import type { CoinData, Transaction } from "../utils";
-  import { createEventDispatcher } from "svelte";
+  import type { CoinData, Transaction, WalletDump } from "../utils";
+  import { createEventDispatcher, getContext } from "svelte";
   import TransactionSummary from "../components/TransactionSummary.svelte";
-  import { settings, current_wallet_dump } from "../store";
 
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
+
+  const {current_wallet_dump} = getContext("store")
   // Whether a summary window is open
   let summary_open: boolean = false;
   // Transaction to display in a summary window
@@ -28,7 +29,7 @@
     [string, [Transaction, number]][] | null
   > = derived(current_wallet_dump, ($dump) => {
     if ($dump) {
-      let txx = Object.entries($dump.full.tx_confirmed);
+      let txx = Object.entries(($dump as WalletDump).full.tx_confirmed);
       txx.sort((a, b) => a[1][1] - b[1][1]);
       txx.reverse();
       console.log(txx);

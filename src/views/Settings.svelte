@@ -1,10 +1,10 @@
 <script type="text/javascript">
   import Setting from "@/components/Setting.svelte";
-  import { writable_settings as settings } from "@/store";
 
 
   export let setting_types;
-
+  export let writable_settings; 
+  
   const check_matching_dependencies = (settings, dependencies) => {
     // console.log(settings,dependencies)
     return !Object.entries(dependencies).reduce((reduced, dep) => {
@@ -26,9 +26,9 @@
               <div class="setting">
                 <Setting
                   bind:setting
-                  bind:value={$settings[setting.name]}
+                  bind:value={$writable_settings[setting.name]}
                   disabled={setting.depends &&
-                    check_matching_dependencies($settings, setting.depends)}
+                    check_matching_dependencies($writable_settings, setting.depends)}
                 />
               </div>
             {/if}
@@ -41,7 +41,7 @@
 <style lang="scss">
   @use "../theme/_smui-theme.scss" as theme;
   .top{
-    height: 3em;
+    height: 2em;
     width:100%;
     background-color: theme.$primary;
 
