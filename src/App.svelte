@@ -1,7 +1,7 @@
 <script lang="typescript">
   import type { WalletSummary } from "./utils";
   import { list_wallets, get_priv_key } from "./utils";
-  import {onMount} from 'svelte'
+  import {onMount, setContext} from 'svelte'
 
   import { Row, Section, Title } from "@smui/top-app-bar";
   //import Banner from '@smui/banner';
@@ -14,8 +14,7 @@
   import Transactions from "./views/Transactions.svelte";
   import Settings from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { settings } from "./store";
-  $: ({current_wallet, default_tab, last_tab, persistent_tabs} = settings)
+  import { Settings as SettingStore } from "./store";
 
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from './res/icons/transactions.svg';
@@ -35,15 +34,22 @@
   const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
 
   const setting_types = [
-    {name: "Network", type: "select", options: {Test: "test", Main: "main"}},
+    {name: "network", label: "Network", type: "select", options: {Test: "test", Main: "main"}, default: "main"},
     {name: "persistent_tabs", type: "checkbox", visible: false},
-    {name: "default_tab" ,label: "Default Tab", type: "select", options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, depends: {}},
+    {name: "default_tab" ,label: "Default Tab", type: "select", options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, depends: {}, default:"Transactions"},
     {name: "last_tab", visible: false},
+    {name: "current_wallet", visible: false}
   ] 
-  const defaults = {network: "test"}
+
+  const Store = SettingStore(setting_types)
+  const {persistent_tabs, current_wallet, default_tab} = Store.settings
+  const {writable_settings} = Store
+  setContext("settings", Store.settings)
+  setContext("store", Store)
+
   
   // Indicates whether modal is open: true or closed: false
-  let modal_is_active = true;
+  let modal_is_active = false;
   // Active tab in UI
   let active_tab: string;
   // Indicates whether the side nav bar is active
@@ -89,7 +95,8 @@
       active_tab = "Transactions"
     }
     else{
-      active_tab = $default_tab;
+      //TODO implement defaults
+      active_tab = $default_tab || "Receive";
     }
   })
 </script>
@@ -98,7 +105,9 @@
 
   {#if modal_is_active}
     <Modal on:closeModal="{()=>{modal_is_active=false}}">
-        <Settings setting_types={setting_types}
+        <Settings 
+          {setting_types}
+          {writable_settings}
         ></Settings>
     </Modal>
   {/if}

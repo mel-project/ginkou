@@ -40,7 +40,6 @@
                 }
             />
         {:else}
-            <!-- !! bind input to value; event binding onchange? -->
             <!-- !! whats this error -->
             <input
                 name={setting.name}
@@ -50,6 +49,7 @@
                 {disabled}
             />
         {/if}
+        <!-- TODO implement momdel -->
     </div>
     <!-- {Object.keys(setting)} -->
 </template>

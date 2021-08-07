@@ -2,13 +2,15 @@
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import List, { Item, Text } from "@smui/list";
   import { wallet_summaries } from "@/store";
-  import {writable_settings as settings} from "@/store";
   import { new_wallet } from "@/utils";
   import WalletMenuItem from "@/components/WalletMenuItem.svelte";
   import Button, { Label, Icon } from "@smui/button";
   import Textfield from "@smui/textfield";
   import HelperText from "@smui/textfield/helper-text/index";
+  import {getContext} from 'svelte';
 
+  const {writable_settings} = getContext("store")
+  const settings = writable_settings
   let add_new_open = false; 
   let new_name = "";
   let new_password = "";
@@ -41,7 +43,10 @@
     <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>
         <Text>{wlt}</Text>
       </Item> -->
-    <div class="menu-item" on:click={() => ($settings.current_wallet = wlt)}>
+    <div class="menu-item" on:click={() => {
+        $settings.current_wallet = wlt
+      }
+      }>
       <WalletMenuItem
         name={wlt}
         wallet={wlt_content}
