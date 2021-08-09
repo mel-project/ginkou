@@ -5,8 +5,8 @@
   "scripts": {
     "smui-theme-light": "smui-theme compile public/build/smui.css -i src/theme",
     "smui-theme-dark": "smui-theme compile public/build/smui-dark.css -i src/theme/dark",
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "build": "mkdir -p public/build && rollup -c",
+    "dev": "mkdir -p public/build && rollup -c -w",
     "start": "sirv public --no-clear --host",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\",\"types\":[\"mocha\"]}' ./node_modules/.bin/mocha -r ts-node/register ./tests/*.spec.ts"
   },
