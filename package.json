@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "smui-theme-light": "smui-theme compile public/build/smui.css -i src/theme",
-    "smui-theme-dark": "smui-theme compile public/build/smui-dark.css -i src/theme/dark",
+    "smui-theme-light": "mkdir -p public/build && smui-theme compile public/build/smui.css -i src/theme",
+    "smui-theme-dark": "mkdir -p public/build && smui-theme compile public/build/smui-dark.css -i src/theme/dark",
     "build": "mkdir -p public/build && rollup -c",
     "dev": "mkdir -p public/build && rollup -c -w",
     "start": "sirv public --no-clear --host",
