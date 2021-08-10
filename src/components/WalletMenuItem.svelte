@@ -35,9 +35,7 @@
   @use "../theme/_smui-theme.scss" as theme;
 
   .wallet-menu-item {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
+    padding: 10px;
     position: relative;
   }
   .wallet-menu-item-selected {

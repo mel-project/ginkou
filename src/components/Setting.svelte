@@ -1,10 +1,6 @@
 <script type="text/typescript">
     import { onMount } from "svelte";
-    interface Setting {
-        name: string;
-        type: string;
-        label?: string;
-    }
+    import type { Setting } from '@/store';
 
     /**
      * Setting should support at least these variants
@@ -16,11 +12,12 @@
     export let setting: Setting;
     export let value: any;
     export let disabled: boolean;
+    export let name: string | undefined = undefined;
 </script>
 
 <template>
     <div class="setting">
-        <label for={setting.name}>{setting.label || setting.name}</label>
+        <label for={name}>{setting.label || name}</label>
         {#if setting.type == "select"}
             <!-- {assume setting is type Select -->
             <select name={setting.name} id="" bind:value {disabled}>

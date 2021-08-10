@@ -1,10 +1,30 @@
-<script type="text/javascript">
-  import Setting from "@/components/Setting.svelte";
+<script type="text/typescript">
+  import SettingComp from "@/components/Setting.svelte";
+  import type {Settings, Setting} from "@/store";
+  import type { Readable } from "svelte/store";
 
 
-  export let setting_types;
-  export let writable_settings; 
+  interface NamedObject {
+    name: string;
+    setting: {[key: string]: Setting};
+  }
+
+  export let setting_types: Settings<Setting>;
+  export let settings: Settings<Readable<string>>;
+  export let writable_settings: Readable<Settings<string>>;
   
+
+  console.log(settings)
+
+  const NamedEntries = (obj: {[key: string]: Setting}): [NamedObject] => {
+
+    const named_entries = Object.entries(obj).map((entry) => {
+      const name: string = entry[0];
+      const setting:Setting =  entry[1];
+      return {name, setting};
+    })
+    return named_entries as unknown as [NamedObject];
+  }
   const check_matching_dependencies = (settings, dependencies) => {
     // console.log(settings,dependencies)
     return !Object.entries(dependencies).reduce((reduced, dep) => {
@@ -13,6 +33,7 @@
       return reduced && settings[dep_name] == dep_value;
     }, true);
   };
+
 </script>
 
 <template>
@@ -21,12 +42,13 @@
     <div class="container">
       <h3>Settings</h3>
       <div class="settings-list">
-          {#each setting_types as setting}
+          {#each NamedEntries(setting_types) as {name, setting}}
             {#if setting.visible != false}
               <div class="setting">
-                <Setting
+                <SettingComp
                   bind:setting
-                  bind:value={$writable_settings[setting.name]}
+                  {name}
+                  bind:value={$writable_settings[name]}
                   disabled={setting.depends &&
                     check_matching_dependencies($writable_settings, setting.depends)}
                 />

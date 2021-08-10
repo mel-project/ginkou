@@ -12,10 +12,10 @@
   import Receive from "./views/Receive.svelte";
   import CreateWallet from "./components/CreateWallet.svelte";
   import Transactions from "./views/Transactions.svelte";
-  import Settings from "./views/Settings.svelte"
+  import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { Settings as SettingStore } from "./store";
-
+  import { Settings, Store } from "./store";
+  import type { Settings as SettingsType, Setting } from "./store";
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from './res/icons/transactions.svg';
   import SendIcon from './res/icons/send.svg';
@@ -32,20 +32,33 @@
 
   // change this cuz wtf
   const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
+  const setting_types: SettingsType<Setting> = {
+    network: {label: "Network", type: "select", 
+      options: {Test: "test", Main: "main"}, default: "main"},
 
-  const setting_types = [
-    {name: "network", label: "Network", type: "select", options: {Test: "test", Main: "main"}, default: "main"},
-    {name: "persistent_tabs", type: "checkbox", visible: false},
-    {name: "default_tab" ,label: "Default Tab", type: "select", options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, depends: {}, default:"Transactions"},
-    {name: "last_tab", visible: false},
-    {name: "current_wallet", visible: false}
-  ] 
+    persistent_tabs:{ type: "checkbox", visible: false},
 
-  const Store = SettingStore(setting_types)
-  const {persistent_tabs, current_wallet, default_tab} = Store.settings
-  const {writable_settings} = Store
-  setContext("settings", Store.settings)
-  setContext("store", Store)
+    default_tab: {label: "Default Tab", type: "select", 
+      options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, 
+      depends: {}, default:"Transactions"},
+
+    last_tab:{ visible: false},
+    current_wallet:{ visible: false}
+  }
+
+  const {writable_settings, settings} = Settings(setting_types)
+  const {persistent_tabs, current_wallet, default_tab} = settings
+
+
+  const store = Store(settings)
+
+  console.log(settings,store)
+  // show restraint when using contexts
+  // pass settings as props through components if possible
+  setContext("settings", {writable_settings, ...settings})
+  setContext("store", store)
+
+ 
 
   
   // Indicates whether modal is open: true or closed: false
@@ -105,10 +118,11 @@
 
   {#if modal_is_active}
     <Modal on:closeModal="{()=>{modal_is_active=false}}">
-        <Settings 
+        <SettingsView 
           {setting_types}
           {writable_settings}
-        ></Settings>
+          {settings}
+        ></SettingsView>
     </Modal>
   {/if}
   <div type="button" class="open-settings"

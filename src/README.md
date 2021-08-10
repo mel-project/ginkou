@@ -36,7 +36,7 @@ const fruits = {name: "special fruit", type: "multiselect-icons", values}
 const settings = {fruits}
 ```
 
-in this case an arbitrary component called, `multiselect-icons` was loaded and populated with the entire object that created it, `fruits`.
+in this case an arbitrary component called, `multiselect-icons` was loaded and populated with the entire object that created it, `fruits`. Similar to this:
 
 
 ```

@@ -1,7 +1,6 @@
 <script lang="typescript">
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import List, { Item, Text } from "@smui/list";
-  import { wallet_summaries } from "@/store";
   import { new_wallet } from "@/utils";
   import WalletMenuItem from "@/components/WalletMenuItem.svelte";
   import Button, { Label, Icon } from "@smui/button";
@@ -9,8 +8,10 @@
   import HelperText from "@smui/textfield/helper-text/index";
   import {getContext} from 'svelte';
 
-  const {writable_settings} = getContext("store")
-  const settings = writable_settings
+  const {wallet_summaries} = getContext("store");
+  const {writable_settings} = getContext("settings");
+  const settings = writable_settings;
+  // wallet_summaries.subscribe(console.log)
   let add_new_open = false; 
   let new_name = "";
   let new_password = "";

@@ -2,4 +2,5 @@
 /public/build/
 yarn.lock
 yarn-error.log
+nohup.out
 .DS_Store
