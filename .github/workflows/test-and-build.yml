@@ -1,0 +1,32 @@
+name: TestAndBuild
+
+on:
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+
+      - name: Update Apt
+        run: sudo apt update
+
+      - name: Install NPM Packages
+        run: npm install
+
+      - name: Install SMUI Light Theme
+        run: npm run smui-theme-light
+
+      - name: Run NPM Tests
+        run: npm run test
+
+      - name: Run NPM Build
+        run: npm run build

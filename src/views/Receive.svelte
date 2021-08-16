@@ -1,10 +1,13 @@
 <script lang="typescript">
   import Button from "@smui/button";
-  import { current_wallet, current_wallet_dump } from "@/store";
+
+
   import { add_coin } from "@/utils";
-  import Snackbar, { Actions, Label } from "@smui/snackbar";
   import Textfield from "@smui/textfield";
-  import HelperText from "@smui/textfield/helper-text/index";
+  import { getContext } from "svelte";
+
+  const {current_wallet} = getContext("settings")
+  const {current_wallet_dump} = getContext("store")
 
   const copy_wallet_handler = async () => {
     if ($current_wallet_dump) {

@@ -1,6 +1,7 @@
 <script lang="typescript">
   import type { WalletSummary } from "./utils";
   import { list_wallets, get_priv_key } from "./utils";
+  import {onMount, setContext} from 'svelte'
 
   import { Row, Section, Title } from "@smui/top-app-bar";
   //import Banner from '@smui/banner';
@@ -9,28 +10,61 @@
 
   import Send from "./views/Send.svelte";
   import Receive from "./views/Receive.svelte";
-  import CreateWallet from "./CreateWallet.svelte";
+  import CreateWallet from "./components/CreateWallet.svelte";
   import Transactions from "./views/Transactions.svelte";
-  import Settings from "./views/Settings.svelte"
-  import WalletMenu from "./WalletMenu.svelte";
-  import { current_wallet } from "./store";
-
+  import SettingsView from "./views/Settings.svelte"
+  import WalletMenu from "./components/WalletMenu.svelte";
+  import { Settings, Store } from "./store";
+  import type { Settings as SettingsType, Setting } from "./store";
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from './res/icons/transactions.svg';
   import SendIcon from './res/icons/send.svg';
   import RecieveIcon from './res/icons/recieve.svg';
   import SettingsIcon from './res/icons/settings.svg';
 
+  import Modal from "./components/Modal.svelte";
+
+
   export let name;
 
+  const tabs = ["Transactions", "Send", "Receive"]
+  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon}
 
-  const tabs = ["Transactions", "Send", "Receive", "Settings"]
-  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon, "Settings": SettingsIcon}
-  const tab_components = Object.assign({},...[Transactions, Send, Receive, Settings].map((comp,i)=>({[tabs[i]]:comp})))
+  // change this cuz wtf
+  const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
+  const setting_types: SettingsType<Setting> = {
+    network: {label: "Network", type: "select", 
+      options: {Test: "test", Main: "main"}, default: "main"},
+
+    persistent_tabs:{ type: "checkbox", visible: false},
+
+    default_tab: {label: "Default Tab", type: "select", 
+      options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, 
+      depends: {}, default:"Transactions"},
+
+    last_tab:{ visible: false},
+    current_wallet:{ visible: false}
+  }
+
+  const {writable_settings, settings} = Settings(setting_types)
+  const {persistent_tabs, current_wallet, default_tab} = settings
+
+
+  const store = Store(settings)
+
+  console.log(settings,store)
+  // show restraint when using contexts
+  // pass settings as props through components if possible
+  setContext("settings", {writable_settings, ...settings})
+  setContext("store", store)
+
+ 
 
   
+  // Indicates whether modal is open: true or closed: false
+  let modal_is_active = false;
   // Active tab in UI
-  let active_tab = "Send";
+  let active_tab: string;
   // Indicates whether the side nav bar is active
   let wallet_menu_is_active = false;
   // Indicates whether secret key will be visible
@@ -65,13 +99,38 @@
       sent_tx_chan = sent_tx_chan.slice(1);
     }, 5000);
   }
-  
+  onMount(()=>{
+
+
+    if($persistent_tabs){
+      //TODO implement $last_tab setting
+      // should capture the last visited tab to automatically load that tab on startup
+      active_tab = "Transactions"
+    }
+    else{
+      //TODO implement defaults
+      active_tab = $default_tab || "Receive";
+    }
+  })
 </script>
 
 <main>
+
+  {#if modal_is_active}
+    <Modal on:closeModal="{()=>{modal_is_active=false}}">
+        <SettingsView 
+          {setting_types}
+          {writable_settings}
+          {settings}
+        ></SettingsView>
+    </Modal>
+  {/if}
+  <div type="button" class="open-settings"
+    on:click={()=>modal_is_active=true} value="Settings">
+    {@html SettingsIcon}
+  </div>
+
   <div class="top-bar">
-    <!--<TopAppBar
-            variant="static">-->
     <Row>
       <Section>
         <div id="wallet-title-section">
@@ -133,6 +192,7 @@
     <div id="wallet-menu" class:active={wallet_menu_is_active}>
       <WalletMenu />
     </div>
+    <!-- !!two way settings bindings -->
     <div class="view-box">
       <svelte:component this={tab_components[active_tab]}
         on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} 
@@ -154,41 +214,22 @@
 </svelte:head>
 
 <style type="text/scss">
+@use "./theme/_smui-theme.scss" as theme;
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
 
 
-.tab-bar{
-  background: red;
-}
-div :global(.mdc-tab){
-  min-width: 1em;
-}
-.tab-content{
-  display: flex;
-}
-.icon{
-  width: 1.5em;
-}
-.tab-content>.text{
-  display: none;
-}
-
-@media all and (max-width: 30em){
-  #wallet-title{
-    display: none;
-  }
-}
-@media all and (min-width: 45em){
-  .tab-content{
-    line-height: 10em;
-    .text{
-      display: inherit;
-      margin-left: .5em;
-    }
-  }
-}
-#wallet-title-section{
-  width: inherit;
+.open-settings{
+  
+  position: absolute;
+  bottom: 3em;
+  right: 3em;
+  border-radius: 100%;
+  width: 2em;
+  height: 2em;
+  background: theme.$primary;
+  padding: .5em;
+  cursor: pointer;
+  fill: white;
 }
 </style>

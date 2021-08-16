@@ -6,7 +6,7 @@
   import Button, { Label } from "@smui/button";
 
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
-  import { unlock_wallet } from "./utils";
+  import { unlock_wallet } from "@/utils";
   import { createEventDispatcher } from "svelte";
   let password = "";
 </script>

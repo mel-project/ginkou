@@ -28,3 +28,11 @@ For developers updating the nix configuration only:
 ```bash
 node2nix --development -l package-lock.json
 ```
+
+
+
+
+
+
+
+

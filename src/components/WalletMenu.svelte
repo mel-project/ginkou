@@ -1,15 +1,18 @@
 <script lang="typescript">
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import List, { Item, Text } from "@smui/list";
-  import { current_wallet, wallet_summaries } from "./store";
-  import { new_wallet } from "./utils";
-  import type { WalletSummary } from "./utils";
-  import WalletMenuItem from "./WalletMenuItem.svelte";
+  import { new_wallet } from "@/utils";
+  import WalletMenuItem from "@/components/WalletMenuItem.svelte";
   import Button, { Label, Icon } from "@smui/button";
   import Textfield from "@smui/textfield";
   import HelperText from "@smui/textfield/helper-text/index";
+  import {getContext} from 'svelte';
 
-  let add_new_open = false;
+  const {wallet_summaries} = getContext("store");
+  const {writable_settings} = getContext("settings");
+  const settings = writable_settings;
+  // wallet_summaries.subscribe(console.log)
+  let add_new_open = false; 
   let new_name = "";
   let new_password = "";
   let new_testnet = false;
@@ -41,11 +44,14 @@
     <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>
         <Text>{wlt}</Text>
       </Item> -->
-    <div class="menu-item" on:click={() => ($current_wallet = wlt)}>
+    <div class="menu-item" on:click={() => {
+        $settings.current_wallet = wlt
+      }
+      }>
       <WalletMenuItem
         name={wlt}
         wallet={wlt_content}
-        selected={wlt === $current_wallet}
+        selected={wlt === $settings.current_wallet}
       />
     </div>
   {/each}
@@ -84,7 +90,7 @@
 </Dialog>
 
 <style type="text/scss">
-  @use './theme/_smui-theme.scss' as theme;
+  @use '../theme/_smui-theme.scss' as theme;
   #wallet-menu-inner{
     overflow: hidden;
     overflow-y: scroll;

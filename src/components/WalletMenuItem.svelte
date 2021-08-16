@@ -1,6 +1,6 @@
 <script lang="typescript">
-  import { lock_wallet } from "./utils";
-  import type { WalletSummary } from "./utils";
+  import { lock_wallet } from "@/utils";
+  import type { WalletSummary } from "@/utils";
 
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import WalletUnlocker from "./WalletUnlocker.svelte";
@@ -32,12 +32,10 @@
 </div>
 
 <style type="text/scss">
-  @use "./theme/_smui-theme.scss" as theme;
+  @use "../theme/_smui-theme.scss" as theme;
 
   .wallet-menu-item {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
+    padding: 10px;
     position: relative;
   }
   .wallet-menu-item-selected {
