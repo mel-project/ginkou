@@ -11,7 +11,7 @@ export interface PersistentSetting {
 export interface Setting extends PersistentSetting {
   label?: string;
   type?: string;
-  options?: Obj<string>;
+  options?: Obj<string | number>;
   depends?: Obj<string>;
   visible?: boolean;
 

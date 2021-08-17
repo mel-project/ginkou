@@ -12,7 +12,8 @@ export type TxHash = string;
 export type PrivateKey = string;
 
 export const MEL = "6d";
-
+export const TESTNET = 1;
+export const MAINNET = 255;
 const home_addr = "http://127.0.0.1";
 const default_port = 11773;
 
@@ -539,3 +540,4 @@ export const tx_history = (
 
     return liftEither(cast_to_either(intoTxHistory(dump.full)));
   });
+

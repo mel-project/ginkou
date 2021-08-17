@@ -1,6 +1,6 @@
 <script lang="typescript">
   import type { WalletSummary } from "./utils";
-  import { list_wallets, get_priv_key } from "./utils";
+  import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils";
   import {onMount, setContext} from 'svelte'
 
   import { Row, Section, Title } from "@smui/top-app-bar";
@@ -34,7 +34,7 @@
   const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
   const setting_types: SettingsType<Setting> = {
     network: {label: "Network", type: "select", 
-      options: {Test: "test", Main: "main"}, default: "main"},
+      options: {Test: TESTNET, Main: MAINNET}, default: "main"},
 
     persistent_tabs:{ type: "checkbox", visible: false},
 
@@ -231,5 +231,6 @@
   padding: .5em;
   cursor: pointer;
   fill: white;
+  z-index: 100;
 }
 </style>
