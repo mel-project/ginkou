@@ -44,7 +44,6 @@
 </script>
 
 <div id="wallet-menu-inner">
-  {$network}
   {#each Object.entries($wallet_summaries) as [wlt, wlt_content]}
     {#if $network == 0 || wlt_content.network == $network}
       <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>

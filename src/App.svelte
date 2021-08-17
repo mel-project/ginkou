@@ -1,5 +1,4 @@
 <script lang="typescript">
-  localStorage.clear();
   import type { WalletSummary } from "./utils";
   import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils";
   import {onMount, setContext} from 'svelte'
@@ -37,23 +36,23 @@
     network: {label: "Network", type: "select", 
       options: {Test: TESTNET, Main: MAINNET, All: 0}, default: 0},
 
-    persistent_tabs:{ type: "checkbox", visible: false},
 
     default_tab: {label: "Default Tab", type: "select", 
       options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, 
-      depends: {}, default:"Transactions"},
+      depends: {persistent_tabs: false}, default:"Transactions"},
+    persistent_tabs:{ label: "Persistent Tabs", type: "checkbox", visible: true, default: false},
 
     last_tab:{ visible: false},
-    current_wallet:{ visible: false}
+    current_wallet:{ visible: false},
+    active_tab: {visible: false}
   }
 
   const {writable_settings, settings} = Settings(setting_types)
-  const {persistent_tabs, current_wallet, default_tab} = settings
+  const {persistent_tabs, current_wallet, default_tab, active_tab} = settings
 
 
   const store = Store(settings)
 
-  console.log(settings,store)
   // show restraint when using contexts
   // pass settings as props through components if possible
   setContext("settings", {writable_settings, ...settings})
@@ -64,8 +63,6 @@
   
   // Indicates whether modal is open: true or closed: false
   let modal_is_active = false;
-  // Active tab in UI
-  let active_tab: string;
   // Indicates whether the side nav bar is active
   let wallet_menu_is_active = false;
   // Indicates whether secret key will be visible
@@ -103,14 +100,10 @@
   onMount(()=>{
 
 
-    if($persistent_tabs){
+    if(!$persistent_tabs){
       //TODO implement $last_tab setting
       // should capture the last visited tab to automatically load that tab on startup
-      active_tab = "Transactions"
-    }
-    else{
-      //TODO implement defaults
-      active_tab = $default_tab || "Receive";
+      $writable_settings.active_tab = $default_tab || "Receive";
     }
   })
 </script>
@@ -146,7 +139,7 @@
         <div id="tabs-container">
           <TabBar class="tab-bar"
             {tabs}
-            bind:active_tab={active_tab}
+            bind:active_tab={$writable_settings.active_tab}
             let:tab
           >
             <Tab {tab}>
@@ -195,7 +188,7 @@
     </div>
     <!-- !!two way settings bindings -->
     <div class="view-box">
-      <svelte:component this={tab_components[active_tab]}
+      <svelte:component this={tab_components[$active_tab]}
         on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} 
       />
     </div>

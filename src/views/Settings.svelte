@@ -14,7 +14,6 @@
   export let writable_settings: Readable<Settings<string>>;
   
 
-  console.log(settings)
 
   const NamedEntries = (obj: {[key: string]: Setting}): [NamedObject] => {
 

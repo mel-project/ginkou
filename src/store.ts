@@ -12,7 +12,7 @@ export interface Setting extends PersistentSetting {
   label?: string;
   type?: string;
   options?: Obj<string | number>;
-  depends?: Obj<string>;
+  depends?: Obj<string | number | boolean>;
   visible?: boolean;
 
 }
@@ -25,6 +25,7 @@ export interface Settings<T extends Setting | Readable<string> | string> {
   default_tab: T;
   last_tab: T;
   current_wallet: T;
+  active_tab: T;
 }
 
 interface SettingsObject {
@@ -137,7 +138,6 @@ export const Store = (settings: Settings<Readable<string>>) => {
         .ifLeft((e) => console.log(`error encountered in list_wallets: ${e}`))
         .map((list) => {
           // console.log("obtained list_wallets");
-          console.log(list)
           set(list);
         });
     };
