@@ -1,4 +1,5 @@
 <script lang="typescript">
+  localStorage.clear();
   import type { WalletSummary } from "./utils";
   import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils";
   import {onMount, setContext} from 'svelte'
@@ -34,7 +35,7 @@
   const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
   const setting_types: SettingsType<Setting> = {
     network: {label: "Network", type: "select", 
-      options: {Test: TESTNET, Main: MAINNET}, default: "main"},
+      options: {Test: TESTNET, Main: MAINNET, All: 0}, default: 0},
 
     persistent_tabs:{ type: "checkbox", visible: false},
 

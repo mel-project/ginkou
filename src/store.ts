@@ -5,7 +5,7 @@ import JSONbig from "json-bigint";
 
 type Obj<T> = { [key: string]: T }
 export interface PersistentSetting {
-  default?: string;
+  default?: string | number;
 }
 
 export interface Setting extends PersistentSetting {
@@ -68,12 +68,12 @@ export const Settings = (setting_types: Settings<Setting>): SettingsObject => {
   const writable_settings: Writable<Settings<string>> = writable(null, (set) => {
 
     const persistent_settings = localStorage.getItem('writable_settings');
-    const defaults: Obj<string> = {};
+    const defaults: Obj<string | number> = {};
     Object.entries(setting_types).forEach((entry: [string, Setting]) => {
       const setting_name: string = entry[0];
       const setting: Setting = entry[1];
 
-      const setting_default: string = setting.default || "";
+      const setting_default: string | number = setting.default !== undefined ? setting.default : "";
 
       defaults[setting_name] = setting_default;
     });
