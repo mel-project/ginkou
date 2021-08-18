@@ -50,7 +50,7 @@
   <Header>
     <Title id="summary-title">Transaction Summary</Title>
   </Header>
-  {#if selected_tx}
+  {#if selected_tx && summary_open}
     <TransactionSummary
       txhash={selected_tx[0]}
       tx={selected_tx[1]}
@@ -79,9 +79,8 @@
       {#each Object.entries($current_wallet_dump.full.tx_in_progress) as [txhash, tx]}
         <Row
           on:click={() => {
-            summary_open = true;
+            summary_open = false;
             selected_tx = [tx, null];
-            console.log(selected_tx)
           }}
         >
           <Cell style="overflow: hidden; text-overflow:ellipsis">{txhash}</Cell>
