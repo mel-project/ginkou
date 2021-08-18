@@ -7,7 +7,7 @@
   import Textfield from "@smui/textfield";
   import Button, { Label } from "@smui/button";
   
-  const {current_wallet, writable_settings} = getContext("settings")
+  const {current_wallet, contacts, writable_settings} = getContext("settings")
   const {current_wallet_dump} = getContext("store")
 
   import BigNumber from "bignumber.js";
@@ -22,6 +22,10 @@
   // Toggle confirmation window before sending a tx
   let open_confirmation: boolean = false;
   let prepared_tx: Transaction | null;
+
+  type Contact = {name: string, address: string}
+  let predicted_contact: Contact | undefined;
+
 
   const dispatcher = createEventDispatcher();
 
@@ -77,6 +81,27 @@
   function spends(outputs: CoinData[]): [string, BigNumber][] {
     return outputs.map((cd) => [cd.covhash, cd.value]);
   }
+
+  const search_names = (contacts: [Contact], sub_name: string)=>{
+    const prediction = contacts.filter((contact)=>contact.name.startsWith(sub_name))[0]
+    if(prediction?.address){
+      return prediction
+    }
+    else{
+      return undefined
+    }
+  }
+  const handle_to_input = (name) => {
+    return (evt) => {
+      predicted_contact = search_names($contacts,name)
+      // console.log(evt
+    }
+  }
+  const handle_to_blur = () => {
+    if(predicted_contact) {
+      to_addr = predicted_contact.address
+    }
+  }
 </script>
 
 {#if prepared_tx}
@@ -116,7 +141,12 @@
 {#if $current_wallet}
   <div id="window">
 
-    <Textfield bind:value={to_addr} label="To" />
+    <Textfield bind:value={to_addr} on:input={handle_to_input(to_addr)} on:blur={handle_to_blur} label="To" />
+    {#if predicted_contact}
+      <div>
+        name: {predicted_contact.name} address: {predicted_contact.address}
+      </div>
+    {/if}
     <Textfield
       bind:value={send_amount}
       label="Amount"
