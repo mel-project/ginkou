@@ -78,10 +78,12 @@
       <!-- List unconfirmed txs -->
       {#each Object.entries($current_wallet_dump.full.tx_in_progress) as [txhash, tx]}
         <Row
+          class="disable-row"
           on:click={() => {
             summary_open = false;
             selected_tx = [tx, null];
           }}
+          
         >
           <Cell style="overflow: hidden; text-overflow:ellipsis">{txhash}</Cell>
           <Cell>{net_spent(tx, $current_wallet_dump.summary.address)}</Cell>
@@ -108,8 +110,11 @@
   <i>loading...</i>
 {/if}
 
-<style>
+<style lang="scss">
   :global(table) {
     width: 100%;
+  }
+  :global(.disable-row){
+    background: rgba(0,0,0,0.08) !important;
   }
 </style>
