@@ -81,6 +81,7 @@
           on:click={() => {
             summary_open = true;
             selected_tx = [tx, null];
+            console.log(selected_tx)
           }}
         >
           <Cell style="overflow: hidden; text-overflow:ellipsis">{txhash}</Cell>

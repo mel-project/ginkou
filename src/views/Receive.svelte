@@ -2,7 +2,7 @@
   import Button from "@smui/button";
 
 
-  import { add_coin } from "@/utils";
+  import { add_coin, tap_faucet, TESTNET } from "@/utils";
   import Textfield from "@smui/textfield";
   import { getContext } from "svelte";
 
@@ -16,7 +16,6 @@
       alert(`copied ${addr} to clipboard`);
     }
   };
-
   const add_coin_handler = async () => {
     if ($current_wallet) {
       await add_coin($current_wallet, coin_id)
@@ -24,7 +23,13 @@
         .run();
     }
   };
-
+  const tap_faucet_handler = async () => {
+    if ($current_wallet) {
+      await tap_faucet($current_wallet)
+        .ifLeft((e) => alert(e))
+        .run();
+    }
+  };
   let coin_id = "";
 </script>
 
@@ -46,10 +51,11 @@
         </HelperText> -->
         </div>
         <Button class="box-button" on:click={add_coin_handler}>Add</Button>
-        
       </div>
-
     </div>
+    {#if $current_wallet_dump.summary.network == TESTNET}
+      <Button on:click={tap_faucet_handler}>Tap Faucet</Button>
+    {/if}
   </div>
 {:else}
   <p>Choose a wallet first ;)</p>
