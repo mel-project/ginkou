@@ -7,7 +7,7 @@
   import Textfield from "@smui/textfield";
   import Button, { Label } from "@smui/button";
   
-  const {current_wallet} = getContext("settings")
+  const {current_wallet, writable_settings} = getContext("settings")
   const {current_wallet_dump} = getContext("store")
 
   import BigNumber from "bignumber.js";
@@ -45,6 +45,7 @@
         await send_tx($current_wallet, prepared_tx)
           .ifLeft((err) => dsptch_err(err))
           .ifRight((txhash) => {
+            $writable_settings.contacts.push({name:"", address: to_addr})
             dispatcher("sent-tx", {
               text: `Transaction initiated with hash ${JSON.stringify(txhash)}`,
             });

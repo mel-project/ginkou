@@ -10,8 +10,9 @@
 
   import Send from "./views/Send.svelte";
   import Receive from "./views/Receive.svelte";
-  import CreateWallet from "./components/CreateWallet.svelte";
   import Transactions from "./views/Transactions.svelte";
+  import Contacts from "./views/Contacts.svelte";
+
   import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
   import { Settings, Store } from "./store";
@@ -27,11 +28,11 @@
 
   export let name;
 
-  const tabs = ["Transactions", "Send", "Receive"]
-  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon}
+  const tabs = ["Transactions", "Send", "Receive", "Contacts"]
+  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon,"Contacts": RecieveIcon}
 
   // change this cuz wtf
-  const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
+  const tab_components = Object.assign({},...[Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
   const setting_types: SettingsType<Setting> = {
     network: {label: "Network", type: "select", 
       options: {Test: TESTNET, Main: MAINNET, All: 0}, default: 0},
@@ -42,9 +43,9 @@
       depends: {persistent_tabs: false}, default:"Transactions"},
     persistent_tabs:{ label: "Persistent Tabs", type: "checkbox", visible: true, default: false},
 
-    last_tab:{ visible: false},
     current_wallet:{ visible: false},
-    active_tab: {visible: false}
+    active_tab: {visible: false},
+    contacts: {visible: false, default: []},
   }
 
   const {writable_settings, settings} = Settings(setting_types)
