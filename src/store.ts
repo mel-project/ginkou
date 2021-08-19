@@ -130,7 +130,7 @@ export const Store = (settings: Settings<Readable<string>>) => {
     null
   );
   // List of all wallets, both mainnet and testnet
-  const wallet_summaries: Readable<Obj<WalletSummary>> = derived(settings.network, ($name,set) => {
+  const wallet_summaries: Readable<Obj<WalletSummary>> = readable({}, (set) => {
     const refresh = async () => {
       // fetch the stuff and set
       const list = await list_wallets();
@@ -145,7 +145,7 @@ export const Store = (settings: Settings<Readable<string>>) => {
     refresh();
     return () => clearInterval(interval);
 
-  }, {});
+  });
   return { wallet_summaries, current_wallet_dump };
 }
 

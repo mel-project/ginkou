@@ -35,7 +35,7 @@
   const tab_components = Object.assign({},...[Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
   const setting_types: SettingsType<Setting> = {
     network: {label: "Network", type: "select", 
-      options: {Test: TESTNET, Main: MAINNET, All: 0}, default: 0},
+      options: {Test: TESTNET, Main: MAINNET, All: 0}, default: TESTNET},
 
 
     default_tab: {label: "Default Tab", type: "select", 
@@ -106,6 +106,8 @@
       // should capture the last visited tab to automatically load that tab on startup
       $writable_settings.active_tab = $default_tab || "Receive";
     }
+    // const {wallet_summaries} = store
+    // console.log($wallet_summaries)
   })
 </script>
 

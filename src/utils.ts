@@ -24,6 +24,8 @@ export interface WalletSummary {
   locked: boolean;
 }
 
+export type WalletEntry = {[key: string]: WalletSummary}
+
 export const kind2str = (kind: number) => {
   if (kind === 0x00) {
     return "Normal";
@@ -529,6 +531,18 @@ export const wallet_dump = (
     // TODO cast this with runtime checks
     return liftEither(Right(res as WalletDump));
   });
+
+  export const wallet_dump_from_entry = (
+    wallet_entry: WalletEntry,
+    port: number = default_port
+  ): EitherAsync<string, WalletDump> =>
+    EitherAsync(async ({ liftEither, fromPromise }) => {
+      const url = `${home_addr}:${port}/wallets/${wallet_name}`;
+      const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
+  
+      // TODO cast this with runtime checks
+      return liftEither(Right(res as WalletDump));
+    });
 
 // Get a TxHistory of a given wallet
 export const tx_history = (

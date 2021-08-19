@@ -8,7 +8,7 @@
   import Button, { Label } from "@smui/button";
   
   const {current_wallet, contacts, writable_settings} = getContext("settings")
-  const {current_wallet_dump} = getContext("store")
+  const {current_wallet_dump, wallet_summaries} = getContext("store")
 
   import BigNumber from "bignumber.js";
 
@@ -94,6 +94,7 @@
   const handle_to_input = (name) => {
     return (evt) => {
       predicted_contact = search_names($contacts,name)
+      // predicted_wallet = search_names()
       // console.log(evt
     }
   }
