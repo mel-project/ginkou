@@ -4,11 +4,12 @@
   import { send_tx, prepare_mel_tx, get_priv_key } from "@/utils";
   import type { WalletSummary, Transaction, CoinData } from "@/utils";
   import { get_wallet } from "@/storage";
-  import Textfield from "@smui/textfield";
+  import Textfield from "@/components/UI/TextField.svelte";
   import Button, { Label } from "@smui/button";
-  
-  const {current_wallet, contacts, writable_settings} = getContext("settings")
-  const {current_wallet_dump, wallet_summaries} = getContext("store")
+
+  const { current_wallet, contacts, writable_settings } =
+    getContext("settings");
+  const { current_wallet_dump, wallet_summaries } = getContext("store");
 
   import BigNumber from "bignumber.js";
 
@@ -23,9 +24,8 @@
   let open_confirmation: boolean = false;
   let prepared_tx: Transaction | null;
 
-  type Contact = {name: string, address: string}
+  type Contact = { name: string; address: string };
   let predicted_contact: Contact | undefined;
-
 
   const dispatcher = createEventDispatcher();
 
@@ -49,7 +49,7 @@
         await send_tx($current_wallet, prepared_tx)
           .ifLeft((err) => dsptch_err(err))
           .ifRight((txhash) => {
-            $writable_settings.contacts.push({name:"", address: to_addr})
+            $writable_settings.contacts.push({ name: "", address: to_addr });
             dispatcher("sent-tx", {
               text: `Transaction initiated with hash ${JSON.stringify(txhash)}`,
             });
@@ -82,27 +82,28 @@
     return outputs.map((cd) => [cd.covhash, cd.value]);
   }
 
-  const search_names = (contacts: [Contact], sub_name: string)=>{
-    const prediction = contacts.filter((contact)=>contact.name.startsWith(sub_name))[0]
-    if(prediction?.address){
-      return prediction
+  const search_names = (contacts: [Contact], sub_name: string) => {
+    const prediction = contacts.filter((contact) =>
+      contact.name.startsWith(sub_name)
+    )[0];
+    if (prediction?.address) {
+      return prediction;
+    } else {
+      return undefined;
     }
-    else{
-      return undefined
-    }
-  }
+  };
   const handle_to_input = (name) => {
     return (evt) => {
-      predicted_contact = search_names($contacts,name)
+      predicted_contact = search_names($contacts, name);
       // predicted_wallet = search_names()
       // console.log(evt
-    }
-  }
+    };
+  };
   const handle_to_blur = () => {
-    if(predicted_contact) {
-      to_addr = predicted_contact.address
+    if (predicted_contact) {
+      to_addr = predicted_contact.address;
     }
-  }
+  };
 </script>
 
 {#if prepared_tx}
@@ -141,8 +142,12 @@
 
 {#if $current_wallet}
   <div id="window">
-
-    <Textfield bind:value={to_addr} on:input={handle_to_input(to_addr)} on:blur={handle_to_blur} label="To" />
+    <Textfield
+      bind:value={to_addr}
+      on:input={handle_to_input(to_addr)}
+      on:blur={handle_to_blur}
+      label="To"
+    />
     {#if predicted_contact}
       <div>
         name: {predicted_contact.name} address: {predicted_contact.address}
@@ -156,7 +161,6 @@
     />
 
     <Button on:click={prepare_tx_handler}>Send</Button>
-        
   </div>
 {:else}
   <p>Choose a wallet first ;)</p>
