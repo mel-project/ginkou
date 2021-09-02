@@ -3,7 +3,7 @@
   import {createEventDispatcher} from 'svelte'
 
   export let items = [];
-  export let stringify = (item) => item.toString()
+  export let stringify;
   let _class;
   export {_class as class}
 
@@ -15,7 +15,7 @@
 <template lang="pug">
     div(class!="menu {_class}")
       +each("items as item")
-        div.item {stringify(item)}
+        div.item(on:click!="{()=>event_dispatcher('click', item)}") {stringify(item)}
 </template>
 
 <style lang="scss">
@@ -24,5 +24,9 @@
     height: 3em;
     background: white;
     border-bottom: 1px solid black;
+  }
+  .item:hover{
+    background: #DDDDDD;
+    cursor: pointer;
   }
 </style>

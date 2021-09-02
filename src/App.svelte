@@ -45,8 +45,19 @@
 
     current_wallet:{ visible: false},
     active_tab: {visible: false},
-    contacts: {visible: false, default: []},
-  }
+    contacts: {visible: false, default: [], override: true},
+  };
+
+
+  (()=>{
+    for(let i = 0; i < 1000; i++){
+      setting_types.contacts.default.push(
+        {
+          name: Math.random().toString(36).slice(2), 
+          address: Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)
+        })
+    }
+  })()
 
   const {writable_settings, settings} = Settings(setting_types)
   const {persistent_tabs, current_wallet, default_tab, active_tab} = settings

@@ -19,6 +19,9 @@
 
   import BigNumber from "bignumber.js";
   import { length } from "json-bigint";
+import { append } from "svelte/internal";
+import App from "../App.svelte";
+import Contacts from "./Contacts.svelte";
 
   // export let active_wallet: string | null;
   // export let wallets: { [key: string]: WalletSummary } = {};
@@ -95,11 +98,12 @@
   }
 
   const search_names = (contacts: Contact[], sub_name: string): Contact[] => {
+    if(sub_name == "") return []
     const prediction = contacts.filter((contact) =>
       contact.name.startsWith(sub_name)
-    )[0];
-    if (prediction?.address) {
-      return [prediction];
+    );
+    if (prediction) {
+      return prediction;
     } else {
       return [];
     }
@@ -120,13 +124,14 @@
 
   const handle_to_enter = () => {
     if(to_addr.trim() == "") return
+    console.log(predictions)
     if(predictions.length > 0){
       to_addrs = [...to_addrs, predictions[0]]
     }
     else{
       to_addrs = [...to_addrs, {name: "", address: to_addr}]
     }
-    to_addr = ""
+    // to_addr = ""
 
   }
   const delete_addr = (index: number):Contact => {
@@ -187,9 +192,9 @@
       on:blur={handle_to_blur}
       label="To:"
 
-    >
-      <Dropdown items={predictions} stringify={(item)=>`${item.name}: ${item.address}`}>
-
+    > 
+      <Dropdown on:click={(item)=>to_addrs = [...to_addrs, item]} items={predictions} stringify={(item)=>`${item.name}: ${item.address}`}>
+        
       </Dropdown>
     </Textfield>
     {#if predictions.length > 0}
@@ -232,5 +237,10 @@
   .choice-buttons {
     display: flex;
     justify-content: center;
+  }
+  .search-menu {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
   }
 </style>
