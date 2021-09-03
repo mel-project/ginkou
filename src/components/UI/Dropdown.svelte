@@ -14,7 +14,7 @@
 </script>
 
 <template lang="pug">
-    div(class!="menu {_class}")
+    div(class!="menu {_class}" tabindex="-1")
       +each("items as item")
         div.item(
           on:mouseenter!="{()=>{hovered=item}}"

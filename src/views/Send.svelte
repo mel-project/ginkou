@@ -172,10 +172,6 @@
       label="To:"
     >
       <Dropdown
-        on:click={({ detail }) => {
-          create_chip(detail.item);
-          to_addr = "";
-        }}
         bind:hovered={selected_prediction}
         items={predictions}
         stringify={(item) => `${item.name}: ${item.address}`}
