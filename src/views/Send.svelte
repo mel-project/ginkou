@@ -6,12 +6,10 @@
   import { get_wallet } from "@/storage";
   import Textfield from "@/components/UI/TextField.svelte";
   import Chip from "@/components/UI/Chip.svelte";
-  import Dropdown from "@/components/UI/Dropdown.svelte"
+  import Dropdown from "@/components/UI/Dropdown.svelte";
   import Button, { Label } from "@smui/button";
 
-
-  type Contact = { name: string ; address: string };
-
+  type Contact = { name: string; address: string };
 
   const { current_wallet, contacts, writable_settings } =
     getContext("settings");
@@ -19,9 +17,9 @@
 
   import BigNumber from "bignumber.js";
   import { length } from "json-bigint";
-import { append } from "svelte/internal";
-import App from "../App.svelte";
-import Contacts from "./Contacts.svelte";
+  import { append } from "svelte/internal";
+  import App from "../App.svelte";
+  import Contacts from "./Contacts.svelte";
 
   // export let active_wallet: string | null;
   // export let wallets: { [key: string]: WalletSummary } = {};
@@ -33,13 +31,13 @@ import Contacts from "./Contacts.svelte";
   let to_addrs: Contact[] = [];
 
   let predictions: Contact[] = [];
+  let selected_prediction: Contact;
   // Toggle confirmation window before sending a tx
   let open_confirmation: boolean = false;
   let prepared_tx: Transaction | null;
 
-
   $: {
-    predictions = search_names($contacts, to_addr)
+    predictions = search_names($contacts, to_addr);
   }
 
   const dispatcher = createEventDispatcher();
@@ -98,7 +96,7 @@ import Contacts from "./Contacts.svelte";
   }
 
   const search_names = (contacts: Contact[], sub_name: string): Contact[] => {
-    if(sub_name == "") return []
+    if (sub_name == "") return [];
     const prediction = contacts.filter((contact) =>
       contact.name.startsWith(sub_name)
     );
@@ -108,19 +106,18 @@ import Contacts from "./Contacts.svelte";
       return [];
     }
   };
- 
- 
-  const delete_addr = (index: number):Contact => {
-      let temp = to_addrs.splice(index, 1)[0] //kind of a hack. I'm assuming this is called on click therefore it exists
-      to_addrs = [...to_addrs]
-      return temp
-  }
+
+  const delete_addr = (index: number): Contact => {
+    let temp = to_addrs.splice(index, 1)[0]; //kind of a hack. I'm assuming this is called on click therefore it exists
+    to_addrs = [...to_addrs];
+    return temp;
+  };
   const handle_chip_click = (index: number) => {
-    to_addr = delete_addr(index).address
-  }
+    to_addr = delete_addr(index).address;
+  };
   const create_chip = (contact: Contact) => {
-    to_addrs = [...to_addrs, contact]
-  }
+    to_addrs = [...to_addrs, contact];
+  };
 </script>
 
 {#if prepared_tx}
@@ -159,20 +156,30 @@ import Contacts from "./Contacts.svelte";
 
 {#if $current_wallet}
   <div id="window">
-    {#each to_addrs as addr,i}
-      <Chip on:click={()=>handle_chip_click(i)} on:remove={()=>delete_addr(i)}>{addr.name}: {addr.address}</Chip>
+    {#each to_addrs as addr, i}
+      <Chip
+        on:click={() => handle_chip_click(i)}
+        on:remove={() => delete_addr(i)}>{addr.name}: {addr.address}</Chip
+      >
     {/each}
     <Textfield
       bind:value={to_addr}
-      on:key_enter={()=>create_chip(predictions[0])}
+      on:blur={() => {
+        selected_prediction && create_chip(selected_prediction || { name: "", address: to_addr });
+        to_addr = "";
+      }}
+      on:key_enter={() => create_chip(predictions[0])}
       label="To:"
-      let:focused={focused}
-    > 
-        {#if focused}
-        <Dropdown on:click={({detail})=>{create_chip(detail.item); to_addr = ""}} items={predictions} stringify={(item)=>`${item.name}: ${item.address}`}>
-          
-        </Dropdown>
-      {/if}
+    >
+      <Dropdown
+        on:click={({ detail }) => {
+          create_chip(detail.item);
+          to_addr = "";
+        }}
+        bind:hovered={selected_prediction}
+        items={predictions}
+        stringify={(item) => `${item.name}: ${item.address}`}
+      />
     </Textfield>
     <Textfield
       bind:value={send_amount}

@@ -4,6 +4,7 @@
 
   export let items = [];
   export let stringify;
+  export let hovered;
   let _class;
   export {_class as class}
 
@@ -15,7 +16,10 @@
 <template lang="pug">
     div(class!="menu {_class}")
       +each("items as item")
-        div.item(on:click!="{()=>event_dispatcher('click', {item})}") {stringify(item)}
+        div.item(
+          on:mouseenter!="{()=>{hovered=item}}"
+          on:mouseleave!="{()=>{hovered=undefined}}"
+        on:click!="{()=>event_dispatcher('click', {item})}") {stringify(item)}
 </template>
 
 <style lang="scss">
