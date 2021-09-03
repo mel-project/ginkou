@@ -108,41 +108,18 @@ import Contacts from "./Contacts.svelte";
       return [];
     }
   };
-  const handle_to_input = (name) => {
-    return (evt) => {
-      console.log('changed')
-      // predicted_wallet = search_names()
-      // console.log(evt
-    };
-  };
-  const handle_to_blur = () => {
-    // if (predicted_contact) {
-    //   to_addr = predicted_contact.address;
-    // }
-    handle_to_enter()
-  };
-
-  const handle_to_enter = () => {
-    if(to_addr.trim() == "") return
-    console.log(predictions)
-    if(predictions.length > 0){
-      to_addrs = [...to_addrs, predictions[0]]
-    }
-    else{
-      to_addrs = [...to_addrs, {name: "", address: to_addr}]
-    }
-    // to_addr = ""
-
-  }
+ 
+ 
   const delete_addr = (index: number):Contact => {
       let temp = to_addrs.splice(index, 1)[0] //kind of a hack. I'm assuming this is called on click therefore it exists
       to_addrs = [...to_addrs]
       return temp
   }
   const handle_chip_click = (index: number) => {
-    handle_to_enter() //accept what is currently input
-
     to_addr = delete_addr(index).address
+  }
+  const create_chip = (contact: Contact) => {
+    to_addrs = [...to_addrs, contact]
   }
 </script>
 
@@ -187,21 +164,16 @@ import Contacts from "./Contacts.svelte";
     {/each}
     <Textfield
       bind:value={to_addr}
-      on:input={handle_to_input(to_addr)}
-      on:key_enter={handle_to_enter}
-      on:blur={handle_to_blur}
+      on:key_enter={()=>create_chip(predictions[0])}
       label="To:"
-
+      let:focused={focused}
     > 
-      <Dropdown on:click={(item)=>to_addrs = [...to_addrs, item]} items={predictions} stringify={(item)=>`${item.name}: ${item.address}`}>
-        
-      </Dropdown>
+        {#if focused}
+        <Dropdown on:click={({detail})=>{create_chip(detail.item); to_addr = ""}} items={predictions} stringify={(item)=>`${item.name}: ${item.address}`}>
+          
+        </Dropdown>
+      {/if}
     </Textfield>
-    {#if predictions.length > 0}
-      <div>
-        name: {predictions[0].name} address: {predictions[0].address}
-      </div>
-    {/if}
     <Textfield
       bind:value={send_amount}
       label="Amount:"

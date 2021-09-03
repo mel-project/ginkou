@@ -15,7 +15,7 @@
 <template lang="pug">
     div(class!="menu {_class}")
       +each("items as item")
-        div.item(on:click!="{()=>event_dispatcher('click', item)}") {stringify(item)}
+        div.item(on:click!="{()=>event_dispatcher('click', {item})}") {stringify(item)}
 </template>
 
 <style lang="scss">
@@ -23,7 +23,11 @@
   .item{
     height: 3em;
     background: white;
-    border-bottom: 1px solid black;
+  }
+  .menu{
+    max-height: 20em;
+    overflow-y: scroll;
+
   }
   .item:hover{
     background: #DDDDDD;

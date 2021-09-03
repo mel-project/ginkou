@@ -4,7 +4,7 @@
   export let value = "";
   export let label = "";
 
-  export let focused = false;
+  let focused = false;
   let _class;
   export { _class as class };
 
@@ -33,7 +33,7 @@
           on:blur!="{handleBlur}" 
           on:focus!="{handleFocus}"
           on:keypress!="{handleKeyPress}")
-      slot()
+      slot({focused})
 </template>
 
 <style lang="scss">
