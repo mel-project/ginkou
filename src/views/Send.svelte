@@ -156,35 +156,37 @@
 
 {#if $current_wallet}
   <div id="window">
-    {#each to_addrs as addr, i}
-      <Chip
-        on:click={() => handle_chip_click(i)}
-        on:remove={() => delete_addr(i)}>{addr.name}: {addr.address}</Chip
+    <div class="centered-container">
+      {#each to_addrs as addr, i}
+        <Chip
+          on:click={() => handle_chip_click(i)}
+          on:remove={() => delete_addr(i)}>{addr.name}: {addr.address}</Chip
+        >
+      {/each}
+      <Textfield
+        bind:value={to_addr}
+        on:blur={() => {
+          selected_prediction && create_chip(selected_prediction || { name: "", address: to_addr });
+          to_addr = "";
+        }}
+        on:key_enter={() => create_chip(predictions[0])}
+        label="To:"
       >
-    {/each}
-    <Textfield
-      bind:value={to_addr}
-      on:blur={() => {
-        selected_prediction && create_chip(selected_prediction || { name: "", address: to_addr });
-        to_addr = "";
-      }}
-      on:key_enter={() => create_chip(predictions[0])}
-      label="To:"
-    >
-      <Dropdown
-        bind:hovered={selected_prediction}
-        items={predictions}
-        stringify={(item) => `${item.name}: ${item.address}`}
+        <Dropdown
+          bind:hovered={selected_prediction}
+          items={predictions}
+          stringify={(item) => `${item.name}: ${item.address}`}
+        />
+      </Textfield>
+      <Textfield
+        bind:value={send_amount}
+        label="Amount:"
+        type="number"
+        suffix="micromel"
       />
-    </Textfield>
-    <Textfield
-      bind:value={send_amount}
-      label="Amount:"
-      type="number"
-      suffix="micromel"
-    />
-
-    <Button on:click={prepare_tx_handler}>Send</Button>
+  
+      <Button on:click={prepare_tx_handler}>Send</Button>
+    </div>
   </div>
 {:else}
   <p>Choose a wallet first ;)</p>
@@ -193,8 +195,7 @@
 <style>
   #window {
     display: flex;
-    flex-direction: column;
-    max-width: 40em;
+    flex-direction: row;
     justify-content: center;
   }
   #confirm-window {
@@ -217,5 +218,8 @@
     position: absolute;
     z-index: 100;
     width: 100%;
+  }
+  .centered-container {
+    width: 40em;
   }
 </style>
