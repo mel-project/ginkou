@@ -5,6 +5,16 @@
   export let items = [];
   export let stringify;
   export let hovered;
+
+  // edge case:
+  // hovered element is destroyed never calling `mouseleave` 
+  // hovered == item, even when the item is gone
+  $: {
+    // on changes to items, make sure the hovered item still exists
+    if(!items.includes(hovered)){
+      hovered = undefined
+    }
+  }
   let _class;
   export {_class as class}
 

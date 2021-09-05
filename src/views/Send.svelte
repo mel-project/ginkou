@@ -163,6 +163,7 @@
           on:remove={() => delete_addr(i)}>{addr.name}: {addr.address}</Chip
         >
       {/each}
+      {selected_prediction?.name}
       <Textfield
         bind:value={to_addr}
         on:blur={() => {
@@ -171,7 +172,9 @@
         }}
         on:key_enter={() => create_chip(predictions[0])}
         label="To:"
+        disabled={to_addrs.length > 0}
       >
+        <!-- //TODO: fix clicking  -->
         <Dropdown
           bind:hovered={selected_prediction}
           items={predictions}

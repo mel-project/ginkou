@@ -3,7 +3,7 @@
 
   export let value = "";
   export let label = "";
-
+  export let disabled;
   let focused = false;
   let _class;
   export { _class as class };
@@ -32,7 +32,8 @@
           on:change on:input 
           on:blur!="{handleBlur}" 
           on:focus!="{handleFocus}"
-          on:keypress!="{handleKeyPress}")
+          on:keypress!="{handleKeyPress}"
+          disabled!="{disabled}")
       slot({focused})
 </template>
 
