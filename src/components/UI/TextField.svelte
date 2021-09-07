@@ -8,6 +8,7 @@
   let _class;
   export { _class as class };
 
+
   const event_dispatcher = createEventDispatcher();
 
   const handleKeyPress = (evt) => {
@@ -22,6 +23,7 @@
     focused = false;
     event_dispatcher("blur", evt);
   };
+
 </script>
 
 <template lang="pug">
@@ -34,7 +36,7 @@
           on:focus!="{handleFocus}"
           on:keypress!="{handleKeyPress}"
           disabled!="{disabled}")
-      slot({focused})
+      slot({focused} {disabled})
 </template>
 
 <style lang="scss">

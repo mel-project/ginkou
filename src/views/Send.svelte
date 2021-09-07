@@ -79,7 +79,6 @@
       if ($current_wallet_dump && $current_wallet_dump.summary.locked) {
         dsptch_err("current wallet is locked!");
       } else {
-        console.log(to_addrs)
         await prepare_mel_tx($current_wallet, to_addrs.map((contact)=>contact.address), new BigNumber(send_amount))
           .ifLeft((err) => dsptch_err(err))
           .ifRight((tx) => {
@@ -178,13 +177,16 @@
         }}
         label="To:"
         disabled={to_addrs.length > 0}
+        let:disabled
       >
         <!-- //TODO: fix clicking  -->
-        <Dropdown
-          bind:hovered={selected_prediction}
-          items={predictions}
-          stringify={(item) => `${item.name}: ${item.address}`}
-        />
+        {#if !disabled}
+          <Dropdown
+            on:click={({detail})=> create_chip(detail.item)}
+            items={predictions}
+            stringify={(item) => `${item.name}: ${item.address}`}
+          />
+        {/if}
       </Textfield>
       <Textfield
         bind:value={send_amount}
