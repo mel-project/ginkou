@@ -4,16 +4,18 @@
 
   import { add_coin, tap_faucet, TESTNET } from "@/utils";
   import Textfield from "@smui/textfield";
-  import { getContext } from "svelte";
+  import { getContext, createEventDispatcher } from "svelte";
 
   const {current_wallet} = getContext("settings")
   const {current_wallet_dump} = getContext("store")
+
+  const dispatcher = createEventDispatcher();
 
   const copy_wallet_handler = async () => {
     if ($current_wallet_dump) {
       const addr = $current_wallet_dump.summary.address;
       await navigator.clipboard.writeText(addr);
-      alert(`copied ${addr} to clipboard`);
+      dispatcher("notify-banner", {text: `copied to clipboard`})
     }
   };
   const add_coin_handler = async () => {

@@ -22,6 +22,7 @@
   import SendIcon from './res/icons/send.svg';
   import RecieveIcon from './res/icons/recieve.svg';
   import SettingsIcon from './res/icons/settings.svg';
+  import ContactsIcon from './res/icons/contacts.svg';
 
   import Modal from "./components/Modal.svelte";
 
@@ -29,7 +30,7 @@
   export let name;
 
   const tabs = ["Transactions", "Send", "Receive", "Contacts"]
-  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon,"Contacts": RecieveIcon}
+  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon,"Contacts": ContactsIcon}
 
   // change this cuz wtf
   const tab_components = Object.assign({},...[Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
@@ -194,7 +195,7 @@
     <!-- !!two way settings bindings -->
     <div class="view-box">
       <svelte:component this={tab_components[$active_tab]}
-        on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} 
+        on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} on:notify-banner={notify_sent_tx_event}
       />
     </div>
   </div>
