@@ -25,7 +25,7 @@
   // export let wallets: { [key: string]: WalletSummary } = {};
 
   // Amount to send in a tx
-  let send_amount: BigNumber = new BigNumber(0);
+  let send_amount: string;
   // Account address to send to
   let to_addr: string = "";
   let to_addrs: Contact[] = [];
@@ -79,7 +79,8 @@
       if ($current_wallet_dump && $current_wallet_dump.summary.locked) {
         dsptch_err("current wallet is locked!");
       } else {
-        await prepare_mel_tx($current_wallet, to_addr, send_amount)
+        console.log(to_addrs)
+        await prepare_mel_tx($current_wallet, to_addrs.map((contact)=>contact.address), new BigNumber(send_amount))
           .ifLeft((err) => dsptch_err(err))
           .ifRight((tx) => {
             open_confirmation = true;
@@ -116,6 +117,7 @@
     to_addr = delete_addr(index).address;
   };
   const create_chip = (contact: Contact) => {
+    if(!contact.address.length) return 
     to_addrs = [...to_addrs, contact];
   };
 </script>
@@ -163,14 +165,17 @@
           on:remove={() => delete_addr(i)}>{addr.name}: {addr.address}</Chip
         >
       {/each}
-      {selected_prediction?.name}
       <Textfield
         bind:value={to_addr}
-        on:blur={() => {
-          selected_prediction && create_chip(selected_prediction || { name: "", address: to_addr });
+        on:key_enter={() => {
+          if(selected_prediction){
+            create_chip(selected_prediction);
+          }
+          else{
+            create_chip({ name: "", address: to_addr });
+          }
           to_addr = "";
         }}
-        on:key_enter={() => create_chip(predictions[0])}
         label="To:"
         disabled={to_addrs.length > 0}
       >
