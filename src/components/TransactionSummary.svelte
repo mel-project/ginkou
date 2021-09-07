@@ -12,6 +12,7 @@
   export let current_wallet_dump: any;
 
   const total_output: { [key: string]: BigNumber } = (() => {
+    console.log(tx)
     let toret: { [key: string]: BigNumber } = {};
     for (const output of tx.outputs) {
       toret[output.denom] = (toret[output.denom] ?? new BigNumber(0)).plus(
@@ -89,8 +90,8 @@
       <Cell span="9" style={table_val_style}>
         {output.covhash}
         <b
-          >{$current_wallet_dump &&
-          output.covhash === $current_wallet_dump.summary.address
+          >{current_wallet_dump &&
+          output.covhash === current_wallet_dump.summary.address
             ? " (self)"
             : ""}</b
         >

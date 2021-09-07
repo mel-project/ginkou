@@ -4,4 +4,5 @@ yarn.lock
 yarn-error.log
 nohup.out
 build
+tmux-workspace.sh
 .DS_Store

@@ -1,21 +1,25 @@
 <script lang="typescript">
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import List, { Item, Text } from "@smui/list";
-  import { new_wallet } from "@/utils";
+  import { new_wallet, TESTNET, MAINNET } from "@/utils";
+  import type { WalletSummary } from "@/utils";
   import WalletMenuItem from "@/components/WalletMenuItem.svelte";
   import Button, { Label, Icon } from "@smui/button";
   import Textfield from "@smui/textfield";
   import HelperText from "@smui/textfield/helper-text/index";
   import {getContext} from 'svelte';
+  import type {Readable} from 'svelte/store'
 
-  const {wallet_summaries} = getContext("store");
-  const {writable_settings} = getContext("settings");
+  type Summaries = Readable<{[key: string]: WalletSummary}>;
+
+  const {wallet_summaries}: {wallet_summaries: Summaries} = getContext("store");
+  const {writable_settings, network} = getContext("settings");
   const settings = writable_settings;
   // wallet_summaries.subscribe(console.log)
   let add_new_open = false; 
   let new_name = "";
   let new_password = "";
-  let new_testnet = false;
+  let new_network = $network == TESTNET;
 
   const raise_err = (err: any) => {
     alert(err); // replace with something decent
@@ -27,7 +31,7 @@
       raise_err("wallet name cannot be empty");
     } else {
       // we try now
-      await new_wallet(new_name, new_testnet, new_password)
+      await new_wallet(new_name, new_network, new_password)
         .ifLeft(raise_err)
         .ifRight((_) => {
           add_new_open = false;
@@ -41,19 +45,21 @@
 
 <div id="wallet-menu-inner">
   {#each Object.entries($wallet_summaries) as [wlt, wlt_content]}
-    <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>
-        <Text>{wlt}</Text>
-      </Item> -->
-    <div class="menu-item" on:click={() => {
-        $settings.current_wallet = wlt
-      }
-      }>
-      <WalletMenuItem
-        name={wlt}
-        wallet={wlt_content}
-        selected={wlt === $settings.current_wallet}
-      />
-    </div>
+    {#if $network == 0 || wlt_content.network == $network}
+      <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>
+          <Text>{wlt}</Text>
+        </Item> -->
+      <div class="menu-item" on:click={() => {
+          $settings.current_wallet = wlt
+        }
+        }>
+        <WalletMenuItem
+          name={wlt}
+          wallet={wlt_content}
+          selected={wlt === $settings.current_wallet}
+        />
+      </div>
+    {/if}
   {/each}
   <div class="menu-item">
     <div class="wallet-add-new">
@@ -82,6 +88,10 @@
       </Textfield>
     </div>
     <div style="text-align: right">
+      <span>
+        <label for="testnet-checkbox" style="display: inline">Testnet: </label>
+        <input name="testnet-checkbox" type="checkbox" bind:checked="{new_network}">
+      </span>
       <Button variant="outlined" on:click={create_wallet_callback}>
         <Label>OK</Label>
       </Button>

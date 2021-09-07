@@ -1,6 +1,6 @@
 <script lang="typescript">
   import type { WalletSummary } from "./utils";
-  import { list_wallets, get_priv_key } from "./utils";
+  import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils";
   import {onMount, setContext} from 'svelte'
 
   import { Row, Section, Title } from "@smui/top-app-bar";
@@ -10,8 +10,9 @@
 
   import Send from "./views/Send.svelte";
   import Receive from "./views/Receive.svelte";
-  import CreateWallet from "./components/CreateWallet.svelte";
   import Transactions from "./views/Transactions.svelte";
+  import Contacts from "./views/Contacts.svelte";
+
   import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
   import { Settings, Store } from "./store";
@@ -21,38 +22,41 @@
   import SendIcon from './res/icons/send.svg';
   import RecieveIcon from './res/icons/recieve.svg';
   import SettingsIcon from './res/icons/settings.svg';
+  import ContactsIcon from './res/icons/contacts.svg';
 
   import Modal from "./components/Modal.svelte";
 
 
   export let name;
 
-  const tabs = ["Transactions", "Send", "Receive"]
-  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon}
+  const tabs = ["Transactions", "Send", "Receive", "Contacts"]
+  const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon,"Contacts": ContactsIcon}
 
   // change this cuz wtf
-  const tab_components = Object.assign({},...[Transactions, Send, Receive].map((comp,i)=>({[tabs[i]]:comp})))
+  const tab_components = Object.assign({},...[Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
   const setting_types: SettingsType<Setting> = {
     network: {label: "Network", type: "select", 
-      options: {Test: "test", Main: "main"}, default: "main"},
+      options: {Test: TESTNET, Main: MAINNET, All: 0}, default: TESTNET},
 
-    persistent_tabs:{ type: "checkbox", visible: false},
 
     default_tab: {label: "Default Tab", type: "select", 
       options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, 
-      depends: {}, default:"Transactions"},
+      depends: {persistent_tabs: false}, default:"Transactions"},
+    persistent_tabs:{ label: "Persistent Tabs", type: "checkbox", visible: true, default: false},
 
-    last_tab:{ visible: false},
-    current_wallet:{ visible: false}
-  }
+    current_wallet:{ visible: false},
+    active_tab: {visible: false},
+    contacts: {visible: false, default: []},
+  };
+
+
 
   const {writable_settings, settings} = Settings(setting_types)
-  const {persistent_tabs, current_wallet, default_tab} = settings
+  const {persistent_tabs, current_wallet, default_tab, active_tab} = settings
 
 
   const store = Store(settings)
 
-  console.log(settings,store)
   // show restraint when using contexts
   // pass settings as props through components if possible
   setContext("settings", {writable_settings, ...settings})
@@ -63,8 +67,6 @@
   
   // Indicates whether modal is open: true or closed: false
   let modal_is_active = false;
-  // Active tab in UI
-  let active_tab: string;
   // Indicates whether the side nav bar is active
   let wallet_menu_is_active = false;
   // Indicates whether secret key will be visible
@@ -102,15 +104,13 @@
   onMount(()=>{
 
 
-    if($persistent_tabs){
+    if(!$persistent_tabs){
       //TODO implement $last_tab setting
       // should capture the last visited tab to automatically load that tab on startup
-      active_tab = "Transactions"
+      $writable_settings.active_tab = $default_tab || "Receive";
     }
-    else{
-      //TODO implement defaults
-      active_tab = $default_tab || "Receive";
-    }
+    // const {wallet_summaries} = store
+    // console.log($wallet_summaries)
   })
 </script>
 
@@ -145,7 +145,7 @@
         <div id="tabs-container">
           <TabBar class="tab-bar"
             {tabs}
-            bind:active_tab={active_tab}
+            bind:active_tab={$writable_settings.active_tab}
             let:tab
           >
             <Tab {tab}>
@@ -194,8 +194,8 @@
     </div>
     <!-- !!two way settings bindings -->
     <div class="view-box">
-      <svelte:component this={tab_components[active_tab]}
-        on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} 
+      <svelte:component this={tab_components[$active_tab]}
+        on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} on:notify-banner={notify_sent_tx_event}
       />
     </div>
   </div>
@@ -231,5 +231,6 @@
   padding: .5em;
   cursor: pointer;
   fill: white;
+  z-index: 100;
 }
 </style>

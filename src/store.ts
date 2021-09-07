@@ -5,16 +5,16 @@ import JSONbig from "json-bigint";
 
 type Obj<T> = { [key: string]: T }
 export interface PersistentSetting {
-  default?: string;
+  default?: any;
 }
 
 export interface Setting extends PersistentSetting {
   label?: string;
   type?: string;
-  options?: Obj<string>;
-  depends?: Obj<string>;
+  options?: Obj<string | number>;
+  depends?: Obj<string | number | boolean>;
   visible?: boolean;
-
+  override?: boolean;
 }
 
 
@@ -23,8 +23,8 @@ export interface Settings<T extends Setting | Readable<string> | string> {
   network: T;
   persistent_tabs: T;
   default_tab: T;
-  last_tab: T;
   current_wallet: T;
+  active_tab: T;
 }
 
 interface SettingsObject {
@@ -63,25 +63,26 @@ const initSettings = (writable_settings: Readable<Settings<string>>): Settings<R
   return (read_only_settings as unknown) as Settings<Readable<string>>;
 
 };
+
+const get_persistent_settings = (localName: string): Obj<any> =>  {
+  const persistent_settings = localStorage.getItem(localName)
+  if (persistent_settings)
+    return JSONbig.parse(persistent_settings)
+  else
+    return {}
+}
 // settings 
 export const Settings = (setting_types: Settings<Setting>): SettingsObject => {
-  const writable_settings: Writable<Settings<string>> = writable(null, (set) => {
+  const writable_settings: Writable<Settings<string>> = writable({}, (set) => {
 
-    const persistent_settings = localStorage.getItem('writable_settings');
-    const defaults: Obj<string> = {};
+    const persistent_settings: Obj<any> = get_persistent_settings("writable_settings");
     Object.entries(setting_types).forEach((entry: [string, Setting]) => {
       const setting_name: string = entry[0];
       const setting: Setting = entry[1];
-
-      const setting_default: string = setting.default || "";
-
-      defaults[setting_name] = setting_default;
+      if(setting.override || !persistent_settings[setting_name])
+        persistent_settings[setting_name] = setting.default
     });
-
-    if (persistent_settings)
-      set(Object.assign(defaults, JSONbig.parse(persistent_settings)))
-    else
-      set(Object.assign(defaults))
+    set(persistent_settings)
   }) as unknown as Writable<Settings<string>>; // guarenteed unless setting_types is improperly cast 
 
   writable_settings.subscribe((value) => {
@@ -90,11 +91,11 @@ export const Settings = (setting_types: Settings<Setting>): SettingsObject => {
 
   let set_setting: SettingsObject["set_setting"] = (name, value) => { };
 
-  (writable_settings.subscribe((settings) => {
-    set_setting = (name, value) => {
-      (settings as Settings<string>)[name] = value
-    }
-  }))();
+  // (writable_settings.subscribe((settings) => {
+  //   set_setting = (name, value) => {
+  //     (settings as Settings<string>)[name] = value
+  //   }
+  // }))();
 
   // create read only interface for _settings
   return { settings: initSettings(writable_settings), writable_settings, set_setting };
@@ -129,7 +130,7 @@ export const Store = (settings: Settings<Readable<string>>) => {
     null
   );
   // List of all wallets, both mainnet and testnet
-  const wallet_summaries: Readable<Obj<WalletSummary>> = derived(settings.network, ($name,set) => {
+  const wallet_summaries: Readable<Obj<WalletSummary>> = readable({}, (set) => {
     const refresh = async () => {
       // fetch the stuff and set
       const list = await list_wallets();
@@ -137,7 +138,6 @@ export const Store = (settings: Settings<Readable<string>>) => {
         .ifLeft((e) => console.log(`error encountered in list_wallets: ${e}`))
         .map((list) => {
           // console.log("obtained list_wallets");
-          console.log(list)
           set(list);
         });
     };
@@ -145,7 +145,7 @@ export const Store = (settings: Settings<Readable<string>>) => {
     refresh();
     return () => clearInterval(interval);
 
-  }, {});
+  });
   return { wallet_summaries, current_wallet_dump };
 }
 

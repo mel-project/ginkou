@@ -56,6 +56,10 @@
     "typescript-is": "^0.18.2"
   },
   "dependencies": {
+    "@capacitor/android": "^3.2.0",
+    "@capacitor/cli": "^3.2.0",
+    "@capacitor/core": "^3.2.0",
+    "@capacitor/ios": "^3.2.0",
     "@smui/button": "^4.2.0",
     "@smui/chips": "^4.2.0",
     "@smui/dialog": "^4.2.0",
