@@ -19,7 +19,7 @@
   let add_new_open = false; 
   let new_name = "";
   let new_password = "";
-  let new_network = $network;
+  let new_network = $network == TESTNET;
 
   const raise_err = (err: any) => {
     alert(err); // replace with something decent
@@ -88,6 +88,10 @@
       </Textfield>
     </div>
     <div style="text-align: right">
+      <span>
+        <label for="testnet-checkbox" style="display: inline">Testnet: </label>
+        <input name="testnet-checkbox" type="checkbox" bind:checked="{new_network}">
+      </span>
       <Button variant="outlined" on:click={create_wallet_callback}>
         <Label>OK</Label>
       </Button>
