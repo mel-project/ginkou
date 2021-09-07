@@ -158,13 +158,9 @@
 {#if $current_wallet}
   <div id="window">
     <div class="centered-container">
-      {#each to_addrs as addr, i}
-        <Chip
-          on:click={() => handle_chip_click(i)}
-          on:remove={() => delete_addr(i)}>{addr.name}: {addr.address}</Chip
-        >
-      {/each}
+      
       <Textfield
+        let:disabled
         bind:value={to_addr}
         on:key_enter={() => {
           if(selected_prediction){
@@ -177,7 +173,7 @@
         }}
         label="To:"
         disabled={to_addrs.length > 0}
-        let:disabled
+        autocomplete="off"
       >
         <!-- //TODO: fix clicking  -->
         {#if !disabled}
@@ -188,11 +184,19 @@
           />
         {/if}
       </Textfield>
+      {#each to_addrs as addr, i}
+        <Chip
+          on:click={() => handle_chip_click(i)}
+          on:remove={() => delete_addr(i)}>{addr.name}: {addr.address}</Chip
+        >
+      {/each}
       <Textfield
         bind:value={send_amount}
         label="Amount:"
         type="number"
         suffix="micromel"
+        autocomplete="off"
+
       />
   
       <Button on:click={prepare_tx_handler}>Send</Button>

@@ -1,5 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
+import App from "../../App.svelte";
+import Chip from "./Chip.svelte";
 
   export let value = "";
   export let label = "";
@@ -35,7 +37,8 @@
           on:blur!="{handleBlur}" 
           on:focus!="{handleFocus}"
           on:keypress!="{handleKeyPress}"
-          disabled!="{disabled}")
+          disabled!="{disabled}"
+          "{...$$props}")
       slot({focused} {disabled})
 </template>
 
