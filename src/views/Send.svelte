@@ -11,7 +11,7 @@
 
   type Contact = { name: string; address: string };
 
-  const { current_wallet, contacts, writable_settings } =
+  const { current_wallet, contacts, network, writable_settings } =
     getContext("settings");
   const { current_wallet_dump, wallet_summaries } = getContext("store");
 
@@ -97,9 +97,16 @@
 
   const search_names = (contacts: Contact[], sub_name: string): Contact[] => {
     if (sub_name == "") return [];
-    const prediction = contacts.filter((contact) =>
+    
+
+    const wallet_contacts: Contact[] = Object.entries($wallet_summaries).filter(entry=>entry[1].network==$network).map(entry=>{
+      return {name: entry[0], address: entry[1].address}
+    })
+
+    const prediction = [...contacts, ...wallet_contacts].filter((contact) =>
       contact.name.startsWith(sub_name)
     );
+
     if (prediction) {
       return prediction;
     } else {
