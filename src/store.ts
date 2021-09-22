@@ -135,7 +135,7 @@ export const Store = (settings: Settings<Readable<string>>) => {
       // fetch the stuff and set
       const list = await list_wallets();
       list
-        .ifLeft((e) => console.log(`error encountered in list_wallets: ${e}`))
+        .ifLeft((e) => console.log(`error encountered in list_wallets: ${JSON.stringify(e)}`))
         .map((list) => {
           // console.log("obtained list_wallets");
           set(list);
