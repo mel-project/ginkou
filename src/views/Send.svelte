@@ -9,17 +9,15 @@
   import Dropdown from "@/components/UI/Dropdown.svelte";
   import Button, { Label } from "@smui/button";
 
+  import BigNumber from "bignumber.js";
+
+
   type Contact = { name: string; address: string };
 
-  const { current_wallet, contacts, network, writable_settings } =
-    getContext("settings");
-  const { current_wallet_dump, wallet_summaries } = getContext("store");
+  const {settings} = getContext("settings");
 
-  import BigNumber from "bignumber.js";
-  import { length } from "json-bigint";
-  import { append } from "svelte/internal";
-  import App from "../App.svelte";
-  import Contacts from "./Contacts.svelte";
+  const { current_wallet, contacts, network } = settings
+  const { current_wallet_dump, wallet_summaries } = getContext("melwalletd");
 
   // export let active_wallet: string | null;
   // export let wallets: { [key: string]: WalletSummary } = {};
@@ -62,7 +60,7 @@
         await send_tx($current_wallet, prepared_tx)
           .ifLeft((err) => dsptch_err(err))
           .ifRight((txhash) => {
-            $writable_settings.contacts.push({ name: "", address: to_addr });
+            $contacts.push({ name: "", address: to_addr });
             dispatcher("sent-tx", {
               text: `Transaction initiated with hash ${JSON.stringify(txhash)}`,
             });

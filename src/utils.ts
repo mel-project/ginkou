@@ -332,6 +332,7 @@ export const tap_faucet = (
   port: number = default_port
 ): EitherAsync<string, TxHash> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
+    console.log('tapping')
     const url = `${home_addr}:${port}/wallets/${wallet_name}/send-faucet`;
     let res = await fromPromise(fetch_json_or_err(url, { method: "POST" }));
     return liftEither(cast_to_either(intoTxHash(res)));

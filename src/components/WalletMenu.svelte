@@ -12,9 +12,9 @@
 
   type Summaries = Readable<{[key: string]: WalletSummary}>;
 
-  const {wallet_summaries}: {wallet_summaries: Summaries} = getContext("store");
-  const {writable_settings, network} = getContext("settings");
-  const settings = writable_settings;
+  const {wallet_summaries}: {wallet_summaries: Summaries} = getContext("melwalletd");
+  const {settings} = getContext("settings");
+  const {network, current_wallet} = settings
   // wallet_summaries.subscribe(console.log)
   let add_new_open = false; 
   let new_name = "";
@@ -37,26 +37,29 @@
           add_new_open = false;
           new_name = "";
           new_password = "";
-        })
-        .run();
+        }).run();
+
+
+
     }
   };
 </script>
 
 <div id="wallet-menu-inner">
+  
   {#each Object.entries($wallet_summaries) as [wlt, wlt_content]}
-    {#if $network == 0 || wlt_content.network == $network}
+   {#if $network == 0 || wlt_content.network == $network}
       <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>
           <Text>{wlt}</Text>
         </Item> -->
       <div class="menu-item" on:click={() => {
-          $settings.current_wallet = wlt
+          $current_wallet = wlt
         }
         }>
         <WalletMenuItem
           name={wlt}
           wallet={wlt_content}
-          selected={wlt === $settings.current_wallet}
+          selected={wlt === $current_wallet}
         />
       </div>
     {/if}

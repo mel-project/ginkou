@@ -15,7 +15,7 @@
 
   import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { Settings, Store } from "./store";
+  import { Settings, Melwalletd } from "./store";
   import type { Settings as SettingsType, Setting } from "./store";
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from './res/icons/transactions.svg';
@@ -47,20 +47,16 @@
     current_wallet:{ visible: false},
     active_tab: {visible: false},
     contacts: {visible: false, default: []},
-  };
+  }
 
-
-
-  const {writable_settings, settings} = Settings(setting_types)
+  const {settings, set_setting} = Settings(setting_types)
   const {persistent_tabs, current_wallet, default_tab, active_tab} = settings
-
-
-  const store = Store(settings)
+  // const store = Store(settings)
 
   // show restraint when using contexts
   // pass settings as props through components if possible
-  setContext("settings", {writable_settings, ...settings})
-  setContext("store", store)
+  setContext("settings", {settings})
+  setContext("melwalletd", Melwalletd(settings))
 
  
 
@@ -104,10 +100,10 @@
   onMount(()=>{
 
 
-    if(!$persistent_tabs){
+    if(!persistent_tabs){
       //TODO implement $last_tab setting
       // should capture the last visited tab to automatically load that tab on startup
-      $writable_settings.active_tab = $default_tab || "Receive";
+      set_setting(active_tab,  default_tab || "Receive")
     }
     // const {wallet_summaries} = store
     // console.log($wallet_summaries)
@@ -115,12 +111,17 @@
 </script>
 
 <main>
+  <input bind:value={$current_wallet}>
+  <div>{$current_wallet}</div>
+  <!-- <canvas style="width: 100vw; height: 100vh">
+
+
+  </canvas> -->
 
   {#if modal_is_active}
     <Modal on:closeModal="{()=>{modal_is_active=false}}">
         <SettingsView 
           {setting_types}
-          {writable_settings}
           {settings}
         ></SettingsView>
     </Modal>
@@ -145,7 +146,7 @@
         <div id="tabs-container">
           <TabBar class="tab-bar"
             {tabs}
-            bind:active_tab={$writable_settings.active_tab}
+            bind:active_tab={$active_tab}
             let:tab
           >
             <Tab {tab}>

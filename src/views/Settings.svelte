@@ -1,7 +1,7 @@
 <script type="text/typescript">
   import SettingComp from "@/components/Setting.svelte";
   import type {Settings, Setting} from "@/store";
-  import type { Readable } from "svelte/store";
+  import type { Writable, Readable } from "svelte/store";
 
 
   interface NamedObject {
@@ -10,8 +10,8 @@
   }
 
   export let setting_types: Settings<Setting>;
-  export let settings: Settings<Readable<string>>;
-  export let writable_settings: Readable<Settings<string>>;
+  export let settings: Settings<Writable<string>>;
+  // export let writable_settings: Readable<Settings<string>>;
   
 
 
@@ -24,7 +24,7 @@
     })
     return named_entries as unknown as [NamedObject];
   }
-  const check_matching_dependencies = (settings, dependencies) => {
+  const check_matching_dependencies = (settings: Settings<Readable<string>>, dependencies: string) => {
     // console.log(settings,dependencies)
     return !Object.entries(dependencies).reduce((reduced, dep) => {
       const dep_name = dep[0];
@@ -47,9 +47,9 @@
                 <SettingComp
                   bind:setting
                   {name}
-                  bind:value={$writable_settings[name]}
+                  bind:value={$settings[name]}
                   disabled={setting.depends &&
-                    check_matching_dependencies($writable_settings, setting.depends)}
+                    check_matching_dependencies(settings, setting.depends)}
                 />
               </div>
             {/if}
