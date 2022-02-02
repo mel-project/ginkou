@@ -1,9 +1,0 @@
-{
-  "unspent_coins": [],
-  "spent_coins": [],
-  "tx_in_progress": {},
-  "tx_confirmed": {},
-  "stake_list": {},
-  "my_covenant": "420009f100000000000000000000000000000000000000000000000000000000000000064200005050f020fb0b7e958dba3aa246832bc39ee5cdbb67aab2ceb67267b8284b8043e1e41108420001320020",
-  "network": 1
-}
