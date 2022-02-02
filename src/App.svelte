@@ -50,7 +50,8 @@
   }
 
   const {settings, set_setting} = Settings(setting_types)
-  const {persistent_tabs, current_wallet, default_tab, active_tab} = settings
+  const {persistent_tabs, current_wallet, default_tab, active_tab, network} = settings
+  console.log(settings)
   // const store = Store(settings)
 
   // show restraint when using contexts
@@ -112,7 +113,9 @@
 
 <main>
   <input bind:value={$current_wallet}>
+  <div>{$network}</div>
   <div>{$current_wallet}</div>
+  <div>{$persistent_tabs}</div>
   <!-- <canvas style="width: 100vw; height: 100vh">
 
 

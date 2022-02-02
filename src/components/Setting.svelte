@@ -1,5 +1,9 @@
 <script type="text/typescript">
     import { onMount } from "svelte";
+
+    import { createEventDispatcher } from 'svelte';
+
+
     import type { Setting } from '@/store';
 
     /**
@@ -13,6 +17,14 @@
     export let value: any;
     export let disabled: boolean;
     export let name: string | undefined = undefined;
+
+
+    const dispatch = createEventDispatcher();
+    $: {
+        dispatch('change', {
+            value
+        })
+    }
 </script>
 
 <template>
