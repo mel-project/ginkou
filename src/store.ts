@@ -32,6 +32,7 @@ interface SettingsObject {
   writable_settings: Writable<Settings<string>>;
   set_setting: (name: string, value: string) => void;
 }
+
 const get_persistent_settings = (localName: string): Obj<any> =>  {
   const persistent_settings = localStorage.getItem(localName)
   if (persistent_settings)
@@ -48,32 +49,32 @@ const persistSetting = (localName: string, readable: Readable<Setting>)=>{
 
   });
 }
-const initSettings = (writable_settings: Readable<Settings<string>>): Settings<Writable<string>> => {
+// const initSettings = (writable_settings: Readable<Settings<string>>): Settings<Writable<string>> => {
 
  
+  
+//   // let settings: Obj<Writable<string>> = {};
+//   // // create inital map from Object<string> to Object<Readable<String>>
+//   // // call immediately after to unsubscribe
+//   // const do_once_and_unsubscribe = writable_settings.subscribe(($settings) => {
+//   //   // map _setting entries to readables
+//   //   Object.keys($settings).forEach((setting_name: any) => {
+//   //     const setting_value = $settings[setting_name]
+//   //     read_only_settings[setting_name] = readable(setting_value, watchSetting(setting_name))
+//   //   })
+//   // });
+//   // do_once_and_unsubscribe()
 
-  let settings: Obj<Writable<string>> = {};
-  // create inital map from Object<string> to Object<Readable<String>>
-  // call immediately after to unsubscribe
-  const do_once_and_unsubscribe = writable_settings.subscribe(($settings) => {
-    // map _setting entries to readables
-    Object.keys($settings).forEach((setting_name: any) => {
-      const setting_value = $settings[setting_name]
-      read_only_settings[setting_name] = readable(setting_value, watchSetting(setting_name))
-    })
-  });
-  do_once_and_unsubscribe()
+//   return  as Settings<Readable<string>>;
 
-  return (read_only_settings as unknown) as Settings<Readable<string>>;
-
-};
+// };
 
 
 // settings 
 export const Settings = (setting_types: Settings<Setting>): SettingsObject => {
   const writable_settings: Writable<Settings<string>> = writable({}, (set) => {
     // start settings as the previous saved state
-    const settings: Obj<any> = get_persistent_settings("settings");
+    const persistent_settings: Obj<any> = get_persistent_settings("settings");
     // for each setting, check if setting.override is set or if it didn't exists in persistent storage
     // in either case, use it's default value
     Object.entries(setting_types).forEach((entry: [string, Setting]) => {
@@ -100,7 +101,7 @@ export const Settings = (setting_types: Settings<Setting>): SettingsObject => {
   // }))();
 
   // create read only interface for _settings
-  return { settings: initSettings(writable_settings), writable_settings, set_setting };
+  return { settings: writable_settings, writable_settings, set_setting };
 }
 
 export const Store = (settings: Settings<Readable<string>>) => {
