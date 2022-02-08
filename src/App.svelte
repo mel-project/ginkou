@@ -115,90 +115,10 @@
 </script>
 
 <main>
+  <canvas style="height: 100vh; width: 100vw">
 
-  {#if modal_is_active}
-    <Modal on:closeModal="{()=>{modal_is_active=false}}">
-        <SettingsView 
-          {setting_types}
-          {writable_settings}
-          {settings}
-        ></SettingsView>
-    </Modal>
-  {/if}
-  <div type="button" class="open-settings"
-    on:click={()=>modal_is_active=true} value="Settings">
-    {@html SettingsIcon}
-  </div>
-
-  <div class="top-bar">
-    <Row>
-      <Section>
-        <div id="wallet-title-section">
-          <Hamburger class="hamburger-menu" bind:menuOpen={wallet_menu_is_active} />
-          <span id="wallet-title">
-            <Title>{$current_wallet}</Title>
-          </span>
-        </div>
-      </Section>
-
-      <Section>
-        <div id="tabs-container">
-          <TabBar class="tab-bar"
-            {tabs}
-            bind:active_tab={$writable_settings.active_tab}
-            let:tab
-          >
-            <Tab {tab}>
-              <Label>
-                <span class="tab-content">
-                  <span class="icon">
-                    {@html tab_icons[tab]}
-                  </span>
-                  <span class="text">{tab}</span>
-                </span>
-                
-              </Label>
-            </Tab>
-          </TabBar>
-        </div>
-      </Section>
-    </Row>
-    <!--</TopAppBar>-->
-  </div>
-
-  <div id="sent-tx-notification-banner">
-    <!-- Report sent-txs to user-->
-    {#if sent_tx_chan.length > 0}
-      <div class="sent-tx-notif-container">
-        {#each sent_tx_chan as msg}
-          <p>{msg}</p>
-        {/each}
-      </div>
-    {/if}
-  </div>
-
-  <div id="error-notification-banner">
-    <!-- Report errors to user-->
-    {#if error_chan.length > 0}
-      <div class="error-notif-container">
-        {#each error_chan as msg}
-          <p>{msg}</p>
-        {/each}
-      </div>
-    {/if}
-  </div>
-
-  <div class="content">
-    <div id="wallet-menu" class:active={wallet_menu_is_active}>
-      <WalletMenu />
-    </div>
-    <!-- !!two way settings bindings -->
-    <div class="view-box">
-      <svelte:component this={tab_components[$active_tab]}
-        on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} on:notify-banner={notify_sent_tx_event}
-      />
-    </div>
-  </div>
+  </canvas>
+  
 </main>
 
 <svelte:head>

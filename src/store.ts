@@ -3,15 +3,26 @@ import { list_wallets, WalletSummary, WalletDump, wallet_dump } from "./utils";
 import JSONbig from "json-bigint";
 
 
+<<<<<<< Updated upstream
 type Obj<T> = { [key: string]: T }
 export interface PersistentSetting {
+=======
+export type Obj<T> = { [key: string]: T }
+export interface PersistentSetting extends String {
+>>>>>>> Stashed changes
   default?: any;
 }
 
 export interface Setting extends PersistentSetting {
+<<<<<<< Updated upstream
   label?: string;
   type?: string;
   options?: Obj<string | number>;
+=======
+  label: string; // the name of this field
+  type: string; // the type of the setting input (can be anything supported by )
+  options?: Obj<string | number>; // for types with multiple selection options
+>>>>>>> Stashed changes
   depends?: Obj<string | number | boolean>;
   visible?: boolean;
   override?: boolean;
@@ -32,6 +43,7 @@ interface SettingsObject {
   writable_settings: Writable<Settings<string>>;
   set_setting: (name: string, value: string) => void;
 }
+<<<<<<< Updated upstream
 const initSettings = (writable_settings: Readable<Settings<string>>): Settings<Readable<string>> => {
 
   // subscribe to changes in writable_settings and alter this readable from within
@@ -49,6 +61,29 @@ const initSettings = (writable_settings: Readable<Settings<string>>): Settings<R
   }
 
   let read_only_settings: Obj<Readable<string>> = {};
+=======
+const get_persistent_settings = (localName: string): Obj<any> =>  {
+  const persistent_settings = localStorage.getItem(localName)
+  if (persistent_settings)
+    return JSONbig.parse(persistent_settings)
+  else
+    return {}
+}
+
+const persistSetting = (localName: string, readable: Readable<Setting>)=>{
+  readable.subscribe((setting) => {
+    let local_settings = localStorage.getItem(localName)
+    Object.assign(local_settings, {[setting.label]: setting})
+    localStorage.setItem(localName, JSONbig.stringify(local_settings))
+
+  });
+}
+const initSettings = (writable_settings: Readable<Settings<string>>): Settings<Writable<string>> => {
+
+ 
+
+  let settings: Obj<Writable<string>> = {};
+>>>>>>> Stashed changes
   // create inital map from Object<string> to Object<Readable<String>>
   // call immediately after to unsubscribe
   const do_once_and_unsubscribe = writable_settings.subscribe(($settings) => {
@@ -64,18 +99,19 @@ const initSettings = (writable_settings: Readable<Settings<string>>): Settings<R
 
 };
 
-const get_persistent_settings = (localName: string): Obj<any> =>  {
-  const persistent_settings = localStorage.getItem(localName)
-  if (persistent_settings)
-    return JSONbig.parse(persistent_settings)
-  else
-    return {}
-}
+
 // settings 
 export const Settings = (setting_types: Settings<Setting>): SettingsObject => {
   const writable_settings: Writable<Settings<string>> = writable({}, (set) => {
+<<<<<<< Updated upstream
 
     const persistent_settings: Obj<any> = get_persistent_settings("writable_settings");
+=======
+    // start settings as the previous saved state
+    const settings: Obj<any> = get_persistent_settings("settings");
+    // for each setting, check if setting.override is set or if it didn't exists in persistent storage
+    // in either case, use it's default value
+>>>>>>> Stashed changes
     Object.entries(setting_types).forEach((entry: [string, Setting]) => {
       const setting_name: string = entry[0];
       const setting: Setting = entry[1];
@@ -85,9 +121,17 @@ export const Settings = (setting_types: Settings<Setting>): SettingsObject => {
     set(persistent_settings)
   }) as unknown as Writable<Settings<string>>; // guarenteed unless setting_types is improperly cast 
 
+<<<<<<< Updated upstream
   writable_settings.subscribe((value) => {
     localStorage.setItem("writable_settings", JSONbig.stringify(value))
   })
+=======
+  // // whenever writable settings is changed
+  // writable_settings.subscribe((value) => {
+  //   // resave the entire thing to local storage
+  //   localStorage.setItem("writable_settings", JSONbig.stringify(value))
+  // })
+>>>>>>> Stashed changes
 
   let set_setting: SettingsObject["set_setting"] = (name, value) => { };
 
