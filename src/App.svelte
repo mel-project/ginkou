@@ -15,7 +15,7 @@
 
   import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { Settings, Store } from "./store";
+  import { Settings, Melwalletd } from "./store";
   import type { Settings as SettingsType, Setting } from "./store";
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from './res/icons/transactions.svg';
@@ -47,20 +47,17 @@
     current_wallet:{ visible: false},
     active_tab: {visible: false},
     contacts: {visible: false, default: []},
-  };
+  }
 
-
-
-  const {writable_settings, settings} = Settings(setting_types)
-  const {persistent_tabs, current_wallet, default_tab, active_tab} = settings
-
-
-  const store = Store(settings)
+  const {settings, set_setting} = Settings(setting_types)
+  const {persistent_tabs, current_wallet, default_tab, active_tab, network} = settings
+  console.log(settings)
+  // const store = Store(settings)
 
   // show restraint when using contexts
   // pass settings as props through components if possible
-  setContext("settings", {writable_settings, ...settings})
-  setContext("store", store)
+  setContext("settings", {settings})
+  setContext("melwalletd", Melwalletd(settings))
 
  
 
@@ -104,10 +101,10 @@
   onMount(()=>{
 
 
-    if(!$persistent_tabs){
+    if(!persistent_tabs){
       //TODO implement $last_tab setting
       // should capture the last visited tab to automatically load that tab on startup
-      $writable_settings.active_tab = $default_tab || "Receive";
+      set_setting(active_tab,  default_tab || "Receive")
     }
     // const {wallet_summaries} = store
     // console.log($wallet_summaries)
@@ -115,10 +112,97 @@
 </script>
 
 <main>
-  <canvas style="height: 100vh; width: 100vw">
+  <input bind:value={$current_wallet}>
+  <div>{$network}</div>
+  <div>{$current_wallet}</div>
+  <div>{$persistent_tabs}</div>
+  <!-- <canvas style="width: 100vw; height: 100vh">
 
-  </canvas>
-  
+
+  </canvas> -->
+
+  {#if modal_is_active}
+    <Modal on:closeModal="{()=>{modal_is_active=false}}">
+        <SettingsView 
+          {setting_types}
+          {settings}
+        ></SettingsView>
+    </Modal>
+  {/if}
+  <div type="button" class="open-settings"
+    on:click={()=>modal_is_active=true} value="Settings">
+    {@html SettingsIcon}
+  </div>
+
+  <div class="top-bar">
+    <Row>
+      <Section>
+        <div id="wallet-title-section">
+          <Hamburger class="hamburger-menu" bind:menuOpen={wallet_menu_is_active} />
+          <span id="wallet-title">
+            <Title>{$current_wallet}</Title>
+          </span>
+        </div>
+      </Section>
+
+      <Section>
+        <div id="tabs-container">
+          <TabBar class="tab-bar"
+            {tabs}
+            bind:active_tab={$active_tab}
+            let:tab
+          >
+            <Tab {tab}>
+              <Label>
+                <span class="tab-content">
+                  <span class="icon">
+                    {@html tab_icons[tab]}
+                  </span>
+                  <span class="text">{tab}</span>
+                </span>
+                
+              </Label>
+            </Tab>
+          </TabBar>
+        </div>
+      </Section>
+    </Row>
+    <!--</TopAppBar>-->
+  </div>
+
+  <div id="sent-tx-notification-banner">
+    <!-- Report sent-txs to user-->
+    {#if sent_tx_chan.length > 0}
+      <div class="sent-tx-notif-container">
+        {#each sent_tx_chan as msg}
+          <p>{msg}</p>
+        {/each}
+      </div>
+    {/if}
+  </div>
+
+  <div id="error-notification-banner">
+    <!-- Report errors to user-->
+    {#if error_chan.length > 0}
+      <div class="error-notif-container">
+        {#each error_chan as msg}
+          <p>{msg}</p>
+        {/each}
+      </div>
+    {/if}
+  </div>
+
+  <div class="content">
+    <div id="wallet-menu" class:active={wallet_menu_is_active}>
+      <WalletMenu />
+    </div>
+    <!-- !!two way settings bindings -->
+    <div class="view-box">
+      <svelte:component this={tab_components[$active_tab]}
+        on:error={notify_err_event} on:sent-tx={notify_sent_tx_event} on:notify-banner={notify_sent_tx_event}
+      />
+    </div>
+  </div>
 </main>
 
 <svelte:head>
