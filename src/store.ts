@@ -114,7 +114,7 @@ export const Melwalletd = (settings: State<Readable<string>>) => {
       // fetch the stuff and set
       const list = await list_wallets();
       list
-        .ifLeft((e) => console.error(`error encountered in list_wallets: ${e}`))
+        .ifLeft((e) => console.log(`error encountered in list_wallets: ${JSON.stringify(e)}`))
         .map((list) => {
           // console.info("obtained list_wallets");
           set(list);

@@ -63,9 +63,7 @@
     </Cell>
     <Cell span="3" style={table_key_style}>Fee</Cell>
     <Cell span="9" style={table_val_style}>
-      {#each Object.entries(total_output) as [denom, val]}
-        {val} {denom2str(denom)}
-      {/each}
+        { tx.fee }
     </Cell>
   </LayoutGrid>
 
