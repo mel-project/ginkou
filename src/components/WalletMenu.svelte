@@ -5,7 +5,7 @@
   import type { WalletSummary } from "@/utils";
   import WalletMenuItem from "@/components/WalletMenuItem.svelte";
   import Button, { Label, Icon } from "@smui/button";
-  import Textfield from "@smui/textfield";
+  import Textfield from "@/components/UI/TextField.svelte";
   import HelperText from "@smui/textfield/helper-text/index";
   import {getContext} from 'svelte';
   import type {Readable} from 'svelte/store'
@@ -79,7 +79,7 @@
   <Content>
     <div style="margin-top: 10px">
       <Textfield variant="outlined" bind:value={new_name} label="Wallet name">
-        <HelperText slot="helper">{new_password}</HelperText>
+        <HelperText slot="helper"></HelperText>
       </Textfield>
       <Textfield
         type="password"
