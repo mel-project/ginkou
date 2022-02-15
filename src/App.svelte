@@ -33,20 +33,33 @@
   const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon,"Contacts": ContactsIcon}
 
   // change this cuz wtf
-  const tab_components = Object.assign({},...[Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
+  const tab_components = Object.assign({},...
+    [Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
+    
   const setting_types: SettingsType<Setting> = {
-    network: {label: "Network", type: "select", 
-      options: {Test: TESTNET, Main: MAINNET, All: 0}, default: TESTNET},
+    network: {
+      label: "Network", 
+      type: "select", 
+      options: {Test: TESTNET, Main: MAINNET, All: 0}, 
+      default: TESTNET
+      },
 
 
-    default_tab: {label: "Default Tab", type: "select", 
+    default_tab: {
+      label: "Default Tab", 
+      type: "select", 
       options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, 
       depends: {persistent_tabs: false}, default:"Transactions"},
-    persistent_tabs:{ label: "Persistent Tabs", type: "checkbox", visible: true, default: false},
 
-    current_wallet:{ visible: false},
-    active_tab: {visible: false},
-    contacts: {visible: false, default: []},
+    persistent_tabs:{ 
+      label: "Persistent Tabs", 
+      type: "checkbox", 
+      visible: true,
+       default: false
+    },
+      current_wallet:{visible: false},
+      active_tab: {visible: false},
+      contacts: {visible: false, default: []},
   }
 
   const {settings, set_setting} = Settings(setting_types)
