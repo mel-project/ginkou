@@ -4,9 +4,13 @@ import JSONbig from "json-bigint";
 
 
 export type Obj<T> = { [key: string]: T }
-export interface PersistentValue<T> {
-  label: string;
-  value: T;
+export type PersistentStorage = PersistentValue[]
+
+export interface Named {
+  label: string
+}
+export interface PersistentValue extends Named{
+  value: any;
 }
 
 /**
@@ -15,16 +19,14 @@ export interface PersistentValue<T> {
  * the settings which track user preferences should be set as `visible: true`
  */
 
-export interface SettingConfig {
-  type?: string; // the type of the setting input (can be anything supported by )
+export interface SettingConfig extends Named{
+  field?: string; // the type of the setting input (can be anything supported by )
   options?: Obj<string | number>; // for types with multiple selection options
   depends?: Obj<string | number | boolean>;
   visible?: boolean; // should this be displayed (interpreted by the acting component)
   override?: boolean; // should the default value be used instead of persisting (debug tool)
-
-}
-export interface Setting extends PersistentValue<any> {
   default: any;
+
 }
 
 /**
@@ -44,28 +46,37 @@ interface StateObject {
   set_setting: (name: string | Readable<string>, value: string | Readable<string>) => void;
 }
 
-const get_persistent_settings = (localName: string): Obj<any> =>  {
+const get_persistent_settings = (localName: string): PersistentStorage =>  {
   const persistent_settings = localStorage.getItem(localName)
   if (persistent_settings)
     return JSONbig.parse(persistent_settings)
   else
-    return {}
+    return []
 }
 
-const restore_settings = (storage_name: string, setting_types: State<Setting>): State<Writable<string>>=>{
+const validate_object_fields = (default_object: Object) => (test_object: Object): Boolean => {
+  const property_test = (acc: Boolean, obj: [string, Object]) => acc && test_object.hasOwnProperty(obj[0])
+  return Object.entries(default_object).reduce(property_test, true)
+}
+console.log("validate", validate_object_fields)
+const config_to_persistent = (setting_config: SettingConfig): PersistentValue =>  {
+  return {label: setting_config.label, value: setting_config.default}
+}
+
+const restore_all_settings = (storage_name: string, setting_types: State<SettingConfig>): State<Writable<string>>=>{
 
   const settings: State<Writable<string>> = writable({}, (set) => {
-    // start settings as the previous saved state
-    const settings: Obj<any> = get_persistent_settings(storage_name);
-    // for each setting, check if setting.override is set or if it didn't exists in persistent storage
-    // in either case, use it's default value
-    Object.value(setting_types).forEach((setting: Setting) => {
-      const setting_name: string = setting.label;
-      // if setting.override or the setting doesn't exist in persistent storage
-      if(setting.override || !settings[setting_name])
-        // use default value
-        settings[setting_name] = setting.default
-    });
+
+    // this is what the storage state will look like on first start
+    const default_storage: PersistentStorage = Object.values(setting_types).map(config_to_persistent);
+
+    // the previous saved settings state
+    const saved_settings: PersistentStorage = get_persistent_settings(storage_name);
+    
+
+    const default_state: State<string> = Object.assign({}, ...saved_settings)
+
+
 
     // the svelte contexts way to say, basically, writable_settings = settings
     set(settings)

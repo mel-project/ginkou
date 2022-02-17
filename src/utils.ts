@@ -152,6 +152,7 @@ function intoCdhTuple(x: any): Maybe<[TxHash, [Transaction, number]]> {
 }
 
 function intoTransaction(x: any): Maybe<Transaction> {
+  console.log("here",x)
   if (
     "kind" in x &&
     typeof x.kind == "number" &&
@@ -159,7 +160,6 @@ function intoTransaction(x: any): Maybe<Transaction> {
     "outputs" in x &&
     "fee" in x &&
     typeof x.fee == "number" &&
-    "scripts" in x &&
     "data" in x &&
     typeof x.data == "string" &&
     "sigs" in x

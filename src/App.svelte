@@ -15,8 +15,8 @@
 
   import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { Settings, Melwalletd } from "./store";
-  import type { Settings as SettingsType, Setting } from "./store";
+  import { State, Melwalletd } from "./store";
+  import type { SettingConfig, Setting } from "./store";
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from './res/icons/transactions.svg';
   import SendIcon from './res/icons/send.svg';
@@ -36,7 +36,7 @@
   const tab_components = Object.assign({},...
     [Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
     
-  const setting_types: SettingsType<Setting> = {
+  const setting_types: State<Setting> = {
     network: {
       label: "Network", 
       type: "select", 
@@ -62,7 +62,7 @@
       contacts: {visible: false, default: []},
   }
 
-  const {settings, set_setting} = Settings(setting_types)
+  const {settings, set_setting} = State(setting_types)
   const {persistent_tabs, current_wallet, default_tab, active_tab, network} = settings
   console.log(settings)
   // const store = Store(settings)
