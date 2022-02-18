@@ -38,10 +38,10 @@
 </script>
 
 <div class="create-wallet-view">
-  <Textfield bind:value={new_wallet_name} label="Testing" />
+  <Textfield bind:value={new_wallet_name} label="Wallet name" />
 
   <Button on:click={() => handle_create_wallet(new_wallet_name)}>
-    Create wallet  ;aasdfasdflsdkfja;slkdfj
+    Create wallet
   </Button>
 </div>
 

@@ -47,7 +47,7 @@
 
 </script>
 
-<template>
+<template>it's way better in the average case but 
   <div class="settings-menu">
     <div class="top"></div>
     <div class="container">
