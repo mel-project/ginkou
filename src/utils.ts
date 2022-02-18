@@ -458,7 +458,8 @@ export const send_tx = (
   ): EitherAsync<string, Transaction> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
       const url_prepare_tx = `${home_addr}:${port}/wallets/${wallet_name}/prepare-tx`;
-  
+      
+      console.log(to, micromel)
       if(to.length != micromel.length) 
         return liftEither(Left("Size of `to` not equal to `micromel`: each recipient must have a matching mel value"))
   
