@@ -114,10 +114,11 @@
   onMount(()=>{
 
 
-    if(!persistent_tabs){
+    if(!$persistent_tabs){
       //TODO implement $last_tab setting
       // should capture the last visited tab to automatically load that tab on startup
-      set_setting(active_tab,  default_tab || "Receive")
+      console.log('changing active tab', $active_tab, $default_tab)
+      $active_tab =  $default_tab || "Send"
     }
     // const {wallet_summaries} = store
     // console.log($wallet_summaries)
@@ -128,6 +129,7 @@
   <input bind:value={$current_wallet}>
   <div>{$network}</div>
   <div>{$current_wallet}</div>
+  <div>{$default_tab}</div>
   <div>{$persistent_tabs}</div>
   <!-- <canvas style="width: 100vw; height: 100vh">
 
