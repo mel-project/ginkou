@@ -71,13 +71,14 @@
   }
 
   async function prepare_tx_handler() {
+    console.log("to_addrs", to_addrs.map((contact)=>contact.address))
     if ($current_wallet == null) {
       dsptch_err("Choose a wallet to send from");
     } else {
       if ($current_wallet_dump && $current_wallet_dump.summary.locked) {
         dsptch_err("current wallet is locked!");
       } else {
-        await prepare_mel_tx($current_wallet, to_addrs.map((contact)=>contact.address), new BigNumber(send_amount))
+        await prepare_mel_tx($current_wallet, ["t24kehfqhph91rmwkmra1gt0hnky7gb61hgctkzt12qje097n4aa3g"], [new BigNumber(send_amount)])
           .ifLeft((err) => dsptch_err(err))
           .ifRight((tx) => {
             open_confirmation = true;
@@ -88,6 +89,7 @@
     }
   }
 
+  // Get a li
   // Get a list of (covhash,amount) pairs from a list of outputs
   function spends(outputs: CoinData[]): [string, BigNumber][] {
     return outputs.map((cd) => [cd.covhash, cd.value]);
