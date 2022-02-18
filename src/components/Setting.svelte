@@ -17,7 +17,7 @@
     export let value: any;
     export let disabled: boolean = false
     export let name: string | undefined = undefined;
-
+    let field = setting.field;
     // console.log("setting", setting)
     // console.log("disabled", disabled)
     const dispatch = createEventDispatcher();
@@ -31,7 +31,7 @@
 <template>
     <div class="setting">
         <label for={name}>{setting.label || name}</label>
-        {#if setting.type == "select"}
+        {#if field == "select"}
             <!-- {assume setting is type Select -->
             <select name={setting.name} id="" bind:value {disabled}>
                 {#each Object.entries(setting.options) as option}
@@ -40,11 +40,11 @@
                     </option>
                 {/each}
             </select>
-        {:else if setting.type == "checkbox"}
+        {:else if field == "checkbox"}
             <input
                 {disabled}
                 name={setting.name}
-                type={setting.type}
+                type={setting.field}
                 checked={value}
                 on:change={(event) => (value = event.target.checked)
                 }
@@ -53,7 +53,7 @@
             <!-- !! whats this error -->
             <input
                 name={setting.name}
-                type={setting.type}
+                type={setting.field}
                 {value}
                 on:input={(event) => (value = event.target.value)}
                 {disabled}
