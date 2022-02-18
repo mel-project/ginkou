@@ -36,10 +36,10 @@
   const tab_components = Object.assign({},...
     [Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
     
-  const setting_types: State<Setting> = {
+  const setting_types: State<SettingConfig> = {
     network: {
       label: "Network", 
-      type: "select", 
+      field: "select", 
       options: {Test: TESTNET, Main: MAINNET, All: 0}, 
       default: TESTNET
       },
@@ -47,18 +47,18 @@
 
     default_tab: {
       label: "Default Tab", 
-      type: "select", 
+      field: "select", 
       options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, 
       depends: {persistent_tabs: false}, default:"Transactions"},
 
     persistent_tabs:{ 
       label: "Persistent Tabs", 
-      type: "checkbox", 
+      field: "checkbox", 
       visible: true,
        default: false
     },
-      current_wallet:{visible: false},
-      active_tab: {visible: false},
+      current_wallet:{default: "", visible: false},
+      active_tab: {default: "Send", visible: false},
       contacts: {visible: false, default: []},
   }
   // localStorage.clear()
@@ -117,7 +117,6 @@
     if(!$persistent_tabs){
       //TODO implement $last_tab setting
       // should capture the last visited tab to automatically load that tab on startup
-      console.log('changing active tab', $active_tab, $default_tab)
       $active_tab =  $default_tab || "Send"
     }
     // const {wallet_summaries} = store
@@ -126,16 +125,6 @@
 </script>
 
 <main>
-  <input bind:value={$current_wallet}>
-  <div>{$network}</div>
-  <div>{$current_wallet}</div>
-  <div>{$default_tab}</div>
-  <div>{$persistent_tabs}</div>
-  <!-- <canvas style="width: 100vw; height: 100vh">
-
-
-  </canvas> -->
-
   {#if modal_is_active}
     <Modal on:closeModal="{()=>{modal_is_active=false}}">
         <SettingsView 

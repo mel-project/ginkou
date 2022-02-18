@@ -22,7 +22,7 @@ export interface PersistentValue extends Named{
  */
 
 export interface SettingConfig{
-  label: string
+  label?: string
   field?: string; // the type of the setting input (can be anything supported by )
   options?: Obj<string | number>; // for types with multiple selection options
   depends?: Obj<string | number | boolean>;
@@ -41,6 +41,7 @@ export interface State<T extends SettingConfig | PersistentValue | Readable<any>
   default_tab: T;
   current_wallet: T;
   active_tab: T;
+  contacts: T;
 }
 
 interface StateObject {
@@ -56,6 +57,7 @@ const default_state_obj = (): State<string>=>{
     default_tab: "",
     current_wallet: "",
     active_tab: "",
+    contacts: "",
   }
 }
 function assert_object_fields<T> (default_object: T ) {
