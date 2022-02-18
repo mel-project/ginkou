@@ -15,6 +15,7 @@
   const {wallet_summaries}: {wallet_summaries: Summaries} = getContext("melwalletd");
   const {settings} = getContext("settings");
   const {network, current_wallet} = settings
+  console.log($network)
   // wallet_summaries.subscribe(console.log)
   let add_new_open = false; 
   let new_name = "";

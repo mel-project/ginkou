@@ -61,7 +61,7 @@
       active_tab: {visible: false},
       contacts: {visible: false, default: []},
   }
-
+  // localStorage.clear()
   const {settings} = State(setting_types)
   const {persistent_tabs, current_wallet, default_tab, active_tab, network} = settings
   // console.log(persistent_tabs, current_wallet, default_tab, active_tab, $network)

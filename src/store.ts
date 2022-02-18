@@ -118,6 +118,11 @@ const persistent_to_writable = (storage_name: string, pv: PersistentValue): Writ
 //   return object_map(storage.map(persistent_to_object).map(Object.entries), (name: string, obj: PersistentValue)=>persistent_to_writable(storage_name, obj))
 // }
 
+// const derive_state_object = (state: State<Writable<any>>) => {
+//   return derived({}, (set)=>{
+
+//   })
+// }
 const restore_all_settings = (storage_name: string, setting_types: State<SettingConfig>): State<Writable<any>>=>{
 
     const assert_state = assert_object_fields(default_state_obj())(setting_types as unknown as State<string>) // the type isn't important here, what's important is gettings around typescript to solve the issue of json being too flexible 

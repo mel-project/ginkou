@@ -58,6 +58,7 @@
               <div class="setting">
                 <SettingComp
                   bind:setting
+                  value={all_settings && get_store_value(settings[name])}
                   {name}
                   on:change={({detail})=>settings[name].set(detail.value)}
                   disabled={all_settings && setting.depends &&
