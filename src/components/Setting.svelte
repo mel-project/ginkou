@@ -4,7 +4,7 @@
     import { createEventDispatcher } from 'svelte';
 
 
-    import type { Setting } from '@/store';
+    import type { SettingConfig } from '@/store';
 
     /**
      * Setting should support at least these variants
@@ -13,12 +13,13 @@
 
     //!!need debug channels
 
-    export let setting: Setting;
+    export let setting: SettingConfig;
     export let value: any;
-    export let disabled: boolean;
+    export let disabled: boolean = false
     export let name: string | undefined = undefined;
 
-
+    // console.log("setting", setting)
+    // console.log("disabled", disabled)
     const dispatch = createEventDispatcher();
     $: {
         dispatch('change', {

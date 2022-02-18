@@ -62,9 +62,9 @@
       contacts: {visible: false, default: []},
   }
 
-  const {settings, set_setting} = State(setting_types)
+  const {settings} = State(setting_types)
   const {persistent_tabs, current_wallet, default_tab, active_tab, network} = settings
-  console.log(settings)
+  // console.log(persistent_tabs, current_wallet, default_tab, active_tab, $network)
   // const store = Store(settings)
 
   // show restraint when using contexts

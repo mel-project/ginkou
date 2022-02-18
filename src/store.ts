@@ -1,15 +1,15 @@
 import { derived, readable, Readable, Subscriber, Writable, writable } from "svelte/store";
 import { list_wallets, WalletSummary, WalletDump, wallet_dump } from "./utils";
 import JSONbig from "json-bigint";
+import { Maybe, Just, Nothing } from "purify-ts/Maybe";
 
 
 export type Obj<T> = { [key: string]: T }
 export type PersistentStorage = PersistentValue[]
 
-export interface Named {
-  label: string
-}
-export interface PersistentValue extends Named{
+
+export interface PersistentValue{
+  name: string
   value: any;
 }
 
@@ -19,7 +19,8 @@ export interface PersistentValue extends Named{
  * the settings which track user preferences should be set as `visible: true`
  */
 
-export interface SettingConfig extends Named{
+export interface SettingConfig{
+  label: string
   field?: string; // the type of the setting input (can be anything supported by )
   options?: Obj<string | number>; // for types with multiple selection options
   depends?: Obj<string | number | boolean>;
@@ -32,7 +33,7 @@ export interface SettingConfig extends Named{
 /**
  * These are the settings which describe global state and user preferences 
  */
-export interface State<T extends SettingConfig | Readable<string> | string> {
+export interface State<T extends SettingConfig | Readable<any> | string> {
   network: T;
   persistent_tabs: T;
   default_tab: T;
@@ -43,53 +44,78 @@ export interface State<T extends SettingConfig | Readable<string> | string> {
 interface StateObject {
   settings: State<Writable<string>>;
   // writable_settings: Writable<State<string>>;
-  set_setting: (name: string | Readable<string>, value: string | Readable<string>) => void;
+  // set_setting: (name: string | Readable<string>, value: string | Readable<string>) => void;
 }
 
-const get_persistent_settings = (localName: string): PersistentStorage =>  {
-  const persistent_settings = localStorage.getItem(localName)
-  if (persistent_settings)
-    return JSONbig.parse(persistent_settings)
-  else
-    return []
+const default_state = (): State<string>=>{
+  return {
+    network: "",
+    persistent_tabs: "",
+    default_tab: "",
+    current_wallet: "",
+    active_tab: "",
+  }
+}
+function assert_object_fields<T> (default_object: T ) {
+  return (test_object: T): Maybe<T> => {
+    // console.log("test_object", test_object)
+    const property_test = (acc: Boolean, obj: [string, Object]) => acc && test_object.hasOwnProperty(obj[0])
+    if(Object.entries(default_object).reduce(property_test, true)) return Just(test_object)
+    return Nothing
+  }
+}
+console.log("validate", assert_object_fields)
+
+const get_saved_setting = (localName: string): Maybe<PersistentValue> => {
+  let saved_value: string | null = localStorage.getItem(localName)  
+  let maybe_value: Maybe<PersistentValue> = saved_value ? Just(Object.assign({},JSONbig.parse(saved_value))) : Nothing
+  // console.log(maybe_value.extract(), "maybed")
+  return maybe_value.chain(assert_object_fields({name: "", value:""}))
+  
+  
 }
 
-const validate_object_fields = (default_object: Object) => (test_object: Object): Boolean => {
-  const property_test = (acc: Boolean, obj: [string, Object]) => acc && test_object.hasOwnProperty(obj[0])
-  return Object.entries(default_object).reduce(property_test, true)
-}
-console.log("validate", validate_object_fields)
-const config_to_persistent = (setting_config: SettingConfig): PersistentValue =>  {
-  return {label: setting_config.label, value: setting_config.default}
+const get_all_saved_settings = (storage_name: string, default_settings: PersistentStorage): PersistentStorage=> {
+  return default_settings.map((obj: PersistentValue)=> {
+    return get_saved_setting(storage_name+obj.name)
+  })
+  .filter((m: Maybe<PersistentValue>)=>m.isJust)
+  .map((m:Maybe<PersistentValue>)=>m.extract) as unknown as PersistentStorage
+
 }
 
+
+
+const config_to_persistent = (name: string, setting_config: SettingConfig): PersistentValue =>  {
+  return {name, value: setting_config.default}
+}
+
+const persistent_to_writable = (storage_name: string, pv: PersistentValue): Writable<any> => {
+  let w = writable(pv.value)
+  w.subscribe( (value: any)=>{
+    pv.value = value
+    localStorage.setItem(storage_name+pv.name, JSONbig.stringify(pv))
+  })
+  return w
+}
 const restore_all_settings = (storage_name: string, setting_types: State<SettingConfig>): State<Writable<string>>=>{
 
-  const settings: State<Writable<string>> = writable({}, (set) => {
-
+    const assert_state = assert_object_fields(default_state())(setting_types as unknown as State<string>) // the type isn't important here, what's important is gettings around typescript to solve the issue of json being too flexible 
+    if(!assert_state) console.warn("store.ts::restore_all_settings\nsettings_types doesn't satisfy type State<T>, be sure all fields in state are satisfied")
     // this is what the storage state will look like on first start
-    const default_storage: PersistentStorage = Object.values(setting_types).map(config_to_persistent);
+    const default_storage: PersistentStorage = Object.entries(setting_types).map((entry: [string, SettingConfig])=>config_to_persistent(entry[0], entry[1]));
 
     // the previous saved settings state
-    const saved_settings: PersistentStorage = get_persistent_settings(storage_name);
-    
+    const saved_settings: PersistentValue[] = get_all_saved_settings(storage_name, default_storage);
 
-    const default_state: State<string> = Object.assign({}, ...saved_settings)
-
-
-
-    // the svelte contexts way to say, basically, writable_settings = settings
-    set(settings)
-  }) as unknown as Writable<State<string>>; // guarenteed unless setting_types is improperly cast 
-  return settings
+    const state: State<Writable<any>> = Object.assign({}, ...default_storage.map((pv:PersistentValue)=>({[pv.name]:persistent_to_writable(storage_name,pv)})))
+    console.log("state", state)
+    return state
 
 }
 // settings 
-export const State = (setting_types: State<Setting>): StateObject => {
-  // create writable settings as a certain combination of persistent settings + setting defaults
-  
-  // create read only interface for _settings
-  return { settings: settings, set_setting };
+export const State = (setting_types: State<SettingConfig>): StateObject => {
+  return { settings: restore_all_settings("ginkou_storage", setting_types) };
 }
 
 export const Melwalletd = (settings: State<Readable<string>>) => {
