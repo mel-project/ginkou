@@ -5,16 +5,17 @@
   import type { WalletSummary } from "@/utils";
   import WalletMenuItem from "@/components/WalletMenuItem.svelte";
   import Button, { Label, Icon } from "@smui/button";
-  import Textfield from "@smui/textfield";
+  import Textfield from "@/components/UI/TextField.svelte";
   import HelperText from "@smui/textfield/helper-text/index";
   import {getContext} from 'svelte';
   import type {Readable} from 'svelte/store'
 
   type Summaries = Readable<{[key: string]: WalletSummary}>;
 
-  const {wallet_summaries}: {wallet_summaries: Summaries} = getContext("store");
-  const {writable_settings, network} = getContext("settings");
-  const settings = writable_settings;
+  const {wallet_summaries}: {wallet_summaries: Summaries} = getContext("melwalletd");
+  const {settings} = getContext("settings");
+  const {network, current_wallet} = settings
+  console.log($network)
   // wallet_summaries.subscribe(console.log)
   let add_new_open = false; 
   let new_name = "";
@@ -37,26 +38,29 @@
           add_new_open = false;
           new_name = "";
           new_password = "";
-        })
-        .run();
+        }).run();
+
+
+
     }
   };
 </script>
 
 <div id="wallet-menu-inner">
+  
   {#each Object.entries($wallet_summaries) as [wlt, wlt_content]}
-    {#if $network == 0 || wlt_content.network == $network}
+   {#if $network == 0 || wlt_content.network == $network}
       <!-- <Item on:SMUI:action={() => (active_wallet = wlt)}>
           <Text>{wlt}</Text>
         </Item> -->
       <div class="menu-item" on:click={() => {
-          $settings.current_wallet = wlt
+          $current_wallet = wlt
         }
         }>
         <WalletMenuItem
           name={wlt}
           wallet={wlt_content}
-          selected={wlt === $settings.current_wallet}
+          selected={wlt === $current_wallet}
         />
       </div>
     {/if}
@@ -76,7 +80,7 @@
   <Content>
     <div style="margin-top: 10px">
       <Textfield variant="outlined" bind:value={new_name} label="Wallet name">
-        <HelperText slot="helper">{new_password}</HelperText>
+        <HelperText slot="helper"></HelperText>
       </Textfield>
       <Textfield
         type="password"

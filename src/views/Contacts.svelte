@@ -4,8 +4,14 @@
 
   const dispatcher = createEventDispatcher();
 
-  const { contacts, writable_settings } = getContext("settings");
+  const { settings } = getContext("settings");
 
+  const { contacts } = settings
+
+  interface Contact { 
+    name: string,
+    address: string,
+  }
   const Contact = (name = "", address = "") => {
     return { name, address };
   };
@@ -13,15 +19,15 @@
   let contact_address = "";
 
   const submitContact = () => {
-    $writable_settings.contacts = $writable_settings.contacts.concat(
+    $contacts = $contacts.concat(
       Contact(contact_name, contact_address)
     );
     contact_name = "";
     contact_address = "";
   };
   const delete_item = (index: number): any => {
-    let temp = $writable_settings.contacts.splice(index, 1)[0]; //kind of a hack. I'm assuming this is called on click therefore it exists
-    $writable_settings.contacts = [...$writable_settings.contacts];
+    let temp = $contacts.splice(index, 1)[0]; //kind of a hack. I'm assuming this is called on click therefore it exists
+    $contacts = [...$contacts];
     console.log($contacts.length);
     return temp;
   };

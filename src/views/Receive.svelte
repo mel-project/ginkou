@@ -6,8 +6,9 @@
   import Textfield from "@smui/textfield";
   import { getContext, createEventDispatcher } from "svelte";
 
-  const {current_wallet} = getContext("settings")
-  const {current_wallet_dump} = getContext("store")
+  const {settings} = getContext("settings")
+  const {current_wallet} = settings
+  const {current_wallet_dump} = getContext("melwalletd")
 
   const dispatcher = createEventDispatcher();
 
@@ -26,6 +27,7 @@
     }
   };
   const tap_faucet_handler = async () => {
+    console.log($current_wallet)
     if ($current_wallet) {
       await tap_faucet($current_wallet)
         .ifLeft((e) => alert(e))

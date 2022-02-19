@@ -152,6 +152,7 @@ function intoCdhTuple(x: any): Maybe<[TxHash, [Transaction, number]]> {
 }
 
 function intoTransaction(x: any): Maybe<Transaction> {
+  console.log("here",x)
   if (
     "kind" in x &&
     typeof x.kind == "number" &&
@@ -159,7 +160,6 @@ function intoTransaction(x: any): Maybe<Transaction> {
     "outputs" in x &&
     "fee" in x &&
     typeof x.fee == "number" &&
-    "scripts" in x &&
     "data" in x &&
     typeof x.data == "string" &&
     "sigs" in x
@@ -332,6 +332,7 @@ export const tap_faucet = (
   port: number = default_port
 ): EitherAsync<string, TxHash> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
+    console.log('tapping')
     const url = `${home_addr}:${port}/wallets/${wallet_name}/send-faucet`;
     let res = await fromPromise(fetch_json_or_err(url, { method: "POST" }));
     return liftEither(cast_to_either(intoTxHash(res)));
@@ -451,16 +452,15 @@ export const send_tx = (
 
   export const prepare_mel_tx = (
     wallet_name: string,
-    to: string | string[],
-    micromel: BigNumber | BigNumber[],
+    to: string[],
+    micromel: BigNumber[],
     additional_data: string = "",
     port: number = default_port
   ): EitherAsync<string, Transaction> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
       const url_prepare_tx = `${home_addr}:${port}/wallets/${wallet_name}/prepare-tx`;
-  
-      if(!Array.isArray(to)) to = [to]
-      if(!Array.isArray(micromel)) micromel = [micromel]
+      
+      console.log(to, micromel)
       if(to.length != micromel.length) 
         return liftEither(Left("Size of `to` not equal to `micromel`: each recipient must have a matching mel value"))
   
@@ -468,10 +468,11 @@ export const send_tx = (
         to.map((address, idx)=>
         ({
           covhash: address,
-          value: (micromel as BigNumber[])[idx],
+          value: micromel[idx],
           denom: MEL,
           additional_data: additional_data,
         }));
+        
         console.log(outputs)
       // Prepare tx (get a json-encoded tx back)
       const tx: Either<string, any> = await fromPromise(
@@ -487,6 +488,8 @@ export const send_tx = (
       );
   
       // Runtime type check and return
+      console.log(tx)
+      console.log(intoTransaction(tx))
       return liftEither(cast_to_either(intoTransaction(tx)));
     });
   

@@ -1,41 +1,53 @@
 <script type="text/typescript">
   import SettingComp from "@/components/Setting.svelte";
-  import type {Settings, Setting} from "@/store";
-  import type { Readable } from "svelte/store";
+  import type {State, SettingConfig, Obj} from "@/store";
+  import type { Writable, Readable, readable} from "svelte/store";
 
 
   interface NamedObject {
     name: string;
-    setting: {[key: string]: Setting};
+    setting: {[key: string]: SettingConfig};
   }
 
-  export let setting_types: Settings<Setting>;
-  export let settings: Settings<Readable<string>>;
-  export let writable_settings: Readable<Settings<string>>;
-  
+  export let setting_types: State<SettingConfig>;
+  export let settings: State<Writable<any>>;
+  // export let writable_settings: Readable<Settings<string>>;
+  let {network, persistent_tabs, default_tab, current_wallet, active_tab} = settings
 
+  // this is a hack
+  // basically without this svelte has no way of knowing a list of stores is passed to the Setting component
+  // so it doesn't make that component reactive to a change in `settings`
+  // the code below takes advantage of computed properties ability to update components (checkout the disabled property)
+  // this is very fragile to changes in settings
+  // adding a new setting can sometimes break this
+  $: all_settings = [$network, $persistent_tabs, $default_tab, $current_wallet, $active_tab]
 
-  const NamedEntries = (obj: {[key: string]: Setting}): [NamedObject] => {
+  const NamedEntries = (obj: State<SettingConfig>): [NamedObject] => {
 
     const named_entries = Object.entries(obj).map((entry) => {
       const name: string = entry[0];
-      const setting:Setting =  entry[1];
+      const setting:SettingConfig =  entry[1];
       return {name, setting};
     })
     return named_entries as unknown as [NamedObject];
   }
-  const check_matching_dependencies = (settings, dependencies) => {
-    // console.log(settings,dependencies)
+  const get_store_value = (store: any) => {
+    let value;
+    store.subscribe((v:any)=> value = v)()
+    return value;
+  }
+  const check_matching_dependencies = (settings: State<Readable<any>>, dependencies: Obj<string | number | boolean>) => {
     return !Object.entries(dependencies).reduce((reduced, dep) => {
       const dep_name = dep[0];
       const dep_value = dep[1];
-      return reduced && settings[dep_name] == dep_value;
+      let setting_value = get_store_value(settings[dep_name])
+      return reduced && setting_value == dep_value;
     }, true);
   };
 
 </script>
 
-<template>
+<template>it's way better in the average case but 
   <div class="settings-menu">
     <div class="top"></div>
     <div class="container">
@@ -46,10 +58,11 @@
               <div class="setting">
                 <SettingComp
                   bind:setting
+                  value={all_settings && get_store_value(settings[name])}
                   {name}
-                  bind:value={$writable_settings[name]}
-                  disabled={setting.depends &&
-                    check_matching_dependencies($writable_settings, setting.depends)}
+                  on:change={({detail})=>settings[name].set(detail.value)}
+                  disabled={all_settings && setting.depends &&
+                    check_matching_dependencies(settings, setting.depends)}
                 />
               </div>
             {/if}

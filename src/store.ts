@@ -1,112 +1,165 @@
 import { derived, readable, Readable, Subscriber, Writable, writable } from "svelte/store";
 import { list_wallets, WalletSummary, WalletDump, wallet_dump } from "./utils";
 import JSONbig from "json-bigint";
+import { Maybe, Just, Nothing } from "purify-ts/Maybe";
 
 
-type Obj<T> = { [key: string]: T }
-export interface PersistentSetting {
-  default?: any;
+export type Obj<T> = { [key: string]: T }
+export type PersistentStorage = PersistentValue[]
+
+export interface Named {
+  name: string
+
+}
+export interface PersistentValue extends Named{
+  value: any;
 }
 
-export interface Setting extends PersistentSetting {
-  label?: string;
-  type?: string;
-  options?: Obj<string | number>;
+/**
+ * This interface describes a single setting field within the larger settings context.
+ * the settings context is used to manage global state and track user preferences
+ * the settings which track user preferences should be set as `visible: true`
+ */
+
+export interface SettingConfig{
+  label?: string
+  field?: string; // the type of the setting input (can be anything supported by )
+  options?: Obj<string | number>; // for types with multiple selection options
   depends?: Obj<string | number | boolean>;
-  visible?: boolean;
-  override?: boolean;
+  visible?: boolean; // should this be displayed (interpreted by the acting component)
+  override?: boolean; // should the default value be used instead of persisting (debug tool)
+  default: any;
+
 }
 
-
-export interface Settings<T extends Setting | Readable<string> | string> {
-  [field_name: string]: T;
+/**
+ * These are the settings which describe global state and user preferences 
+ */
+export interface State<T extends SettingConfig | PersistentValue | Readable<any> | string> {
   network: T;
   persistent_tabs: T;
   default_tab: T;
   current_wallet: T;
   active_tab: T;
+  contacts: T;
 }
 
-interface SettingsObject {
-  settings: Settings<Readable<string>>;
-  writable_settings: Writable<Settings<string>>;
-  set_setting: (name: string, value: string) => void;
+interface StateObject {
+  settings: State<Writable<string>>;
+  // writable_settings: Writable<State<string>>;
+  // set_setting: (name: string | Readable<string>, value: string | Readable<string>) => void;
 }
-const initSettings = (writable_settings: Readable<Settings<string>>): Settings<Readable<string>> => {
 
-  // subscribe to changes in writable_settings and alter this readable from within
-  function watchSetting(field_name: string) {
-    return (set: any) => {
-      writable_settings.subscribe(($setting) => {
-        // if store_value: readables[name] = $store_value[name]
-        // what is readables?
-        // readables is a mapping from writable_settings: {string: string} => {string: Readable<string>} 
-        if ($setting) {
-          set($setting[field_name])
-        }
-      })
-    }
+const default_state_obj = (): State<string>=>{
+  return {
+    network: "",
+    persistent_tabs: "",
+    default_tab: "",
+    current_wallet: "",
+    active_tab: "",
+    contacts: "",
   }
+}
+function assert_object_fields<T> (default_object: T ) {
+  return (test_object: T): Maybe<T> => {
+    // console.log("test_object", test_object)
+    const property_test = (acc: Boolean, obj: [string, Object]) => acc && test_object.hasOwnProperty(obj[0])
+    if(Object.entries(default_object).reduce(property_test, true)) return Just(test_object)
+    return Nothing
+  }
+}
 
-  let read_only_settings: Obj<Readable<string>> = {};
-  // create inital map from Object<string> to Object<Readable<String>>
-  // call immediately after to unsubscribe
-  const do_once_and_unsubscribe = writable_settings.subscribe(($settings) => {
-    // map _setting entries to readables
-    Object.keys($settings).forEach((setting_name: any) => {
-      const setting_value = $settings[setting_name]
-      read_only_settings[setting_name] = readable(setting_value, watchSetting(setting_name))
-    })
-  });
-  do_once_and_unsubscribe()
+// for every entry in an object, map a function onto it's value and return the reconstructed object
+function object_map<T, F> (obj_entries: [string, T][], func: (name: string, obj: T) => F){
+  console.log(obj_entries)
+  return Object.assign({}, ...obj_entries.map((entry: [string, T])=>({[entry[0]]:func(entry[0], entry[1])})))
+}
+console.log("validate", assert_object_fields)
 
-  return (read_only_settings as unknown) as Settings<Readable<string>>;
+const get_saved_setting = (localName: string): Maybe<PersistentValue> => {
+  console.log(localName)
+  let saved_value: string | null = localStorage.getItem(localName)
+  let maybe_value: Maybe<PersistentValue> = saved_value ? Just(Object.assign({},JSONbig.parse(saved_value))) : Nothing
+  // console.log(maybe_value.extract(), "maybed")
+  return maybe_value.chain(assert_object_fields({name: "", value:""}))
+  
+  
+}
 
-};
+const get_all_saved_settings = (storage_name: string, default_settings: PersistentStorage): PersistentStorage=> {
+  return default_settings.map((obj: PersistentValue)=> {
+    return get_saved_setting(storage_name+obj.name)
+  })
+  .filter((m: Maybe<PersistentValue>)=>m.isJust())
+  .map((m:Maybe<PersistentValue>)=>m.extract()) as unknown as PersistentStorage
 
-const get_persistent_settings = (localName: string): Obj<any> =>  {
-  const persistent_settings = localStorage.getItem(localName)
-  if (persistent_settings)
-    return JSONbig.parse(persistent_settings)
-  else
-    return {}
+}
+
+
+
+const config_to_persistent = (name: string, setting_config: SettingConfig): PersistentValue =>  {
+  return {name, value: setting_config.default}
+}
+
+const persistent_to_object = (pv: PersistentValue): Obj<string> => {
+  return {[pv.name]: pv.value}
+}
+const persistent_to_writable = (storage_name: string, pv: PersistentValue): Writable<any> => {
+  let w = writable(pv.value)
+  w.subscribe( (value: any)=>{
+    console.log("changing setting", pv)
+    pv.value = value
+    localStorage.setItem(storage_name+pv.name, JSONbig.stringify(pv))
+    console.log(localStorage.getItem(storage_name+pv.name))
+  })
+  return w
+}
+
+// const storage_to_state_writable = (storage_name: string, storage: PersistentStorage): State<Writable<any>> => {
+
+//   return object_map(storage.map(persistent_to_object).map(Object.entries), (name: string, obj: PersistentValue)=>persistent_to_writable(storage_name, obj))
+// }
+
+// const derive_state_object = (state: State<Writable<any>>) => {
+//   return derived({}, (set)=>{
+
+//   })
+// }
+const restore_all_settings = (storage_name: string, setting_types: State<SettingConfig>): State<Writable<any>>=>{
+
+    const assert_state = assert_object_fields(default_state_obj())(setting_types as unknown as State<string>) // the type isn't important here, what's important is gettings around typescript to solve the issue of json being too flexible 
+    if(!assert_state) console.warn("store.ts::restore_all_settings\nsettings_types doesn't satisfy type State<T>, be sure all fields in state are satisfied")
+    // this is what the storage state will look like on first start
+    const default_storage: PersistentStorage = Object.entries(setting_types).map((entry: [string, SettingConfig])=>config_to_persistent(entry[0], entry[1]));
+
+    // the previous saved settings state
+    const saved_storage: PersistentValue[] = get_all_saved_settings(storage_name, default_storage);
+
+
+    const default_state: State<PersistentValue> =  Object.assign({}, ...default_storage.map((pv:PersistentValue)=>({[pv.name]:pv})))
+    const saved_state: State<PersistentValue> =  Object.assign({}, ...saved_storage.map((pv:PersistentValue)=>({[pv.name]:pv})))
+    console.log("saved: ", saved_state)
+    const reconstructed_state: State<PersistentValue> = Object.assign(default_state, saved_state)
+
+    const state: State<Writable<any>> =  Object.assign({}, ...Object.entries(reconstructed_state).map((entry: [string, PersistentValue])=>({[entry[0]]: persistent_to_writable(storage_name,entry[1])})))
+
+    console.log("state", state)
+
+    console.log(default_storage)
+    console.log(state)
+    return state
+
 }
 // settings 
-export const Settings = (setting_types: Settings<Setting>): SettingsObject => {
-  const writable_settings: Writable<Settings<string>> = writable({}, (set) => {
-
-    const persistent_settings: Obj<any> = get_persistent_settings("writable_settings");
-    Object.entries(setting_types).forEach((entry: [string, Setting]) => {
-      const setting_name: string = entry[0];
-      const setting: Setting = entry[1];
-      if(setting.override || !persistent_settings[setting_name])
-        persistent_settings[setting_name] = setting.default
-    });
-    set(persistent_settings)
-  }) as unknown as Writable<Settings<string>>; // guarenteed unless setting_types is improperly cast 
-
-  writable_settings.subscribe((value) => {
-    localStorage.setItem("writable_settings", JSONbig.stringify(value))
-  })
-
-  let set_setting: SettingsObject["set_setting"] = (name, value) => { };
-
-  // (writable_settings.subscribe((settings) => {
-  //   set_setting = (name, value) => {
-  //     (settings as Settings<string>)[name] = value
-  //   }
-  // }))();
-
-  // create read only interface for _settings
-  return { settings: initSettings(writable_settings), writable_settings, set_setting };
+export const State = (setting_types: State<SettingConfig>): StateObject => {
+  return { settings: restore_all_settings("ginkou_storage_", setting_types) };
 }
 
-export const Store = (settings: Settings<Readable<string>>) => {
+export const Melwalletd = (settings: State<Readable<string>>) => {
   // Current wallet dump. Automatically talks to the daemon.
   const current_wallet_dump: Readable<WalletDump> = derived(
     settings.current_wallet,
     ($name, set: (a0: any) => void) => {
-      console.log("ENTERING");
       if ($name == null) {
         set(null);
       } else {
@@ -115,7 +168,7 @@ export const Store = (settings: Settings<Readable<string>>) => {
           // fetch the stuff and set
           const dump = await wallet_dump($name as string);
           dump
-            .ifLeft((e) => console.log(`error encountered in wallet_dump: ${e}`))
+            .ifLeft((e) => console.error(`error encountered in wallet_dump: ${e}`))
             .map((dump) => {
               // console.log("obtained wallet_dump");
               // console.log(dump);
@@ -137,7 +190,7 @@ export const Store = (settings: Settings<Readable<string>>) => {
       list
         .ifLeft((e) => console.log(`error encountered in list_wallets: ${JSON.stringify(e)}`))
         .map((list) => {
-          // console.log("obtained list_wallets");
+          // console.info("obtained list_wallets");
           set(list);
         });
     };
@@ -150,5 +203,5 @@ export const Store = (settings: Settings<Readable<string>>) => {
 }
 
 
-export default { Settings, Store }
+export default { State, Melwalletd }
 // settings.subscribe((v)=>{})

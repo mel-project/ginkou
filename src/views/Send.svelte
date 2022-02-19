@@ -9,17 +9,15 @@
   import Dropdown from "@/components/UI/Dropdown.svelte";
   import Button, { Label } from "@smui/button";
 
+  import BigNumber from "bignumber.js";
+
+
   type Contact = { name: string; address: string };
 
-  const { current_wallet, contacts, network, writable_settings } =
-    getContext("settings");
-  const { current_wallet_dump, wallet_summaries } = getContext("store");
+  const {settings} = getContext("settings");
 
-  import BigNumber from "bignumber.js";
-  import { length } from "json-bigint";
-  import { append } from "svelte/internal";
-  import App from "../App.svelte";
-  import Contacts from "./Contacts.svelte";
+  const { current_wallet, contacts, network } = settings
+  const { current_wallet_dump, wallet_summaries } = getContext("melwalletd");
 
   // export let active_wallet: string | null;
   // export let wallets: { [key: string]: WalletSummary } = {};
@@ -27,17 +25,16 @@
   // Amount to send in a tx
   let send_amount: string;
   // Account address to send to
-  let to_addr: string = "";
+  let search_input: string = "";
   let to_addrs: Contact[] = [];
 
   let predictions: Contact[] = [];
-  let selected_prediction: Contact;
   // Toggle confirmation window before sending a tx
   let open_confirmation: boolean = false;
   let prepared_tx: Transaction | null;
 
   $: {
-    predictions = search_names($contacts, to_addr);
+    predictions = search_contacts($contacts, search_input);
   }
 
   const dispatcher = createEventDispatcher();
@@ -62,7 +59,7 @@
         await send_tx($current_wallet, prepared_tx)
           .ifLeft((err) => dsptch_err(err))
           .ifRight((txhash) => {
-            $writable_settings.contacts.push({ name: "", address: to_addr });
+            $contacts.push({ name: "", address: search_input });
             dispatcher("sent-tx", {
               text: `Transaction initiated with hash ${JSON.stringify(txhash)}`,
             });
@@ -73,13 +70,14 @@
   }
 
   async function prepare_tx_handler() {
+    console.log("to_addrs", to_addrs.map((contact)=>contact.address.trim()))
     if ($current_wallet == null) {
       dsptch_err("Choose a wallet to send from");
     } else {
       if ($current_wallet_dump && $current_wallet_dump.summary.locked) {
         dsptch_err("current wallet is locked!");
       } else {
-        await prepare_mel_tx($current_wallet, to_addrs.map((contact)=>contact.address), new BigNumber(send_amount))
+        await prepare_mel_tx($current_wallet, to_addrs.map((contact)=>contact.address.trim()), [new BigNumber(send_amount)])
           .ifLeft((err) => dsptch_err(err))
           .ifRight((tx) => {
             open_confirmation = true;
@@ -94,33 +92,29 @@
   function spends(outputs: CoinData[]): [string, BigNumber][] {
     return outputs.map((cd) => [cd.covhash, cd.value]);
   }
+  const select_contact = (predictions: Contact[], index: number) =>{
+    to_addrs = [predictions[0]]
+  }
+  const search_contacts = (contacts: Contact[], sub_name: string): Contact[] => {
+    const wallet_contacts: Contact[] = Object.entries($wallet_summaries)
+                                      .filter(entry=>entry[1].network==$network)
+                                      .map(entry=>({name: entry[0], address: entry[1].address}))
 
-  const search_names = (contacts: Contact[], sub_name: string): Contact[] => {
-    if (sub_name == "") return [];
-    
-
-    const wallet_contacts: Contact[] = Object.entries($wallet_summaries).filter(entry=>entry[1].network==$network).map(entry=>{
-      return {name: entry[0], address: entry[1].address}
-    })
-
-    const prediction = [...contacts, ...wallet_contacts].filter((contact) =>
-      contact.name.startsWith(sub_name)
+    const predictions = [...contacts, ...wallet_contacts].filter((contact) =>
+      contact.name.indexOf(sub_name) >= 0 || contact.address.indexOf(sub_name) >= 0
     );
-
-    if (prediction) {
-      return prediction;
-    } else {
-      return [];
-    }
+    predictions.push({name: "unknown", address: sub_name})
+    console.log($wallet_summaries, wallet_contacts, predictions)
+    return predictions;
   };
 
   const delete_addr = (index: number): Contact => {
     let temp = to_addrs.splice(index, 1)[0]; //kind of a hack. I'm assuming this is called on click therefore it exists
-    to_addrs = [...to_addrs];
+    to_addrs = [...to_addrs]; // used to force an update
     return temp;
   };
   const handle_chip_click = (index: number) => {
-    to_addr = delete_addr(index).address;
+    search_input = delete_addr(index).address;
   };
   const create_chip = (contact: Contact) => {
     if(!contact.address.length) return 
@@ -168,28 +162,23 @@
       
       <Textfield
         let:disabled
-        bind:value={to_addr}
-        on:key_enter={() => {
-          if(selected_prediction){
-            create_chip(selected_prediction);
-          }
-          else{
-            create_chip({ name: "", address: to_addr });
-          }
-          to_addr = "";
-        }}
+        let:focused
+        bind:value={search_input}
+        on:key_enter={() => select_contact(predictions, 0)}
+        on:blur={()=> {console.log("blur");select_contact(predictions, 0)}}
         label="To:"
         disabled={to_addrs.length > 0}
         autocomplete="off"
       >
         <!-- //TODO: fix clicking  -->
-        {#if !disabled}
-          <Dropdown
-            on:click={({detail})=> create_chip(detail.item)}
-            items={predictions}
-            stringify={(item) => `${item.name}: ${item.address}`}
-          />
-        {/if}
+       
+        <Dropdown
+          on:click={({detail})=> create_chip(detail.item)}
+          items={predictions}
+          stringify={(item) => `${item.name}: ${item.address}`}
+          active={focused && !disabled}
+          {disabled}
+        />
       </Textfield>
       {#each to_addrs as addr, i}
         <Chip

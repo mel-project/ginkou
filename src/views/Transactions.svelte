@@ -11,7 +11,7 @@
   import type { Readable } from "svelte/store";
 
 
-  const {current_wallet_dump} = getContext("store")
+  const {current_wallet_dump} = getContext("melwalletd")
   // Whether a summary window is open
   let summary_open: boolean = false;
   // Transaction to display in a summary window

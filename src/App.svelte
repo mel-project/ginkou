@@ -15,8 +15,8 @@
 
   import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { Settings, Store } from "./store";
-  import type { Settings as SettingsType, Setting } from "./store";
+  import { State, Melwalletd } from "./store";
+  import type { SettingConfig, Setting } from "./store";
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from './res/icons/transactions.svg';
   import SendIcon from './res/icons/send.svg';
@@ -33,34 +33,44 @@
   const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon,"Contacts": ContactsIcon}
 
   // change this cuz wtf
-  const tab_components = Object.assign({},...[Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
-  const setting_types: SettingsType<Setting> = {
-    network: {label: "Network", type: "select", 
-      options: {Test: TESTNET, Main: MAINNET, All: 0}, default: TESTNET},
+  const tab_components = Object.assign({},...
+    [Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
+    
+  const setting_types: State<SettingConfig> = {
+    network: {
+      label: "Network", 
+      field: "select", 
+      options: {Test: TESTNET, Main: MAINNET, All: 0}, 
+      default: TESTNET
+      },
 
 
-    default_tab: {label: "Default Tab", type: "select", 
+    default_tab: {
+      label: "Default Tab", 
+      field: "select", 
       options: {Transactions: "Transactions", Send: "Send", Recieve: "Receive"}, 
       depends: {persistent_tabs: false}, default:"Transactions"},
-    persistent_tabs:{ label: "Persistent Tabs", type: "checkbox", visible: true, default: false},
 
-    current_wallet:{ visible: false},
-    active_tab: {visible: false},
-    contacts: {visible: false, default: []},
-  };
-
-
-
-  const {writable_settings, settings} = Settings(setting_types)
-  const {persistent_tabs, current_wallet, default_tab, active_tab} = settings
-
-
-  const store = Store(settings)
+    persistent_tabs:{ 
+      label: "Persistent Tabs", 
+      field: "checkbox", 
+      visible: true,
+       default: false
+    },
+      current_wallet:{default: "", visible: false},
+      active_tab: {default: "Send", visible: false},
+      contacts: {visible: false, default: []},
+  }
+  // localStorage.clear()
+  const {settings} = State(setting_types)
+  const {persistent_tabs, current_wallet, default_tab, active_tab, network} = settings
+  // console.log(persistent_tabs, current_wallet, default_tab, active_tab, $network)
+  // const store = Store(settings)
 
   // show restraint when using contexts
   // pass settings as props through components if possible
-  setContext("settings", {writable_settings, ...settings})
-  setContext("store", store)
+  setContext("settings", {settings})
+  setContext("melwalletd", Melwalletd(settings))
 
  
 
@@ -107,7 +117,7 @@
     if(!$persistent_tabs){
       //TODO implement $last_tab setting
       // should capture the last visited tab to automatically load that tab on startup
-      $writable_settings.active_tab = $default_tab || "Receive";
+      $active_tab =  $default_tab || "Send"
     }
     // const {wallet_summaries} = store
     // console.log($wallet_summaries)
@@ -115,12 +125,10 @@
 </script>
 
 <main>
-
   {#if modal_is_active}
     <Modal on:closeModal="{()=>{modal_is_active=false}}">
         <SettingsView 
           {setting_types}
-          {writable_settings}
           {settings}
         ></SettingsView>
     </Modal>
@@ -145,7 +153,7 @@
         <div id="tabs-container">
           <TabBar class="tab-bar"
             {tabs}
-            bind:active_tab={$writable_settings.active_tab}
+            bind:active_tab={$active_tab}
             let:tab
           >
             <Tab {tab}>
