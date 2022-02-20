@@ -51,7 +51,7 @@
   <div class="settings-menu">
     <div class="top"></div>
     <div class="container">
-      <h3>Settings</h3>
+      <h3>Settings v0.0.2</h3>
       <div class="settings-list">
           {#each NamedEntries(setting_types) as {name, setting}}
             {#if setting.visible != false}
