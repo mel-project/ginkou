@@ -14,4 +14,7 @@
         text-align: center;
         text-justify: center;
     }
+    .tab:hover{
+        cursor: pointer;
+    }
 </style>

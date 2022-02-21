@@ -5,15 +5,18 @@
 
 <template lang="pug">
     div(class!="label {_class}")
-        h3
+        div
             slot
 </template>
 
 <style lang="scss">
     .label{
+        box-sizing: border-box;
         text-align: center;
         text-justify: center;
         display: flex;
-        height: 100%;
+        // height: 3em;
+        // padding: 1em 0em;
+        font-size: 1.2em;
     }
 </style>

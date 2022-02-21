@@ -21,6 +21,7 @@ export interface PersistentValue extends Named{
  * the settings which track user preferences should be set as `visible: true`
  */
 
+
 export interface SettingConfig{
   label?: string
   field?: string; // the type of the setting input (can be anything supported by )

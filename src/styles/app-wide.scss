@@ -16,7 +16,9 @@
   }
 }
 
-
+.tab:hover{
+  cursor: pointer;
+}
 .tab-bar{
   background: red;
 }
@@ -27,7 +29,7 @@ div :global(.mdc-tab){
   display: flex;
 }
 .icon{
-  width: 1.5em;
+  width: 1em;
 }
 .tab-content>.text{
   display: none;
@@ -40,10 +42,11 @@ div :global(.mdc-tab){
 }
 @media all and (min-width: 45em){
   .tab-content{
-    line-height: 10em;
+    // line-height: 10em;
     .text{
       display: inherit;
-      margin-left: .5em;
+      margin-right: .5em;
+      margin-left: .05em;
     }
   }
 }

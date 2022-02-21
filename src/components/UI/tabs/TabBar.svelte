@@ -19,7 +19,7 @@
   @use "../../../theme/_smui-theme.scss" as theme;
   ul{
     list-style: none;
-    padding: 0;
+    padding: 1em 0;
     margin: 0;
   }
   .tabs{
