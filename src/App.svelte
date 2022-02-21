@@ -3,11 +3,10 @@
   import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils";
   import {onMount, setContext} from 'svelte'
 
-  import { Row, Section, Title } from "@smui/top-app-bar";
   //import Banner from '@smui/banner';
-  import Tab, { Label } from "@smui/tab";
-  import TabBar from "./components/tabs/TabBar.svelte";
-
+  import Tab from "./components/UI/tabs/Tab.svelte";
+  import TabBar from "./components/UI/tabs/TabBar.svelte";
+  import Label from "./components/UI/Label.svelte"
   import Send from "./views/Send.svelte";
   import Receive from "./views/Receive.svelte";
   import Transactions from "./views/Transactions.svelte";
@@ -139,17 +138,17 @@
   </div>
 
   <div class="top-bar">
-    <Row>
-      <Section>
-        <div id="wallet-title-section">
+    <div style="display: flex; justify-content: space-between; width: 100%">
+      <div style="padding: 0 2em">
+        <div id="wallet-title-section" style="height: 100%">
           <Hamburger class="hamburger-menu" bind:menuOpen={wallet_menu_is_active} />
           <span id="wallet-title">
-            <Title>{$current_wallet}</Title>
+            <Label>{$current_wallet}</Label>
           </span>
         </div>
-      </Section>
+      </div>
 
-      <Section>
+      <div style="padding: 0 2em">
         <div id="tabs-container">
           <TabBar class="tab-bar"
             {tabs}
@@ -169,8 +168,8 @@
             </Tab>
           </TabBar>
         </div>
-      </Section>
-    </Row>
+      </div>
+    </div>
     <!--</TopAppBar>-->
   </div>
 

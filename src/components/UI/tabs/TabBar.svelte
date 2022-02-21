@@ -1,7 +1,7 @@
-<script>
-  export let tabs = []
+<script lang="typescript">
+  export let tabs: string[] = []
   export let active_tab = tabs[0]
-  let _class;
+  let _class: string = "";
   export {_class as class}
   let active_index = tabs.indexOf(active_tab)
 </script>
@@ -16,7 +16,7 @@
 </template>
 
 <style lang="scss">
-  @use "../../theme/_smui-theme.scss" as theme;
+  @use "../../../theme/_smui-theme.scss" as theme;
   ul{
     list-style: none;
     padding: 0;
