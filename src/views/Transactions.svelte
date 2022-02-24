@@ -32,7 +32,7 @@
       let txx = Object.entries(($dump as WalletDump).full.tx_confirmed);
       txx.sort((a, b) => a[1][1] - b[1][1]);
       txx.reverse();
-      console.log(txx);
+      // console.log(txx);
       return txx;
     } else {
       return null;

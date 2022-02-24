@@ -26,8 +26,6 @@
   import Modal from "./components/Modal.svelte";
 
 
-  export let name;
-
   const tabs = ["Transactions", "Send", "Receive", "Contacts"]
   const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon,"Contacts": ContactsIcon}
 

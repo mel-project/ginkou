@@ -12,7 +12,6 @@
   export let current_wallet_dump: any;
 
   const total_output: { [key: string]: BigNumber } = (() => {
-    console.log(tx)
     let toret: { [key: string]: BigNumber } = {};
     for (const output of tx.outputs) {
       toret[output.denom] = (toret[output.denom] ?? new BigNumber(0)).plus(

@@ -1,7 +1,5 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-import App from "../../App.svelte";
-import Chip from "./Chip.svelte";
+import { createEventDispatcher } from "svelte";
 
   export let value = "";
   export let label = "";
@@ -43,7 +41,6 @@ import Chip from "./Chip.svelte";
 </template>
 
 <style lang="scss">
-  @use "../../theme/_smui-theme.scss" as theme;
   input {
     border: none;
     background: transparent;

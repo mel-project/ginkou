@@ -12,7 +12,7 @@ describe.skip('list wallets', () => {
                 assert.isAbove(Object.keys(wallets).length, 0);
             })
             .ifLeft( e => {
-                console.log(e);
+                console.warn(e);
                 assert(false);
             });
     });

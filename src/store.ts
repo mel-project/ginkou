@@ -75,10 +75,8 @@ function object_map<T, F> (obj_entries: [string, T][], func: (name: string, obj:
   console.log(obj_entries)
   return Object.assign({}, ...obj_entries.map((entry: [string, T])=>({[entry[0]]:func(entry[0], entry[1])})))
 }
-console.log("validate", assert_object_fields)
 
 const get_saved_setting = (localName: string): Maybe<PersistentValue> => {
-  console.log(localName)
   let saved_value: string | null = localStorage.getItem(localName)
   let maybe_value: Maybe<PersistentValue> = saved_value ? Just(Object.assign({},JSONbig.parse(saved_value))) : Nothing
   // console.log(maybe_value.extract(), "maybed")
@@ -108,10 +106,8 @@ const persistent_to_object = (pv: PersistentValue): Obj<string> => {
 const persistent_to_writable = (storage_name: string, pv: PersistentValue): Writable<any> => {
   let w = writable(pv.value)
   w.subscribe( (value: any)=>{
-    console.log("changing setting", pv)
     pv.value = value
     localStorage.setItem(storage_name+pv.name, JSONbig.stringify(pv))
-    console.log(localStorage.getItem(storage_name+pv.name))
   })
   return w
 }
@@ -139,15 +135,10 @@ const restore_all_settings = (storage_name: string, setting_types: State<Setting
 
     const default_state: State<PersistentValue> =  Object.assign({}, ...default_storage.map((pv:PersistentValue)=>({[pv.name]:pv})))
     const saved_state: State<PersistentValue> =  Object.assign({}, ...saved_storage.map((pv:PersistentValue)=>({[pv.name]:pv})))
-    console.log("saved: ", saved_state)
     const reconstructed_state: State<PersistentValue> = Object.assign(default_state, saved_state)
 
     const state: State<Writable<any>> =  Object.assign({}, ...Object.entries(reconstructed_state).map((entry: [string, PersistentValue])=>({[entry[0]]: persistent_to_writable(storage_name,entry[1])})))
 
-    console.log("state", state)
-
-    console.log(default_storage)
-    console.log(state)
     return state
 
 }

@@ -21,7 +21,6 @@
       if (wallet.locked) {
         unlocker_open = true;
       } else {
-        console.log("unlocking");
         await lock_wallet(name).ifLeft(alert).run();
       }
     }}

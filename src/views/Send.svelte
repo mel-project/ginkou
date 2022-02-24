@@ -4,7 +4,7 @@
   import { send_tx, prepare_mel_tx, get_priv_key } from "@/utils";
   import type { WalletSummary, Transaction, CoinData } from "@/utils";
   import { get_wallet } from "@/storage";
-  import Textfield from "@/components/UI/TextField.svelte";
+  import Textfield from "@/components/UI/inputs/TextField.svelte";
   import Chip from "@/components/UI/Chip.svelte";
   import Dropdown from "@/components/UI/Dropdown.svelte";
   import Button, { Label } from "@smui/button";
@@ -70,7 +70,7 @@
   }
 
   async function prepare_tx_handler() {
-    console.log("to_addrs", to_addrs.map((contact)=>contact.address.trim()))
+    // console.log("to_addrs", to_addrs.map((contact)=>contact.address.trim()))
     if ($current_wallet == null) {
       dsptch_err("Choose a wallet to send from");
     } else {
@@ -104,7 +104,7 @@
       contact.name.indexOf(sub_name) >= 0 || contact.address.indexOf(sub_name) >= 0
     );
     predictions.push({name: "unknown", address: sub_name})
-    console.log($wallet_summaries, wallet_contacts, predictions)
+    // console.log($wallet_summaries, wallet_contacts, predictions)
     return predictions;
   };
 
