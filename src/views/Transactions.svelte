@@ -1,7 +1,8 @@
 <script lang="typescript">
-  import Dialog, { Title, Content, Actions, Header } from "@smui/dialog";
+  import { Title, Content, Actions, Header } from "@smui/dialog";
+  import Dialog from "@/components/UI/windows/Dialog.svelte"
   import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
-  import Button, { Label } from "@smui/button";
+  import Button from "@/components/UI/inputs/Button.svelte";
   import { wallet_dump, wallet_dump_default, net_spent } from "../utils";
   import type { CoinData, Transaction, WalletDump } from "../utils";
   import { createEventDispatcher, getContext } from "svelte";
@@ -40,29 +41,29 @@
   });
 </script>
 
+
 <Dialog
   bind:open={summary_open}
   fullscreen
   aria-labelledby="simple-title"
   aria-describedby="simple-content"
-  surface$style="width: 1000px; max-width:100vw;"
 >
-  <Header>
-    <Title id="summary-title">Transaction Summary</Title>
-  </Header>
-  {#if selected_tx && summary_open}
-    <TransactionSummary
-      txhash={selected_tx[0]}
-      tx={selected_tx[1]}
-      height={selected_tx[2]}
-      current_wallet_dump={$current_wallet_dump}
-    />
-  {/if}
-  <Actions>
-    <Button>
-      <Label>Done</Label>
+  <template>
+    {#if selected_tx && summary_open}
+      <TransactionSummary
+        txhash={selected_tx[0]}
+        tx={selected_tx[1]}
+        height={selected_tx[2]}
+        current_wallet_dump={$current_wallet_dump}
+      />
+    {/if}
+  </template>
+   
+  <svelte:fragment slot="actions">
+    <Button on:click={()=>summary_open=false}>
+      Done
     </Button>
-  </Actions>
+  </svelte:fragment>
 </Dialog>
 
 {#if $current_wallet_dump && $sorted_confirmed_txx}

@@ -3,7 +3,6 @@
   import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils";
   import {onMount, setContext} from 'svelte'
 
-  //import Banner from '@smui/banner';
   import Tab from "./components/UI/tabs/Tab.svelte";
   import TabBar from "./components/UI/tabs/TabBar.svelte";
   import Label from "./components/UI/Label.svelte"
@@ -15,15 +14,15 @@
   import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
   import { State, Melwalletd } from "./store";
-  import type { SettingConfig, Setting } from "./store";
+  import type { SettingConfig } from "./store";
   import Hamburger from "./components/Hamburger.svelte";
-  import TransactionIcon from './res/icons/transactions.svg';
-  import SendIcon from './res/icons/send.svg';
-  import RecieveIcon from './res/icons/recieve.svg';
-  import SettingsIcon from './res/icons/settings.svg';
-  import ContactsIcon from './res/icons/contacts.svg';
+  import TransactionIcon from '@/res/icons/transactions.svg';
+  import SendIcon from '@/res/icons/send.svg';
+  import RecieveIcon from '@/res/icons/recieve.svg';
+  import SettingsIcon from '@/res/icons/settings.svg';
+  import ContactsIcon from '@/res/icons/contacts.svg';
 
-  import Modal from "./components/Modal.svelte";
+  import Modal from "./components/UI/windows/Modal.svelte";
 
 
   const tabs = ["Transactions", "Send", "Receive", "Contacts"]
@@ -213,8 +212,6 @@
     href="https://fonts.googleapis.com/icon?family=Material+Icons"
   />
 
-  <!-- SMUI -->
-  <!--<link rel="stylesheet" href="https://unpkg.com/svelte-material-ui/bare.css" />-->
   <link rel="stylesheet" href="/build/smui.css" />
 </svelte:head>
 
