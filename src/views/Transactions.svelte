@@ -1,6 +1,6 @@
 <script lang="typescript">
   import { Title, Content, Actions, Header } from "@smui/dialog";
-  import Dialog from "@/components/UI/windows/Dialog.svelte"
+  import Dialog from "@/components/UI/windows/Dialog.svelte";
   import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
   import Button from "@/components/UI/inputs/Button.svelte";
   import { wallet_dump, wallet_dump_default, net_spent } from "../utils";
@@ -11,8 +11,7 @@
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
-
-  const {current_wallet_dump} = getContext("melwalletd")
+  const { current_wallet_dump } = getContext("melwalletd");
   // Whether a summary window is open
   let summary_open: boolean = false;
   // Transaction to display in a summary window
@@ -25,7 +24,15 @@
       text: msg,
     });
   }
-
+  // used for testing the layout of open dialogs
+  $: {
+    if ($sorted_confirmed_txx) {
+      let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
+      selected_tx = [txhash, tx, height];
+      summary_open = true;
+    }
+  }
+  // remove above in prod
   const sorted_confirmed_txx: Readable<
     [string, [Transaction, number]][] | null
   > = derived(current_wallet_dump, ($dump) => {
@@ -40,7 +47,6 @@
     }
   });
 </script>
-
 
 <Dialog
   bind:open={summary_open}
@@ -58,16 +64,18 @@
       />
     {/if}
   </template>
-   
+
   <svelte:fragment slot="actions">
-    <Button on:click={()=>summary_open=false}>
-      Done
-    </Button>
+    <Button on:click={() => (summary_open = false)}>Done</Button>
   </svelte:fragment>
 </Dialog>
 
 {#if $current_wallet_dump && $sorted_confirmed_txx}
-  <DataTable class="transactions" table$aria-label="Transactions Table" style="max-width: 100%">
+  <DataTable
+    class="transactions"
+    table$aria-label="Transactions Table"
+    style="max-width: 100%"
+  >
     <Head>
       <Row>
         <Cell style="width: 50%">Hash</Cell>
@@ -84,7 +92,6 @@
             summary_open = false;
             selected_tx = [tx, null];
           }}
-          
         >
           <Cell style="overflow: hidden; text-overflow:ellipsis">{txhash}</Cell>
           <Cell>{net_spent(tx, $current_wallet_dump.summary.address)}</Cell>
@@ -115,7 +122,7 @@
   :global(table) {
     width: 100%;
   }
-  :global(.disable-row){
-    background: rgba(0,0,0,0.08) !important;
+  :global(.disable-row) {
+    background: rgba(0, 0, 0, 0.08) !important;
   }
 </style>

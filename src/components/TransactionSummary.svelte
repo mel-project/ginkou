@@ -1,5 +1,4 @@
 <script lang="typescript">
-  import { Content } from "@smui/dialog";
   import { denom2str, kind2str } from "../utils";
   import type { Transaction } from "../utils";
   import BigNumber from "bignumber.js";
@@ -31,7 +30,7 @@
       : "https://scan.themelio.org";
 </script>
 
-<Content>
+<div>
   {#if height}
     <i
       ><a
@@ -105,7 +104,7 @@
       <Cell span="12" />
     {/each}
   </LayoutGrid>
-</Content>
+</div>
 
 <style>
   h3 {

@@ -3,6 +3,7 @@
     import Modal from "@/components/UI/windows/Modal.svelte"
 
     export let open = false;
+    export let title = "Transaction Summary"
     const dispatch = createEventDispatcher();
 
     const close = () => {
@@ -15,6 +16,7 @@
 +if("open")
     Modal
         div.t-dialog
+            h2.title {title}
             div.content
                     slot
             div.actions
@@ -22,10 +24,29 @@
 </template>
 
 <style lang="scss">
+    .t-dialog {
+        z-index: 1000;
+        position:relative;
+        display: flex;
+        flex-direction: column;
+        background: red;
+        height: 50%;
+        width: 50%;
+        // top: 50%;
+        // left: 50%;
+        padding: 1em;
+        box-sizing: border-box;
+  /* bring your own prefixes */
+        transform: translate(50%, 50%);
+        overscroll-behavior: none;
+    }
     .content {
-        height: 70%;
+        position:relative;
         background-color: white;
-        overflow: scroll;
+        overflow-y: scroll;
+        overflow-x: wrap;
+        overscroll-behavior: none;
+        max-height: inherit;
         // align-content: center;
         // justify-content: center;
         // & > .content {
@@ -34,14 +55,13 @@
         //     position: relative;
         // }
     }
-    .t-dialog {
-        z-index: 1000;
-        position:relative;
-        display: flex;
-        flex-direction: column;
-        background: red;
-    }
+
     .actions{
         background: blue;
+        display: flex;
+        flex-flow: reverse;
+        justify-content: right;
+        overscroll-behavior: none;
+
     }
 </style>
