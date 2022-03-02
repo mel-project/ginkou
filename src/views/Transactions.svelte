@@ -25,13 +25,13 @@
     });
   }
   // used for testing the layout of open dialogs
-  $: {
-    if ($sorted_confirmed_txx) {
-      let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
-      selected_tx = [txhash, tx, height];
-      summary_open = true;
-    }
-  }
+  // $: {
+  //   if ($sorted_confirmed_txx) {
+  //     let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
+  //     selected_tx = [txhash, tx, height];
+  //     summary_open = true;
+  //   }
+  // }
   // remove above in prod
   const sorted_confirmed_txx: Readable<
     [string, [Transaction, number]][] | null
@@ -50,6 +50,7 @@
 
 <Dialog
   bind:open={summary_open}
+  on:close={()=>summary_open = false}
   fullscreen
   aria-labelledby="simple-title"
   aria-describedby="simple-content"
@@ -65,8 +66,8 @@
     {/if}
   </template>
 
-  <svelte:fragment slot="actions">
-    <Button on:click={() => (summary_open = false)}>Done</Button>
+  <svelte:fragment let:close slot="actions">
+    <Button on:click={close}>Done</Button>
   </svelte:fragment>
 </Dialog>
 

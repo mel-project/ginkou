@@ -1,4 +1,6 @@
 <script lang="typescript">
+  import "../node_modules/material-design-lite/material.min.css"
+  import "../node_modules/material-design-lite/material.min.js"
   import type { WalletSummary } from "./utils";
   import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils";
   import {onMount, setContext} from 'svelte'
@@ -121,6 +123,7 @@
 </script>
 
 <main>
+
   {#if modal_is_active}
     <Modal on:closeModal="{()=>{modal_is_active=false}}">
         <SettingsView 
@@ -219,7 +222,6 @@
 @use "./theme/_smui-theme.scss" as theme;
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
-
 
 .open-settings{
   

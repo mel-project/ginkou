@@ -2,9 +2,7 @@
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
-
-    const close = () => {
-        console.log('closing',dispatch)
+    export const close = () => {
         dispatch('closeModal')
         dispatch('close')
     };
@@ -12,7 +10,7 @@
 
 <template lang="pug">
     div(class="modal" on:click|self!="{close}")
-        slot(close!="{close}")
+        slot()
 </template>
 
 <style lang="scss">
