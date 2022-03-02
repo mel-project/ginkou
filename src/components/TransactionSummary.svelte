@@ -2,8 +2,6 @@
   import { denom2str, kind2str } from "../utils";
   import type { Transaction } from "../utils";
   import BigNumber from "bignumber.js";
-  import LayoutGrid, { Cell } from "@smui/layout-grid";
-  import { xlink_attr } from "svelte/internal";
   // Transaction to display
   export let tx: Transaction;
   export let txhash: string;
@@ -51,13 +49,13 @@
           }
         </b>`,
         Value: `${output.value}${denom2str(output.denom)}`,
-        Additional_data: ``
+        Additional_data: `""`
 
     }
   })
 </script>
 
-<div>
+<div class="">
   {#if height}
     <i><a
         href={`${melscan_url()}/blocks/${height}/${txhash}`}
@@ -67,37 +65,48 @@
     </a></i> 
   {/if}
   <h3>Summary</h3>
-  <LayoutGrid style="padding: 0; font-size: 90%" innerGrid$class="tight-grid">
+  <div class="layout-grid">
     {#each Object.entries(transaction_info) as entry}
-      <Cell span="3" style={table_key_style}>{entry[0].replace("_"," ")}</Cell>
-      <Cell span="9" style={table_val_style}>{entry[1]}</Cell>
+        <span class="key" style={table_key_style}>{entry[0].replace("_"," ")}</span>
+        <span class="value" style={table_val_style}>{entry[1]}</span>
     {/each}
-  </LayoutGrid>
+  </div>
 
   <h3>Inputs</h3>
-  <LayoutGrid style="padding: 0; font-size: 90%" innerGrid$class="tight-grid">
+  <div class="layout-grid">
     {#each tx.inputs as input, i}
-      <Cell span="3" style={table_key_style}>Input {i}</Cell>
-      <Cell span="9" style={table_val_style}>
+      <span span="3" style={table_key_style}>Input {i}</span>
+      <span span="9" style={table_val_style}>
         {input.txhash}-{input.index}
-      </Cell>
+      </span>
     {/each}
-  </LayoutGrid>
+  </div>
 
   <h3>Outputs</h3>
-  <LayoutGrid style="padding: 0; font-size: 90%" innerGrid$class="tight-grid">
+  <div class="layout-container outputs">
     {#each outputs as output}
+    <div class="layout-grid">
       {#each Object.entries(output) as entry}
-        <Cell span="3" style={table_key_style}>{entry[0].replace("_"," ")}</Cell>
-        <Cell span="9" style={table_val_style}>{@html entry[1]}</Cell>
+        <span style={table_key_style}>{entry[0].replace("_"," ")}</span>
+        <span style={table_val_style}>{@html entry[1]}</span>
       {/each}
-      <Cell span="12" />
+    </div>
     {/each}
 
-  </LayoutGrid>
+  </div>
 </div>
 
-<style>
+<style lang="scss">
+  .layout-container{
+    .layout-grid{
+      margin-bottom: 2em;
+    }
+
+  }
+  .layout-grid{
+    display: grid;
+    grid-template-columns: minmax(12em, auto) 1fr;
+  }
   h3 {
     color: black;
     padding-top: 10px;

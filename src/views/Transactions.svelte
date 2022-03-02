@@ -25,13 +25,13 @@
     });
   }
   // used for testing the layout of open dialogs
-  // $: {
-  //   if ($sorted_confirmed_txx) {
-  //     let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
-  //     selected_tx = [txhash, tx, height];
-  //     summary_open = true;
-  //   }
-  // }
+  $: {
+    if ($sorted_confirmed_txx) {
+      let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
+      selected_tx = [txhash, tx, height];
+      summary_open = true;
+    }
+  }
   // remove above in prod
   const sorted_confirmed_txx: Readable<
     [string, [Transaction, number]][] | null
