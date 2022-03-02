@@ -1,11 +1,11 @@
 <script lang="typescript">
-  import Textfield from "@smui/textfield";
-  import HelperText from "@smui/textfield/helper-text/index";
-  import Button, { Label } from "@smui/button";
   
   import { unlock_wallet } from "@/utils";
   import { createEventDispatcher } from "svelte";
   import Dialog from "./UI/windows/Dialog.svelte";
+  import Button from "./UI/inputs/Button.svelte";
+  import TextField from "./UI/inputs/TextField.svelte";
+
   export let name: string;
   let password = "";
   const dispatch = createEventDispatcher();
@@ -19,14 +19,13 @@
     <svelte:fragment>
       <div>
         <div style="margin-top: 10px">
-          <Textfield
+          <TextField
             type="password"
             variant="outlined"
             bind:value={password}
             label="Password"
           >
-            <HelperText er slot="helper">{password}</HelperText>
-          </Textfield>
+          </TextField>
         </div>
       </div>
     </svelte:fragment>
@@ -39,7 +38,7 @@
             close()
           }}
         >
-          <Label>Unlock</Label>
+          Unlock
         </Button>
     </svelte:fragment>
   </Dialog>

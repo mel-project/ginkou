@@ -1,15 +1,16 @@
 <script lang="typescript">
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import { createEventDispatcher, getContext } from "svelte";
   import { send_tx, prepare_mel_tx, get_priv_key } from "@/utils";
   import type { WalletSummary, Transaction, CoinData } from "@/utils";
   import { get_wallet } from "@/storage";
   import Textfield from "@/components/UI/inputs/TextField.svelte";
-  import Chip from "@/components/UI/Chip.svelte";
+  import Chip from "@/components/UI/Chip.svelte"
+  import Dialog from "@/components/UI/windows/Dialog.svelte"
   import Dropdown from "@/components/UI/Dropdown.svelte";
-  import Button, { Label } from "@smui/button";
+;
 
   import BigNumber from "bignumber.js";
+  import Button from "../components/UI/inputs/Button.svelte";
 
 
   type Contact = { name: string; address: string };
@@ -123,15 +124,14 @@
 </script>
 
 {#if prepared_tx}
-  <Dialog
-    bind:open={open_confirmation}
-    aria-labelledby="simple-title"
-    aria-describedby="simple-content"
+  <Dialog title="Confirm Transaction"
+    on:close={()=>open_confirmation=false}
+    open={open_confirmation}
   >
     <div id="confirm-window">
-      <h1>Confirm Transaction</h1>
 
       {#each spends(prepared_tx.outputs).filter(([address, _]) => $current_wallet_dump && address != $current_wallet_dump.summary.address) as spend}
+        {console.log('spending', spend)}
         <p>Send</p>
         <div class="highlight">{spend[1]} micromel</div>
         <p>To address</p>
@@ -141,18 +141,20 @@
       <p>For</p>
       <div class="highlight">{prepared_tx.fee} micromel</div>
 
-      <div class="choice-buttons">
-        <Button on:click={() => (open_confirmation = false)}>Cancel</Button>
+    </div>
 
+
+      <div slot="actions" class="choice-buttons" let:close>
+        <Button on:click={close}>Cancel</Button>
+        
         <!-- Send Tx -->
         <Button
           on:click={() => {
-            open_confirmation = false;
+            close()
             send_tx_handler();
           }}>Confirm</Button
         >
       </div>
-    </div>
   </Dialog>
 {/if}
 

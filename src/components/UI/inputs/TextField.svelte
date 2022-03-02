@@ -1,6 +1,5 @@
-<script>
-import { createEventDispatcher } from "svelte";
-
+<script lang="typescript">
+  import { createEventDispatcher } from "svelte";
   export let value = "";
   export let label = "";
   export let disabled;
@@ -23,7 +22,6 @@ import { createEventDispatcher } from "svelte";
     focused = false;
     event_dispatcher("blur", evt);
   };
-
 </script>
 
 <template lang="pug">
