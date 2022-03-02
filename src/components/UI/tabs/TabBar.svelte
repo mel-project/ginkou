@@ -16,7 +16,7 @@
 </template>
 
 <style lang="scss">
-  @use "../../../theme/_smui-theme.scss" as theme;
+  @use "../../../styles/theme.scss" as theme;
   ul{
     list-style: none;
     padding: 1em 0;

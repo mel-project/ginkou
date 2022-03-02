@@ -215,11 +215,10 @@
     href="https://fonts.googleapis.com/icon?family=Material+Icons"
   />
 
-  <link rel="stylesheet" href="/build/smui.css" />
 </svelte:head>
 
 <style type="text/scss">
-@use "./theme/_smui-theme.scss" as theme;
+@use "./styles/theme.scss" as theme;
 @use 'styles/app.scss';
 @use 'styles/app-wide.scss';
 

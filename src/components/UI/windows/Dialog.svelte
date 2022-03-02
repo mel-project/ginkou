@@ -7,7 +7,7 @@
     const dispatch = createEventDispatcher();
 
     const close = () => {
-        console.log('closing dialog')
+        console.log('requesting: close dialog')
         dispatch('close')
     };
 </script>

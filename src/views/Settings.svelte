@@ -73,7 +73,7 @@
 </template>
 
 <style lang="scss">
-  @use "../theme/_smui-theme.scss" as theme;
+  @use "../styles/theme.scss" as theme;
   .top{
     height: 2em;
     width:100%;

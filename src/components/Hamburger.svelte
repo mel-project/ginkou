@@ -18,7 +18,7 @@
 </div>
 
 <style type="text/scss">
-  @use "../theme/_smui-theme.scss" as theme;
+  @use "../styles/theme.scss" as theme;
   @import "./styles/normalize.css";
 
   label {

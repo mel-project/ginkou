@@ -65,7 +65,7 @@
 </template>
 
 <style lang="scss">
-@use "../theme/_smui-theme.scss" as theme;
+@use "../styles/theme.scss" as theme;
 
 select, input{
     width: 12em;
