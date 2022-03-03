@@ -1,5 +1,5 @@
 import { derived, readable, Readable, Subscriber, Writable, writable } from "svelte/store";
-import { list_wallets, WalletSummary, WalletDump, wallet_dump } from "./utils";
+import { list_wallets, WalletSummary, WalletDump, wallet_dump, Transaction } from "./utils";
 import JSONbig from "json-bigint";
 import { Maybe, Just, Nothing } from "purify-ts/Maybe";
 
@@ -191,7 +191,20 @@ export const Melwalletd = (settings: State<Readable<string>>) => {
     return () => clearInterval(interval);
 
   });
-  return { wallet_summaries, current_wallet_dump };
+  const sorted_confirmed_txx: Readable<
+  [string, [Transaction, number]][] | null
+> = derived(current_wallet_dump, ($dump) => {
+  if ($dump) {
+    let txx = Object.entries(($dump as WalletDump).full.tx_confirmed);
+    txx.sort((a, b) => a[1][1] - b[1][1]);
+    txx.reverse();
+    // console.log(txx);
+    return txx;
+  } else {
+    return null;
+  }
+});
+  return { wallet_summaries, current_wallet_dump, sorted_confirmed_txx };
 }
 
 

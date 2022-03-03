@@ -1,51 +1,48 @@
 <script lang="typescript">
-  import { Title, Content, Actions, Header } from "@smui/dialog";
+	import { TxHash } from './../utils.ts';
   import Dialog from "@/components/UI/windows/Dialog.svelte";
   import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
   import Button from "@/components/UI/inputs/Button.svelte";
   import { wallet_dump, wallet_dump_default, net_spent } from "../utils";
   import type { CoinData, Transaction, WalletDump } from "../utils";
-  import { createEventDispatcher, getContext } from "svelte";
+  import { createEventDispatcher, getContext, onMount } from "svelte";
   import TransactionSummary from "../components/TransactionSummary.svelte";
 
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
+import type { Either } from "purify-ts/Either";
 
-  const { current_wallet_dump } = getContext("melwalletd");
-  // Whether a summary window is open
+  interface DataTable<T>{
+    head: string[]
+    body: T[]
+  }
+
+  
+  const { current_wallet_dump:  Readable<WalletDump>, sorted_confirmed_txx: Readable<ConfirmedTransaction[]> } = getContext("melwalletd");
+  // Whether a summary window i> open
   let summary_open: boolean = false;
   // Transaction to display in a summary window
   let selected_tx: [string, Transaction, number | null] | null = null;
 
-  const dispatcher = createEventDispatcher();
+  // $: table: DataTable<Either_Transaction> = {
+  //   head: ["text","text", "text"],
+  //   body: (()=>{
+  //     let unconfirmed: UnconfirmedTransaction = Object.entries($current_wallet_dump.full.tx_in_progress);
+  //   })()
+  // }
 
-  function dsptch_err(msg: any) {
-    dispatcher("error", {
-      text: msg,
-    });
-  }
-  // used for testing the layout of open dialogs
-  $: {
-    if ($sorted_confirmed_txx) {
-      let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
-      selected_tx = [txhash, tx, height];
-      summary_open = true;
-    }
-  }
-  // remove above in prod
-  const sorted_confirmed_txx: Readable<
-    [string, [Transaction, number]][] | null
-  > = derived(current_wallet_dump, ($dump) => {
-    if ($dump) {
-      let txx = Object.entries(($dump as WalletDump).full.tx_confirmed);
-      txx.sort((a, b) => a[1][1] - b[1][1]);
-      txx.reverse();
-      // console.log(txx);
-      return txx;
-    } else {
-      return null;
-    }
-  });
+
+
+  // // used for testing the layout of open dialogs
+  // $: {
+  //   if ($sorted_confirmed_txx) {
+  //     let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
+  //     selected_tx = [txhash, tx, height];
+  //     summary_open = true;
+  //   }
+  // }
+  // // remove above in prod
+
 </script>
 
 <Dialog
