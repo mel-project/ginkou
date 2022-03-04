@@ -1,47 +1,44 @@
 <script lang="typescript">
-	import { TxHash } from './../utils.ts';
-  import Dialog from "@/components/UI/windows/Dialog.svelte";
-  import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
-  import Button from "@/components/UI/inputs/Button.svelte";
-  import { wallet_dump, wallet_dump_default, net_spent } from "../utils";
-  import type { CoinData, Transaction, WalletDump } from "../utils";
-  import { createEventDispatcher, getContext, onMount } from "svelte";
-  import TransactionSummary from "../components/TransactionSummary.svelte";
+import Dialog from "@/components/UI/windows/Dialog.svelte";
+import Button from "@/components/UI/inputs/Button.svelte";
+import { createEventDispatcher, getContext, onMount } from "svelte";
+import TransactionSummary from "../components/TransactionSummary.svelte";
 
-  import { derived } from "svelte/store";
-  import type { Readable } from "svelte/store";
+import { derived } from "svelte/store";
+import type { Readable } from "svelte/store";
 import type { Either } from "purify-ts/Either";
+import { net_spent } from "../utils/utils";
 
-  interface DataTable<T>{
-    head: string[]
-    body: T[]
-  }
-
-  
-  const { current_wallet_dump:  Readable<WalletDump>, sorted_confirmed_txx: Readable<ConfirmedTransaction[]> } = getContext("melwalletd");
-  // Whether a summary window i> open
-  let summary_open: boolean = false;
-  // Transaction to display in a summary window
-  let selected_tx: [string, Transaction, number | null] | null = null;
-
-  // $: table: DataTable<Either_Transaction> = {
-  //   head: ["text","text", "text"],
-  //   body: (()=>{
-  //     let unconfirmed: UnconfirmedTransaction = Object.entries($current_wallet_dump.full.tx_in_progress);
-  //   })()
-  // }
+interface PendingDataTable<T>{
+  head: string[]
+  body: T[]
+}
 
 
+const { current_wallet_dump, sorted_confirmed_txx } = getContext("melwalletd");
+// Whether a summary window i> open
+let summary_open: boolean = false;
+// Transaction to display in a summary window
+let selected_tx: [string, Transaction, number | null] | null = null;
 
-  // // used for testing the layout of open dialogs
-  // $: {
-  //   if ($sorted_confirmed_txx) {
-  //     let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
-  //     selected_tx = [txhash, tx, height];
-  //     summary_open = true;
-  //   }
-  // }
-  // // remove above in prod
+// $: table: DataTable<Either_Transaction> = {
+//   head: ["text","text", "text"],
+//   body: (()=>{
+//     let unconfirmed: UnconfirmedTransaction = Object.entries($current_wallet_dump.full.tx_in_progress);
+//   })()
+// }
+
+
+
+// // used for testing the layout of open dialogs
+// $: {
+//   if ($sorted_confirmed_txx) {
+//     let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
+//     selected_tx = [txhash, tx, height];
+//     summary_open = true;
+//   }
+// }
+// // remove above in prod
 
 </script>
 
@@ -50,8 +47,7 @@ import type { Either } from "purify-ts/Either";
   on:close={()=>summary_open = false}
   fullscreen
   aria-labelledby="simple-title"
-  aria-describedby="simple-content"
->
+  aria-describedby="simple-content">
   <template>
     {#if selected_tx && summary_open}
       <TransactionSummary
@@ -69,49 +65,43 @@ import type { Either } from "purify-ts/Either";
 </Dialog>
 
 {#if $current_wallet_dump && $sorted_confirmed_txx}
-  <DataTable
+  <table
     class="transactions"
-    table$aria-label="Transactions Table"
     style="max-width: 100%"
   >
-    <Head>
-      <Row>
-        <Cell style="width: 50%">Hash</Cell>
-        <Cell>Spent (µMEL)</Cell>
-        <Cell>Block Height</Cell>
-      </Row>
-    </Head>
-    <Body>
+    <tr>
+        <th class="cell" style="width: 50%">Hash</th>
+        <th class="cell">Spent (µMEL)</th>
+        <th class="cell">Block Height</th>
+    </tr>
       <!-- List unconfirmed txs -->
       {#each Object.entries($current_wallet_dump.full.tx_in_progress) as [txhash, tx]}
-        <Row
-          class="disable-row"
+        <tr class="row disable-row"
           on:click={() => {
             summary_open = false;
             selected_tx = [tx, null];
           }}
         >
-          <Cell style="overflow: hidden; text-overflow:ellipsis">{txhash}</Cell>
-          <Cell>{net_spent(tx, $current_wallet_dump.summary.address)}</Cell>
-          <Cell>pending</Cell>
-        </Row>
+          <td class="cell" style="overflow: hidden; text-overflow:ellipsis">{txhash}</td>
+          <td class="cell">{net_spent(tx, $current_wallet_dump.summary.address)}</td>
+          <td class="cell">pending</td>
+        </tr>
       {/each}
 
       <!-- List confirmed txs -->
       {#each $sorted_confirmed_txx as [txhash, [tx, height]]}
-        <Row
+        <tr class="row"
           on:click={() => {
             summary_open = true;
             selected_tx = [txhash, tx, height];
           }}
         >
-          <Cell>{txhash}</Cell>
-          <Cell>{net_spent(tx, $current_wallet_dump.summary.address)}</Cell>
-          <Cell>{height}</Cell>
-        </Row>
+          <td class="cell">{txhash}</td>
+          <td class="cell">{net_spent(tx, $current_wallet_dump.summary.address)}</td>
+          <td class="cell">{height}</td>
+        </tr>
       {/each}
-    </Body>
-  </DataTable>
+  </table>
 {:else}
   <i>loading...</i>
 {/if}

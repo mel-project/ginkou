@@ -18,8 +18,8 @@
 </div>
 
 <style type="text/scss">
-  @use "../styles/theme.scss" as theme;
-  @import "./styles/normalize.css";
+  @use "../res/styles/theme.scss" as theme;
+  @import "./res/styles/normalize.css";
 
   label {
     display: block;

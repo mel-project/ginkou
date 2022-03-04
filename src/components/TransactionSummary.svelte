@@ -1,6 +1,6 @@
 <script lang="typescript">
-  import { denom2str, kind2str } from "../utils";
-  import type { Transaction } from "../utils";
+  import { denom2str, kind2str } from "../utils/utils";
+  import type { Transaction } from "../utils/types";
   import BigNumber from "bignumber.js";
   // Transaction to display
   export let tx: Transaction;

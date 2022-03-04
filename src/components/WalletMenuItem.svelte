@@ -1,6 +1,6 @@
 <script lang="typescript">
-  import { lock_wallet } from "@/utils";
-  import type { WalletSummary } from "@/utils";
+  import { lock_wallet } from "../utils/utils";
+  import type { WalletSummary } from "../utils/types";
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
@@ -35,7 +35,7 @@
 </div>
 
 <style type="text/scss">
-  @use "../styles/theme.scss" as theme;
+  @use "../res/styles/theme.scss" as theme;
 
   .wallet-menu-item {
     padding: 10px;

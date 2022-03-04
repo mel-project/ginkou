@@ -1,8 +1,7 @@
 <script lang="typescript">
   import "../node_modules/material-design-lite/material.min.css"
   import "../node_modules/material-design-lite/material.min.js"
-  import type { WalletSummary } from "./utils";
-  import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils";
+  import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils/utils";
   import {onMount, setContext} from 'svelte'
 
   import Tab from "./components/UI/tabs/Tab.svelte";
@@ -15,8 +14,7 @@
 
   import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { State, Melwalletd } from "./store";
-  import type { SettingConfig } from "./store";
+  import { AppState, Melwalletd } from "./utils/store";
   import Hamburger from "./components/Hamburger.svelte";
   import TransactionIcon from '@/res/icons/transactions.svg';
   import SendIcon from '@/res/icons/send.svg';
@@ -25,6 +23,7 @@
   import ContactsIcon from '@/res/icons/contacts.svg';
 
   import Modal from "./components/UI/windows/Modal.svelte";
+  import type { SettingConfig } from "./utils/types";
 
 
   const tabs = ["Transactions", "Send", "Receive", "Contacts"]
@@ -34,7 +33,7 @@
   const tab_components = Object.assign({},...
     [Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
     
-  const setting_types: State<SettingConfig> = {
+  const setting_types: AppState<SettingConfig> = {
     network: {
       label: "Network", 
       field: "select", 
@@ -60,7 +59,7 @@
       contacts: {visible: false, default: []},
   }
   // localStorage.clear()
-  const {settings} = State(setting_types)
+  const {settings} = AppState(setting_types)
   const {persistent_tabs, current_wallet, default_tab, active_tab, network} = settings
   // console.log(persistent_tabs, current_wallet, default_tab, active_tab, $network)
   // const store = Store(settings)
@@ -211,16 +210,16 @@
 <svelte:head>
   <!-- Fonts -->
   <link
-    rel="stylesheet"
+    rel="res/stylesheet"
     href="https://fonts.googleapis.com/icon?family=Material+Icons"
   />
 
 </svelte:head>
 
 <style type="text/scss">
-@use "./styles/theme.scss" as theme;
-@use 'styles/app.scss';
-@use 'styles/app-wide.scss';
+@use "./res/styles/theme.scss" as theme;
+@use 'res/styles/app.scss';
+@use 'res/styles/app-wide.scss';
 
 .open-settings{
   

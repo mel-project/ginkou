@@ -1,8 +1,8 @@
 <script lang="typescript">
   import Button from "@/components/UI/inputs/Button.svelte";
-  import { add_coin, tap_faucet, TESTNET } from "@/utils";
   import Textfield from "@/components/UI/inputs/TextField.svelte";
   import { getContext, createEventDispatcher } from "svelte";
+import { add_coin, tap_faucet, TESTNET } from "../utils/utils";
 
   const {settings} = getContext("settings")
   const {current_wallet} = settings

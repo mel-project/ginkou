@@ -1,51 +1,51 @@
 <script lang="typescript">
-  import { new_wallet, TESTNET, MAINNET } from "@/utils";
-  import type { WalletSummary } from "@/utils";
-  import WalletMenuItem from "@/components/WalletMenuItem.svelte";
-  import TextField from "./UI/inputs/TextField.svelte"
-  import Button from "@/components/UI/inputs/Button.svelte";
-  import {getContext} from 'svelte';
-  import type {Readable} from 'svelte/store'
-  import WalletUnlocker from "./WalletUnlocker.svelte";
-  import Dialog from "./UI/windows/Dialog.svelte";
+import WalletMenuItem from "@/components/WalletMenuItem.svelte";
+import TextField from "./UI/inputs/TextField.svelte"
+import Button from "@/components/UI/inputs/Button.svelte";
+import {getContext} from 'svelte';
+import type {Readable} from 'svelte/store'
+import WalletUnlocker from "./WalletUnlocker.svelte";
+import Dialog from "./UI/windows/Dialog.svelte";
+import { TESTNET } from "../utils/utils";
+import type { WalletSummary } from "../utils/types";
 
-  type Summaries = Readable<{[key: string]: WalletSummary}>;
+type Summaries = Readable<{[key: string]: WalletSummary}>;
 
-  const {wallet_summaries}: {wallet_summaries: Summaries} = getContext("melwalletd");
-  const {settings} = getContext("settings");
-  const {network, current_wallet} = settings
-  console.log($network)
-  // wallet_summaries.subscribe(console.log)
-  let add_new_open = false; 
-  let new_name = "";
-  let new_password = "";
-  let new_network = $network == TESTNET;
-  let unlocking_wallet: any;
-  const raise_err = (err: any) => {
-    alert(err); // replace with something decent
-  };
+const {wallet_summaries}: {wallet_summaries: Summaries} = getContext("melwalletd");
+const {settings} = getContext("settings");
+const {network, current_wallet} = settings
+console.log($network)
+// wallet_summaries.subscribe(console.log)
+let add_new_open = false; 
+let new_name = "";
+let new_password = "";
+let new_network = $network == TESTNET;
+let unlocking_wallet: any;
+const raise_err = (err: any) => {
+  alert(err); // replace with something decent
+};
 
-  const create_wallet_callback = async () => {
-    // validate name
-    if (!new_name) {
-      raise_err("wallet name cannot be empty");
-    } else {
-      // we try now
-      await new_wallet(new_name, new_network, new_password)
-        .ifLeft(raise_err)
-        .ifRight((_) => {
-          add_new_open = false;
-          new_name = "";
-          new_password = "";
-        }).run();
+const create_wallet_callback = async () => {
+  // validate name
+  if (!new_name) {
+    raise_err("wallet name cannot be empty");
+  } else {
+    // we try now
+    await new_wallet(new_name, new_network, new_password)
+      .ifLeft(raise_err)
+      .ifRight((_) => {
+        add_new_open = false;
+        new_name = "";
+        new_password = "";
+      }).run();
 
 
 
-    }
-  };
-  const open_unlocker = ({detail}: any)=>{
-    unlocking_wallet=detail;
   }
+};
+const open_unlocker = ({detail}: any)=>{
+  unlocking_wallet=detail;
+}
 </script>
 
 <div id="wallet-menu-inner">
@@ -103,7 +103,7 @@
 </Dialog>
 
 <style type="text/scss">
-  @use '../styles/theme.scss' as theme;
+  @use '../res/styles/theme.scss' as theme;
   #wallet-menu-inner{
     overflow: hidden;
     overflow-y: scroll;

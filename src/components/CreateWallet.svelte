@@ -1,8 +1,6 @@
 <script lang="typescript">
-  import { derive_key, encrypt } from "../crypto";
-  import { store_wallet } from "../storage";
   import { createEventDispatcher } from "svelte";
-  import { new_wallet } from "../utils";
+  import { new_wallet } from "../utils/utils";
 
   import Button from "@/components/UI/inputs/Button.svelte";
   import TextField from "@/components/UI/inputs/TextField.svelte";

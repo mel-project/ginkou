@@ -1,10 +1,10 @@
 <script lang="typescript">
   
-  import { unlock_wallet } from "@/utils";
   import { createEventDispatcher } from "svelte";
   import Dialog from "./UI/windows/Dialog.svelte";
   import Button from "./UI/inputs/Button.svelte";
   import TextField from "./UI/inputs/TextField.svelte";
+import { unlock_wallet } from "../utils/utils";
 
   export let name: string;
   let password = "";

@@ -24,7 +24,7 @@
 </template>
 
 <style lang="scss">
-  @use "../../styles/theme.scss" as theme;
+  @use "../../res/styles/theme.scss" as theme;
   .chip{
     user-select: none;
     background-color:  theme.$secondary;

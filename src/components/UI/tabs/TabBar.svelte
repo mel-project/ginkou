@@ -16,7 +16,7 @@
 </template>
 
 <style lang="scss">
-  @use "../../../styles/theme.scss" as theme;
+  @use "../../../res/styles/theme.scss" as theme;
   ul{
     list-style: none;
     padding: 1em 0;
