@@ -1,0 +1,56 @@
+@media all and (min-width: 35em) {
+  #wallet-menu.active {
+    width: min(12em, 30vw);
+  }
+  #wallet-title-section>:global(.hamburger-menu){
+    display: inherit;
+  }
+}
+
+@media all and (min-width: 45em) {
+  #wallet-menu, #wallet-menu.active {
+    width: clamp(11em, 15em, 25vw);
+  }
+  .top-bar #wallet-title-section>:global(.hamburger-menu){
+    display: none;
+  }
+}
+
+.tab:hover{
+  cursor: pointer;
+}
+.tab-bar{
+  background: red;
+}
+div :global(.mdc-tab){
+  min-width: 1em;
+}
+.tab-content{
+  display: flex;
+}
+.icon{
+  width: 1em;
+}
+.tab-content>.text{
+  display: none;
+}
+
+@media all and (max-width: 30em){
+  #wallet-title{
+    display: none;
+  }
+}
+@media all and (min-width: 45em){
+  .tab-content{
+    // line-height: 10em;
+    .text{
+      display: inherit;
+      margin-right: .5em;
+      margin-left: .05em;
+    }
+  }
+}
+#wallet-title-section{
+  width: inherit;
+}
+
