@@ -9,19 +9,19 @@ $surface: #fff;
 $background: #fff;
 $error: red;
 
-html,
-body {
-  background-color: $surface;
-  // color: $on-surface;
-}
+// html,
+// body {
+//   background-color: $surface;
+//   // color: $on-surface;
+// }
 
-a {
-  color: #40b3ff;
-}
-a:visited {
-  color: color.scale(#40b3ff, $lightness: -35%);
-}
+// a {
+//   color: #40b3ff;
+// }
+// a:visited {
+//   color: color.scale(#40b3ff, $lightness: -35%);
+// }
 
-* {
-  font-family: var(--font-family) !important;
-}
+// * {
+//   font-family: var(--font-family) !important;
+// }
