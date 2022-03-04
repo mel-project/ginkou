@@ -1,7 +1,7 @@
 import { EitherAsync } from "purify-ts/EitherAsync";
 import { Either, Left, Right } from "purify-ts/Either";
 import { Maybe, Just, Nothing } from "purify-ts/Maybe";
-import { get_wallet } from "./storage";
+import { get_wallet } from "./store";
 import { derive_key, decrypt } from "./crypto";
 import JSONbig from "json-bigint";
 import fetch from "cross-fetch";
@@ -444,8 +444,8 @@ export const send_tx = (
 export const send_mel = (
   wallet_name: string,
   wallet: WalletSummary,
-  to: string,
-  mel: BigNumber,
+  to: string[],
+  mel: BigNumber[],
   additional_data: string = "",
   port: number = default_port
 ): EitherAsync<string, TxHash> =>
@@ -459,8 +459,8 @@ export const send_mel = (
     );
 
     return liftEither(cast_to_either(intoTransaction(tx_res)))
-      .chain((tx) => send_tx(wallet_name, tx))
-      .chain((txhash_str) =>
+      .chain((tx: any) => send_tx(wallet_name, tx))
+      .chain((txhash_str: any) =>
         liftEither(cast_to_either(intoTxHash(txhash_str)))
       );
   });
@@ -488,17 +488,17 @@ export const wallet_dump = (
     return liftEither(Right(res as WalletDump));
   });
 
-  export const wallet_dump_from_entry = (
-    wallet_entry: WalletEntry,
-    port: number = default_port
-  ): EitherAsync<string, WalletDump> =>
-    EitherAsync(async ({ liftEither, fromPromise }) => {
-      const url = `${home_addr}:${port}/wallets/${wallet_name}`;
-      const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
+  // export const wallet_dump_from_entry = (
+  //   wallet_entry: WalletEntry,
+  //   port: number = default_port
+  // ): EitherAsync<string, WalletDump> =>
+  //   EitherAsync(async ({ liftEither, fromPromise }) => {
+  //     const url = `${home_addr}:${port}/wallets/${wallet_name}`;
+  //     const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
   
-      // TODO cast this with runtime checks
-      return liftEither(Right(res as WalletDump));
-    });
+  //     // TODO cast this with runtime checks
+  //     return liftEither(Right(res as WalletDump));
+  //   });
 
 // Get a TxHistory of a given wallet
 export const tx_history = (

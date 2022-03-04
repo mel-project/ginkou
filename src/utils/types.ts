@@ -7,6 +7,15 @@ export type BlockHeight = number;
 export type TxHash = string;
 export type PrivateKey = string;
 
+// The object stored in local storage.
+// priv_key is encrypted and can be decrypted using iv, salt, and a
+// user-provided password.
+export interface WalletCryptoData {
+  salt: Uint8Array;
+  iv: Uint8Array;
+  priv_key: Uint8Array;
+}
+
 export interface WalletSummary {
     total_micromel: BigNumber;
     network: number;

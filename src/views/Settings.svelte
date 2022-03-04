@@ -1,4 +1,4 @@
-<script type="text/typescript">
+<script lang="ts">
   import SettingComp from "@/components/Setting.svelte";
   import type {State, SettingConfig, Obj} from "@/store";
   import type { Writable, Readable, readable} from "svelte/store";

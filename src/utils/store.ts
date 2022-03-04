@@ -3,9 +3,39 @@ import { list_wallets,  wallet_dump } from "./utils";
 import JSONbig from "json-bigint";
 import { Maybe, Just, Nothing } from "purify-ts/Maybe";
 import type { PersistentValue, PersistentStorage, SettingConfig,
-   Obj, State, StateObject,WalletSummary, WalletDump,Transaction } from "./types";
+   Obj, State, StateObject,WalletSummary, WalletDump,Transaction, WalletCryptoData } from "./types";
 
 
+// todo: implement 
+// these functions are never used
+export function store_wallet(
+    wallet_name: string,
+    encrypted_priv_key: Uint8Array,
+    salt: Uint8Array,
+    iv: Uint8Array
+  ) {
+    localStorage.setItem(
+      wallet_name,
+      JSON.stringify({
+        iv: [].map.call(iv, (x) => x),
+        salt: [].map.call(salt, (x) => x),
+        priv_key: [].map.call(encrypted_priv_key, (x) => x),
+      })
+    );
+  }
+  
+  // TODO put in a maybe
+  export function get_wallet(wallet_name: string): WalletCryptoData {
+    let data = JSONbig.parse(localStorage.getItem(wallet_name));
+    // if (data == null)
+    data.salt = new Uint8Array(data.salt);
+    data.iv = new Uint8Array(data.iv);
+    data.priv_key = new Uint8Array(data.priv_key);
+  
+    return data;
+  }
+  
+// this might be a little jank
 const default_state_obj = (): State<string>=>{
   return {
     network: "",
@@ -79,7 +109,8 @@ const persistent_to_writable = (storage_name: string, pv: PersistentValue): Writ
 // }
 const restore_all_settings = (storage_name: string, setting_types: State<SettingConfig>): State<Writable<any>>=>{
 
-    const assert_state = assert_object_fields(default_state_obj())(setting_types as unknown as State<string>) // the type isn't important here, what's important is gettings around typescript to solve the issue of json being too flexible 
+    //  the type isn't important here, what's important is gettings around typescript to solve the issue of json being too flexible 
+    const assert_state = assert_object_fields(default_state_obj())(setting_types as unknown as State<string>)
     if(!assert_state) console.warn("store.ts::restore_all_settings\nsettings_types doesn't satisfy type State<T>, be sure all fields in state are satisfied")
     // this is what the storage state will look like on first start
     const default_storage: PersistentStorage = Object.entries(setting_types).map((entry: [string, SettingConfig])=>config_to_persistent(entry[0], entry[1]));

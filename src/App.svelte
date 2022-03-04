@@ -1,7 +1,7 @@
 <script lang="ts">
   import "../node_modules/material-design-lite/material.min.css"
   import "../node_modules/material-design-lite/material.min.js"
-  import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils/utils";
+  import { TESTNET, MAINNET } from "./utils/utils";
   import {onMount, setContext} from 'svelte'
 
   import Tab from "./components/UI/tabs/Tab.svelte";
@@ -23,7 +23,7 @@
   import ContactsIcon from '@/res/icons/contacts.svg';
 
   import Modal from "./components/UI/windows/Modal.svelte";
-  import type { SettingConfig } from "./utils/types";
+  import type { SettingConfig, State } from "./utils/types";
 
 
   const tabs = ["Transactions", "Send", "Receive", "Contacts"]
@@ -33,7 +33,7 @@
   const tab_components = Object.assign({},...
     [Transactions, Send, Receive, Contacts].map((comp,i)=>({[tabs[i]]:comp})))
     
-  const setting_types: AppState<SettingConfig> = {
+  const setting_types: State<SettingConfig> = {
     network: {
       label: "Network", 
       field: "select", 

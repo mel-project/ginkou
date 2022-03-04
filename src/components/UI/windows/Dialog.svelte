@@ -1,4 +1,4 @@
-<script type="text/typescript">
+<script lang="ts">
     import { createEventDispatcher } from "svelte";
     import Modal from "@/components/UI/windows/Modal.svelte"
 
