@@ -216,7 +216,7 @@
 
 </svelte:head>
 
-<style type="text/scss">
+<style lang="scss">
 @use "./res/styles/theme.scss" as theme;
 @use 'res/styles/app.scss';
 @use 'res/styles/app-wide.scss';

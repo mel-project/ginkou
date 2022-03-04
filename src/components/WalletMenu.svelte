@@ -102,7 +102,7 @@ const open_unlocker = ({detail}: any)=>{
     </svelte:fragment>
 </Dialog>
 
-<style type="text/scss">
+<style lang="scss">
   @use '../res/styles/theme.scss' as theme;
   #wallet-menu-inner{
     overflow: hidden;

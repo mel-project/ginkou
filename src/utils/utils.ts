@@ -441,29 +441,29 @@ export const send_tx = (
     });
   
 
-export const send_mel = (
-  wallet_name: string,
-  wallet: WalletSummary,
-  to: string[],
-  mel: BigNumber[],
-  additional_data: string = "",
-  port: number = default_port
-): EitherAsync<string, TxHash> =>
-  EitherAsync(async ({ liftEither, fromPromise }) => {
-    let tx_res = await prepare_mel_tx(
-      wallet_name,
-      to,
-      mel,
-      additional_data,
-      port
-    );
+// export const send_mel = (
+//   wallet_name: string,
+//   wallet: WalletSummary,
+//   to: string[],
+//   mel: BigNumber[],
+//   additional_data: string = "",
+//   port: number = default_port
+// ): EitherAsync<string, TxHash> =>
+//   EitherAsync(async ({ liftEither, fromPromise }) => {
+//     let tx_res = await prepare_mel_tx(
+//       wallet_name,
+//       to,
+//       mel,
+//       additional_data,
+//       port
+//     );
 
-    return liftEither(cast_to_either(intoTransaction(tx_res)))
-      .chain((tx: any) => send_tx(wallet_name, tx))
-      .chain((txhash_str: any) =>
-        liftEither(cast_to_either(intoTxHash(txhash_str)))
-      );
-  });
+//     return liftEither(cast_to_either(intoTransaction(tx_res)))
+//       .chain((tx: any) => send_tx(wallet_name, tx))
+//       .chain((txhash_str: any) =>
+//         liftEither(cast_to_either(intoTxHash(txhash_str)))
+//       );
+//   });
 
 // Get a list of all stored wallets
 export const list_wallets = (

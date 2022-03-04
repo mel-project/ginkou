@@ -26,7 +26,7 @@ export function store_wallet(
   
   // TODO put in a maybe
   export function get_wallet(wallet_name: string): WalletCryptoData {
-    let data = JSONbig.parse(localStorage.getItem(wallet_name));
+    let data = JSONbig.parse(localStorage.getItem(wallet_name) as unknown as string);
     // if (data == null)
     data.salt = new Uint8Array(data.salt);
     data.iv = new Uint8Array(data.iv);

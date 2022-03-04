@@ -17,7 +17,7 @@
   </label>
 </div>
 
-<style type="text/scss">
+<style lang="scss">
   @use "../res/styles/theme.scss" as theme;
   @import "./res/styles/normalize.css";
 

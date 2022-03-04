@@ -34,7 +34,7 @@
   </div>
 </div>
 
-<style type="text/scss">
+<style lang="scss">
   @use "../res/styles/theme.scss" as theme;
 
   .wallet-menu-item {
