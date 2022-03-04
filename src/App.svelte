@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import "../node_modules/material-design-lite/material.min.css"
   import "../node_modules/material-design-lite/material.min.js"
   import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils/utils";

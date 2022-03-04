@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
 import { createEventDispatcher, getContext } from "svelte";
 import Textfield from "@/components/UI/inputs/TextField.svelte";
 import Chip from "@/components/UI/Chip.svelte"

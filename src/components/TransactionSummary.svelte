@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { denom2str, kind2str } from "../utils/utils";
   import type { Transaction } from "../utils/types";
   import BigNumber from "bignumber.js";

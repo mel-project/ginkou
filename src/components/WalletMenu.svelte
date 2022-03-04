@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
 import WalletMenuItem from "@/components/WalletMenuItem.svelte";
 import TextField from "./UI/inputs/TextField.svelte"
 import Button from "@/components/UI/inputs/Button.svelte";

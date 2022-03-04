@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { lock_wallet } from "../utils/utils";
   import type { WalletSummary } from "../utils/types";
   import { createEventDispatcher } from "svelte";

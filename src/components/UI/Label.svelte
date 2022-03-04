@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
     let _class: string = "";
     export {_class as class}
 </script>

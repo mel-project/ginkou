@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
 import Dialog from "@/components/UI/windows/Dialog.svelte";
 import Button from "@/components/UI/inputs/Button.svelte";
 import { createEventDispatcher, getContext, onMount } from "svelte";

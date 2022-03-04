@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   export let tabs: string[] = []
   export let active_tab = tabs[0]
   let _class: string = "";

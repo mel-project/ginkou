@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
     export let tab: string;
     let _class: string = "";
     export {_class as class}

@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { getContext, createEventDispatcher } from "svelte";
   import type { Readable } from "svelte/store";
 
