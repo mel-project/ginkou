@@ -8,6 +8,7 @@ import { derived } from "svelte/store";
 import type { Readable } from "svelte/store";
 import type { Either } from "purify-ts/Either";
 import { net_spent } from "../utils/utils";
+import type { Transaction } from "../utils/types";
 
 interface PendingDataTable<T>{
   head: string[]

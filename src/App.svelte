@@ -222,7 +222,7 @@
 @use 'res/styles/app-wide.scss';
 
 .open-settings{
-  
+   
   position: absolute;
   bottom: 3em;
   right: 3em;
