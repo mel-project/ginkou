@@ -1,10 +1,8 @@
-<script lang="typescript">
-  import Button from "@smui/button";
-
-
-  import { add_coin, tap_faucet, TESTNET } from "@/utils";
-  import Textfield from "@smui/textfield";
+<script lang="ts">
+  import Button from "@/components/UI/inputs/Button.svelte";
+  import Textfield from "@/components/UI/inputs/TextField.svelte";
   import { getContext, createEventDispatcher } from "svelte";
+import { add_coin, tap_faucet, TESTNET } from "../utils/utils";
 
   const {settings} = getContext("settings")
   const {current_wallet} = settings
@@ -27,7 +25,6 @@
     }
   };
   const tap_faucet_handler = async () => {
-    console.log($current_wallet)
     if ($current_wallet) {
       await tap_faucet($current_wallet)
         .ifLeft((e) => alert(e))

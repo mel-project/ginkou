@@ -5,13 +5,14 @@
     "outDir": "./out",
     "strict": true,
     "target": "es6",
-    // "lib": ["es2017.object"],
+    "lib": ["es2017"],
+    "allowSyntheticDefaultImports": true,
+
     "plugins": [
       { "transform": "typescript-is/lib/transform-inline/transformer" }
     ]
   },
 
-  "allowSyntheticDefaultImports": true,
   "extends": "@tsconfig/svelte/tsconfig.json",
   "include": ["src/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"]

@@ -1,31 +1,30 @@
-<script type="text/typescript">
-    import { onMount } from "svelte";
+<script lang="ts">
 
-    import { createEventDispatcher } from 'svelte';
+import { createEventDispatcher } from 'svelte';
+import type { SettingConfig } from "../utils/types";
 
 
-    import type { SettingConfig } from '@/store';
 
-    /**
-     * Setting should support at least these variants
-     * select, input
-     */
+/**
+ * Setting should support at least these variants
+ * select, input
+ */
 
-    //!!need debug channels
+//!!need debug channels
 
-    export let setting: SettingConfig;
-    export let value: any;
-    export let disabled: boolean = false
-    export let name: string | undefined = undefined;
-    let field = setting.field;
-    // console.log("setting", setting)
-    // console.log("disabled", disabled)
-    const dispatch = createEventDispatcher();
-    $: {
-        dispatch('change', {
-            value
-        })
-    }
+export let setting: SettingConfig;
+export let value: any;
+export let disabled: boolean = false
+export let name: string | undefined = undefined;
+let field = setting.field;
+// console.log("setting", setting)
+// console.log("disabled", disabled)
+const dispatch = createEventDispatcher();
+$: {
+    dispatch('change', {
+        value
+    })
+}
 </script>
 
 <template>
@@ -65,7 +64,7 @@
 </template>
 
 <style lang="scss">
-@use "../theme/_smui-theme.scss" as theme;
+@use "../res/styles/theme.scss" as theme;
 
 select, input{
     width: 12em;

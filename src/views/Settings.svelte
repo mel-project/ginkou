@@ -1,4 +1,4 @@
-<script type="text/typescript">
+<script lang="ts">
   import SettingComp from "@/components/Setting.svelte";
   import type {State, SettingConfig, Obj} from "@/store";
   import type { Writable, Readable, readable} from "svelte/store";
@@ -47,11 +47,10 @@
 
 </script>
 
-<template>it's way better in the average case but 
+<template>
   <div class="settings-menu">
     <div class="top"></div>
     <div class="container">
-      <h3>Settings v0.0.2</h3>
       <div class="settings-list">
           {#each NamedEntries(setting_types) as {name, setting}}
             {#if setting.visible != false}
@@ -73,10 +72,11 @@
 </template>
 
 <style lang="scss">
-  @use "../theme/_smui-theme.scss" as theme;
+  @use "../res/styles/theme.scss" as theme;
   .top{
     height: 2em;
     width:100%;
+    margin-bottom: 1em;
     background-color: theme.$primary;
 
   }
@@ -94,8 +94,5 @@
     width: 100%;
     display: flex;
     justify-content: left;
-  }
-  .settings-list {
-    // padding-left: 5em;
   }
 </style>

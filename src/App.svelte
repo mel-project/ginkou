@@ -1,13 +1,13 @@
-<script lang="typescript">
-  import type { WalletSummary } from "./utils";
-  import { list_wallets, get_priv_key, TESTNET, MAINNET } from "./utils";
+<script lang="ts">
+  import "../node_modules/material-design-lite/material.min.css"
+  import "../node_modules/material-design-lite/material.min.js"
+  import { TESTNET, MAINNET } from "./utils/utils";
   import {onMount, setContext} from 'svelte'
 
-  import { Row, Section, Title } from "@smui/top-app-bar";
-  //import Banner from '@smui/banner';
-  import Tab, { Label } from "@smui/tab";
-  import TabBar from "./components/tabs/TabBar.svelte";
-
+  import Tab from "./components/UI/tabs/Tab.svelte";
+  import TabBar from "./components/UI/tabs/TabBar.svelte";
+  import Label from "./components/UI/Label.svelte"
+  import Button from "./components/UI/inputs/Button.svelte"
   import Send from "./views/Send.svelte";
   import Receive from "./views/Receive.svelte";
   import Transactions from "./views/Transactions.svelte";
@@ -15,19 +15,18 @@
 
   import SettingsView from "./views/Settings.svelte"
   import WalletMenu from "./components/WalletMenu.svelte";
-  import { State, Melwalletd } from "./store";
-  import type { SettingConfig, Setting } from "./store";
+  import { AppState, Melwalletd } from "./utils/store";
   import Hamburger from "./components/Hamburger.svelte";
-  import TransactionIcon from './res/icons/transactions.svg';
-  import SendIcon from './res/icons/send.svg';
-  import RecieveIcon from './res/icons/recieve.svg';
-  import SettingsIcon from './res/icons/settings.svg';
-  import ContactsIcon from './res/icons/contacts.svg';
+  import TransactionIcon from '@/res/icons/transactions.svg';
+  import SendIcon from '@/res/icons/send.svg';
+  import RecieveIcon from '@/res/icons/recieve.svg';
+  import SettingsIcon from '@/res/icons/settings.svg';
+  import ContactsIcon from '@/res/icons/contacts.svg';
 
-  import Modal from "./components/Modal.svelte";
+  import Modal from "./components/UI/windows/Modal.svelte";
+  import type { SettingConfig, State } from "./utils/types";
+import Dialog from "./components/UI/windows/Dialog.svelte";
 
-
-  export let name;
 
   const tabs = ["Transactions", "Send", "Receive", "Contacts"]
   const tab_icons = {"Transactions": TransactionIcon, "Send": SendIcon, "Receive": RecieveIcon,"Contacts": ContactsIcon}
@@ -62,7 +61,7 @@
       contacts: {visible: false, default: []},
   }
   // localStorage.clear()
-  const {settings} = State(setting_types)
+  const {settings} = AppState(setting_types)
   const {persistent_tabs, current_wallet, default_tab, active_tab, network} = settings
   // console.log(persistent_tabs, current_wallet, default_tab, active_tab, $network)
   // const store = Store(settings)
@@ -125,13 +124,15 @@
 </script>
 
 <main>
+
   {#if modal_is_active}
-    <Modal on:closeModal="{()=>{modal_is_active=false}}">
+    <Dialog title="Settings V1.0.6" open={modal_is_active} on:close="{()=>{modal_is_active=false}}">
         <SettingsView 
           {setting_types}
           {settings}
         ></SettingsView>
-    </Modal>
+        <Button slot="actions" let:close on:click={close}>Apply</Button>
+    </Dialog>
   {/if}
   <div type="button" class="open-settings"
     on:click={()=>modal_is_active=true} value="Settings">
@@ -139,17 +140,17 @@
   </div>
 
   <div class="top-bar">
-    <Row>
-      <Section>
-        <div id="wallet-title-section">
+    <div style="display: flex; justify-content: space-between; width: 100%">
+      <div style="padding: 0 2em">
+        <div id="wallet-title-section" style="height: 100%">
           <Hamburger class="hamburger-menu" bind:menuOpen={wallet_menu_is_active} />
           <span id="wallet-title">
-            <Title>{$current_wallet}</Title>
+            <Label>{$current_wallet}</Label>
           </span>
         </div>
-      </Section>
+      </div>
 
-      <Section>
+      <div style="padding: 0 2em">
         <div id="tabs-container">
           <TabBar class="tab-bar"
             {tabs}
@@ -169,8 +170,8 @@
             </Tab>
           </TabBar>
         </div>
-      </Section>
-    </Row>
+      </div>
+    </div>
     <!--</TopAppBar>-->
   </div>
 
@@ -212,23 +213,19 @@
 <svelte:head>
   <!-- Fonts -->
   <link
-    rel="stylesheet"
+    rel="res/stylesheet"
     href="https://fonts.googleapis.com/icon?family=Material+Icons"
   />
 
-  <!-- SMUI -->
-  <!--<link rel="stylesheet" href="https://unpkg.com/svelte-material-ui/bare.css" />-->
-  <link rel="stylesheet" href="/build/smui.css" />
 </svelte:head>
 
-<style type="text/scss">
-@use "./theme/_smui-theme.scss" as theme;
-@use 'styles/app.scss';
-@use 'styles/app-wide.scss';
-
+<style lang="scss">
+@use "./res/styles/theme.scss" as theme;
+@use 'res/styles/app.scss';
+@use 'res/styles/app-wide.scss';
 
 .open-settings{
-  
+   
   position: absolute;
   bottom: 3em;
   right: 3em;

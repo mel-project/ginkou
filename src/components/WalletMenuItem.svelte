@@ -1,15 +1,19 @@
-<script lang="typescript">
-  import { lock_wallet } from "@/utils";
-  import type { WalletSummary } from "@/utils";
+<script lang="ts">
+  import { lock_wallet } from "../utils/utils";
+  import type { WalletSummary } from "../utils/types";
+  import { createEventDispatcher } from "svelte";
 
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
-  import WalletUnlocker from "./WalletUnlocker.svelte";
+  const dispatch = createEventDispatcher();
 
   export let name: string;
   export let wallet: WalletSummary;
   export let selected: boolean;
 
-  let unlocker_open = false;
+  const dispatch_unlock = () => {
+    dispatch('unlock',{name, wallet, selected})
+  };
+
+
 </script>
 
 <div class={!selected ? "wallet-menu-item" : "wallet-menu-item-selected"}>
@@ -19,20 +23,19 @@
     class="lock-status" class:locked="{wallet.locked}"
     on:click={async () => {
       if (wallet.locked) {
-        unlocker_open = true;
+        console.log('dispatching unlock')
+        dispatch_unlock();
       } else {
-        console.log("unlocking");
         await lock_wallet(name).ifLeft(alert).run();
       }
     }}
   >
     {wallet.locked ? "locked" : "unlocked"}
   </div>
-  <WalletUnlocker bind:name bind:open={unlocker_open} />
 </div>
 
-<style type="text/scss">
-  @use "../theme/_smui-theme.scss" as theme;
+<style lang="scss">
+  @use "../res/styles/theme.scss" as theme;
 
   .wallet-menu-item {
     padding: 10px;

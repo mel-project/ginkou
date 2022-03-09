@@ -22,9 +22,6 @@ jobs:
       - name: Install NPM Packages
         run: npm install
 
-      - name: Install SMUI Light Theme
-        run: npm run smui-theme-light
-
       - name: Run NPM Tests
         run: npm run test
 

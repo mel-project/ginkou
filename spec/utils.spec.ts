@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import * as utils from '../src/utils';
-import type { PrivateKey } from '../src/utils';
+import * as utils from '../src/utils/utils';
+import type { PrivateKey } from '../src/utils/types';
 import { EitherAsync } from 'purify-ts/EitherAsync';
 
 describe.skip('list wallets', () => {
@@ -12,7 +12,7 @@ describe.skip('list wallets', () => {
                 assert.isAbove(Object.keys(wallets).length, 0);
             })
             .ifLeft( e => {
-                console.log(e);
+                console.warn(e);
                 assert(false);
             });
     });

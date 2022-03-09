@@ -38,7 +38,7 @@
 </template>
 
 <style lang="scss">
-  @use "../../theme/_smui-theme.scss" as theme;
+  @use "../../res/styles/theme.scss" as theme;
   .item{
     height: 3em;
     background: white;

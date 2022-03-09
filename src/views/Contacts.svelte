@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { getContext, createEventDispatcher } from "svelte";
   import type { Readable } from "svelte/store";
 
@@ -28,7 +28,6 @@
   const delete_item = (index: number): any => {
     let temp = $contacts.splice(index, 1)[0]; //kind of a hack. I'm assuming this is called on click therefore it exists
     $contacts = [...$contacts];
-    console.log($contacts.length);
     return temp;
   };
   const copy_address = async (item: Contact) => {

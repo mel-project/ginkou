@@ -1,11 +1,9 @@
-<script lang="typescript">
-  import { derive_key, encrypt } from "../crypto";
-  import { store_wallet } from "../storage";
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { new_wallet } from "../utils";
+  import { new_wallet } from "../utils/utils";
 
-  import Button from "@smui/button";
-  import Textfield from "@smui/textfield";
+  import Button from "@/components/UI/inputs/Button.svelte";
+  import TextField from "@/components/UI/inputs/TextField.svelte";
 
   export let networks: any;
   export let active_net: number;
@@ -38,7 +36,7 @@
 </script>
 
 <div class="create-wallet-view">
-  <Textfield bind:value={new_wallet_name} label="Wallet name" />
+  <TextField bind:value={new_wallet_name} label="Wallet name" />
 
   <Button on:click={() => handle_create_wallet(new_wallet_name)}>
     Create wallet

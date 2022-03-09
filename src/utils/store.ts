@@ -1,55 +1,41 @@
 import { derived, readable, Readable, Subscriber, Writable, writable } from "svelte/store";
-import { list_wallets, WalletSummary, WalletDump, wallet_dump } from "./utils";
+import { list_wallets,  wallet_dump } from "./utils";
 import JSONbig from "json-bigint";
 import { Maybe, Just, Nothing } from "purify-ts/Maybe";
+import type { PersistentValue, PersistentStorage, SettingConfig,
+   Obj, State, StateObject,WalletSummary, WalletDump,Transaction, WalletCryptoData } from "./types";
 
 
-export type Obj<T> = { [key: string]: T }
-export type PersistentStorage = PersistentValue[]
-
-export interface Named {
-  name: string
-
-}
-export interface PersistentValue extends Named{
-  value: any;
-}
-
-/**
- * This interface describes a single setting field within the larger settings context.
- * the settings context is used to manage global state and track user preferences
- * the settings which track user preferences should be set as `visible: true`
- */
-
-export interface SettingConfig{
-  label?: string
-  field?: string; // the type of the setting input (can be anything supported by )
-  options?: Obj<string | number>; // for types with multiple selection options
-  depends?: Obj<string | number | boolean>;
-  visible?: boolean; // should this be displayed (interpreted by the acting component)
-  override?: boolean; // should the default value be used instead of persisting (debug tool)
-  default: any;
-
-}
-
-/**
- * These are the settings which describe global state and user preferences 
- */
-export interface State<T extends SettingConfig | PersistentValue | Readable<any> | string> {
-  network: T;
-  persistent_tabs: T;
-  default_tab: T;
-  current_wallet: T;
-  active_tab: T;
-  contacts: T;
-}
-
-interface StateObject {
-  settings: State<Writable<string>>;
-  // writable_settings: Writable<State<string>>;
-  // set_setting: (name: string | Readable<string>, value: string | Readable<string>) => void;
-}
-
+// todo: implement 
+// these functions are never used
+export function store_wallet(
+    wallet_name: string,
+    encrypted_priv_key: Uint8Array,
+    salt: Uint8Array,
+    iv: Uint8Array
+  ) {
+    localStorage.setItem(
+      wallet_name,
+      JSON.stringify({
+        iv: [].map.call(iv, (x) => x),
+        salt: [].map.call(salt, (x) => x),
+        priv_key: [].map.call(encrypted_priv_key, (x) => x),
+      })
+    );
+  }
+  
+  // TODO put in a maybe
+  export function get_wallet(wallet_name: string): WalletCryptoData {
+    let data = JSONbig.parse(localStorage.getItem(wallet_name) as unknown as string);
+    // if (data == null)
+    data.salt = new Uint8Array(data.salt);
+    data.iv = new Uint8Array(data.iv);
+    data.priv_key = new Uint8Array(data.priv_key);
+  
+    return data;
+  }
+  
+// this might be a little jank
 const default_state_obj = (): State<string>=>{
   return {
     network: "",
@@ -60,7 +46,7 @@ const default_state_obj = (): State<string>=>{
     contacts: "",
   }
 }
-function assert_object_fields<T> (default_object: T ) {
+function assert_object_fields<T extends Object> (default_object: T ) {
   return (test_object: T): Maybe<T> => {
     // console.log("test_object", test_object)
     const property_test = (acc: Boolean, obj: [string, Object]) => acc && test_object.hasOwnProperty(obj[0])
@@ -74,10 +60,8 @@ function object_map<T, F> (obj_entries: [string, T][], func: (name: string, obj:
   console.log(obj_entries)
   return Object.assign({}, ...obj_entries.map((entry: [string, T])=>({[entry[0]]:func(entry[0], entry[1])})))
 }
-console.log("validate", assert_object_fields)
 
 const get_saved_setting = (localName: string): Maybe<PersistentValue> => {
-  console.log(localName)
   let saved_value: string | null = localStorage.getItem(localName)
   let maybe_value: Maybe<PersistentValue> = saved_value ? Just(Object.assign({},JSONbig.parse(saved_value))) : Nothing
   // console.log(maybe_value.extract(), "maybed")
@@ -107,10 +91,8 @@ const persistent_to_object = (pv: PersistentValue): Obj<string> => {
 const persistent_to_writable = (storage_name: string, pv: PersistentValue): Writable<any> => {
   let w = writable(pv.value)
   w.subscribe( (value: any)=>{
-    console.log("changing setting", pv)
     pv.value = value
     localStorage.setItem(storage_name+pv.name, JSONbig.stringify(pv))
-    console.log(localStorage.getItem(storage_name+pv.name))
   })
   return w
 }
@@ -127,7 +109,8 @@ const persistent_to_writable = (storage_name: string, pv: PersistentValue): Writ
 // }
 const restore_all_settings = (storage_name: string, setting_types: State<SettingConfig>): State<Writable<any>>=>{
 
-    const assert_state = assert_object_fields(default_state_obj())(setting_types as unknown as State<string>) // the type isn't important here, what's important is gettings around typescript to solve the issue of json being too flexible 
+    //  the type isn't important here, what's important is gettings around typescript to solve the issue of json being too flexible 
+    const assert_state = assert_object_fields(default_state_obj())(setting_types as unknown as State<string>)
     if(!assert_state) console.warn("store.ts::restore_all_settings\nsettings_types doesn't satisfy type State<T>, be sure all fields in state are satisfied")
     // this is what the storage state will look like on first start
     const default_storage: PersistentStorage = Object.entries(setting_types).map((entry: [string, SettingConfig])=>config_to_persistent(entry[0], entry[1]));
@@ -138,20 +121,15 @@ const restore_all_settings = (storage_name: string, setting_types: State<Setting
 
     const default_state: State<PersistentValue> =  Object.assign({}, ...default_storage.map((pv:PersistentValue)=>({[pv.name]:pv})))
     const saved_state: State<PersistentValue> =  Object.assign({}, ...saved_storage.map((pv:PersistentValue)=>({[pv.name]:pv})))
-    console.log("saved: ", saved_state)
     const reconstructed_state: State<PersistentValue> = Object.assign(default_state, saved_state)
 
     const state: State<Writable<any>> =  Object.assign({}, ...Object.entries(reconstructed_state).map((entry: [string, PersistentValue])=>({[entry[0]]: persistent_to_writable(storage_name,entry[1])})))
 
-    console.log("state", state)
-
-    console.log(default_storage)
-    console.log(state)
     return state
 
 }
 // settings 
-export const State = (setting_types: State<SettingConfig>): StateObject => {
+export const AppState = (setting_types: State<SettingConfig>): StateObject => {
   return { settings: restore_all_settings("ginkou_storage_", setting_types) };
 }
 
@@ -175,8 +153,8 @@ export const Melwalletd = (settings: State<Readable<string>>) => {
               set(dump);
             });
         };
+        refresh()
         const interval = setInterval(refresh, 5000);
-        refresh();
         return () => clearInterval(interval);
       }
     },
@@ -194,14 +172,28 @@ export const Melwalletd = (settings: State<Readable<string>>) => {
           set(list);
         });
     };
+    refresh()
     const interval = setInterval(refresh, 1000);
-    refresh();
     return () => clearInterval(interval);
 
   });
-  return { wallet_summaries, current_wallet_dump };
+  const sorted_confirmed_txx: Readable<
+  [string, [Transaction, number]][] | null
+> = derived(current_wallet_dump, ($dump) => {
+  if ($dump) {
+    let txx = Object.entries(($dump as WalletDump).full.tx_confirmed);
+    txx.sort((a, b) => a[1][1] - b[1][1]);
+    txx.reverse();
+    // console.log(txx);
+    return txx;
+  } else {
+    return null;
+  }
+
+});
+  return { wallet_summaries, current_wallet_dump, sorted_confirmed_txx };
 }
 
 
-export default { State, Melwalletd }
+export default { AppState, Melwalletd }
 // settings.subscribe((v)=>{})

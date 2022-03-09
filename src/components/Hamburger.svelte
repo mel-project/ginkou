@@ -17,9 +17,9 @@
   </label>
 </div>
 
-<style type="text/scss">
-  @use "../theme/_smui-theme.scss" as theme;
-  @import "./styles/normalize.css";
+<style lang="scss">
+  @use "../res/styles/theme.scss" as theme;
+  @import "./res/styles/normalize.css";
 
   label {
     display: block;
