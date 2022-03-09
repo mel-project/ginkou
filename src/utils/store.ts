@@ -153,9 +153,9 @@ export const Melwalletd = (settings: State<Readable<string>>) => {
               set(dump);
             });
         };
-        // const interval = setInterval(refresh, 5000);
-        refresh();
-        return () => clearInterval(0);
+        refresh()
+        const interval = setInterval(refresh, 5000);
+        return () => clearInterval(interval);
       }
     },
     null
@@ -172,9 +172,9 @@ export const Melwalletd = (settings: State<Readable<string>>) => {
           set(list);
         });
     };
-    // const interval = setInterval(refresh, 1000);
-    refresh();
-    return () => clearInterval(0);
+    refresh()
+    const interval = setInterval(refresh, 1000);
+    return () => clearInterval(interval);
 
   });
   const sorted_confirmed_txx: Readable<

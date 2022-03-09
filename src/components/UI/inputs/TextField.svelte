@@ -1,44 +1,55 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  export let value = "";
-  export let label = "";
-  export let disabled;
-  let focused = false;
-  let _class;
-  export { _class as class };
+import { createEventDispatcher } from "svelte";
+import { InputVariant } from "../../../utils/svelte-types";
+export let value = "";
+export let label = "";
+export let disabled: boolean;
+let focused = false;
+let _class: string;
+let variant: InputVariant = InputVariant.DEFAULT;
+let labeled: boolean = true;
+export { _class as class };
 
 
-  const event_dispatcher = createEventDispatcher();
 
-  const handleKeyPress = (evt) => {
-    if (evt.key == "Enter") event_dispatcher("key_enter");
-    else if (evt.key == "Tab") event_dispatcher("key_tab");
-  };
-  const handleFocus = (evt) => {
-    focused = true;
-    event_dispatcher("focus", evt);
-  };
-  const handleBlur = (evt) => {
-    focused = false;
-    event_dispatcher("blur", evt);
-  };
+const event_dispatcher = createEventDispatcher();
+
+const handleKeyPress = (evt: Event) => {
+  if (evt.key == "Enter") event_dispatcher("key_enter");
+  else if (evt.key == "Tab") event_dispatcher("key_tab");
+};
+const handleFocus = (evt) => {
+  focused = true;
+  event_dispatcher("focus", evt);
+};
+const handleBlur = (evt) => {
+  focused = false;
+  event_dispatcher("blur", evt);
+};
 </script>
 
-<template lang="pug">
-    .container
-      div(class!="input {_class}"  on:click)
-        label(for="input") {label}
-        input(type="text" name="input" bind:value 
+<template>
+    <div class="container {variant}">
+      <div class="input {_class}"  on:click|stopPropagation>
+        <label for="input">{labeled ? label : ''}</label>
+        <input type="text" name="input" bind:value 
+          on:click|stopPropagation
           on:change on:input 
-          on:blur!="{handleBlur}" 
-          on:focus!="{handleFocus}"
-          on:keypress!="{handleKeyPress}"
-          disabled!="{disabled}"
-          "{...$$props}")
-      slot({focused} {disabled})
+          on:blur={handleBlur} 
+          on:focus={handleFocus}
+          on:keypress={handleKeyPress}
+          placeholder={!labeled ? label : ''}
+          {...$$props}
+          disabled={false}
+          >
+        </div>
+      <slot {focused} {disabled} {value}></slot>
+    </div>
 </template>
 
 <style lang="scss">
+  @use '../../../res/styles/theme.scss' as theme;
+  
   input {
     border: none;
     background: transparent;
@@ -48,16 +59,30 @@
     margin: 0;
     margin-left: 1em;
   }
-  input:focus {
-    outline: none;
+  input:focus{
+    outline: none
   }
   .input {
-    border-bottom: 1px solid black;
+    text-overflow: ellipsis;
     display: flex;
     align-items: center;
     margin: 0;
     margin-left: 0;
+
+
+    .underlined{
+      border-bottom: 1px solid black;
+      &:focus{
+        outline: none;
+      }
+    }
+    .outlined{
+      border: 1px solid theme.$primary;
+    }
+
+
   }
+
   .container {
     position: relative;
   }

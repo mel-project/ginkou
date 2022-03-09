@@ -7,6 +7,7 @@
   import Tab from "./components/UI/tabs/Tab.svelte";
   import TabBar from "./components/UI/tabs/TabBar.svelte";
   import Label from "./components/UI/Label.svelte"
+  import Button from "./components/UI/inputs/Button.svelte"
   import Send from "./views/Send.svelte";
   import Receive from "./views/Receive.svelte";
   import Transactions from "./views/Transactions.svelte";
@@ -24,6 +25,7 @@
 
   import Modal from "./components/UI/windows/Modal.svelte";
   import type { SettingConfig, State } from "./utils/types";
+import Dialog from "./components/UI/windows/Dialog.svelte";
 
 
   const tabs = ["Transactions", "Send", "Receive", "Contacts"]
@@ -124,12 +126,13 @@
 <main>
 
   {#if modal_is_active}
-    <Modal on:closeModal="{()=>{modal_is_active=false}}">
+    <Dialog title="Settings V1.0.6" open={modal_is_active} on:close="{()=>{modal_is_active=false}}">
         <SettingsView 
           {setting_types}
           {settings}
         ></SettingsView>
-    </Modal>
+        <Button slot="actions" let:close on:click={close}>Apply</Button>
+    </Dialog>
   {/if}
   <div type="button" class="open-settings"
     on:click={()=>modal_is_active=true} value="Settings">

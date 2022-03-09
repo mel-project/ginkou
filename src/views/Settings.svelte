@@ -51,7 +51,6 @@
   <div class="settings-menu">
     <div class="top"></div>
     <div class="container">
-      <h3>Settings v0.0.2</h3>
       <div class="settings-list">
           {#each NamedEntries(setting_types) as {name, setting}}
             {#if setting.visible != false}
@@ -77,6 +76,7 @@
   .top{
     height: 2em;
     width:100%;
+    margin-bottom: 1em;
     background-color: theme.$primary;
 
   }
@@ -94,8 +94,5 @@
     width: 100%;
     display: flex;
     justify-content: left;
-  }
-  .settings-list {
-    // padding-left: 5em;
   }
 </style>

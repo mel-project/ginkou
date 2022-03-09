@@ -6,7 +6,7 @@ import {getContext} from 'svelte';
 import type {Readable} from 'svelte/store'
 import WalletUnlocker from "./WalletUnlocker.svelte";
 import Dialog from "./UI/windows/Dialog.svelte";
-import { TESTNET } from "../utils/utils";
+import { new_wallet, TESTNET } from "../utils/utils";
 import type { WalletSummary } from "../utils/types";
 
 type Summaries = Readable<{[key: string]: WalletSummary}>;

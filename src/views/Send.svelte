@@ -9,6 +9,8 @@ import BigNumber from "bignumber.js";
 import Button from "../components/UI/inputs/Button.svelte";
 import { prepare_mel_tx, send_tx } from "../utils/utils";
 import type { CoinData, Transaction } from "../utils/types";
+import Contacts from "./Contacts.svelte";
+import { loop_guard } from "svelte/internal";
 
 
 type Contact = { name: string; address: string };
@@ -129,7 +131,6 @@ const create_chip = (contact: Contact) => {
     <div id="confirm-window">
 
       {#each spends(prepared_tx.outputs).filter(([address, _]) => $current_wallet_dump && address != $current_wallet_dump.summary.address) as spend}
-        {console.log('spending', spend)}
         <p>Send</p>
         <div class="highlight">{spend[1]} micromel</div>
         <p>To address</p>
@@ -163,20 +164,21 @@ const create_chip = (contact: Contact) => {
       <Textfield
         let:disabled
         let:focused
+        let:value
         bind:value={search_input}
         on:key_enter={() => select_contact(predictions, 0)}
-        on:blur={()=> {console.log("blur");select_contact(predictions, 0)}}
+        on:click={()=>delete_addr(0)}
         label="To:"
         disabled={to_addrs.length > 0}
         autocomplete="off"
       >
         <!-- //TODO: fix clicking  -->
-       
+
         <Dropdown
           on:click={({detail})=> create_chip(detail.item)}
           items={predictions}
           stringify={(item) => `${item.name}: ${item.address}`}
-          active={focused && !disabled}
+          active={focused && !disabled && value}
           {disabled}
         />
       </Textfield>

@@ -67,7 +67,7 @@ let selected_tx: [string, Transaction, number | null] | null = null;
 
 {#if $current_wallet_dump && $sorted_confirmed_txx}
   <table
-    class="transactions"
+    class="transactions mdl-data-table mdl-js-data-table mdl-shadow--2dp"
     style="max-width: 100%"
   >
     <tr>
@@ -113,5 +113,12 @@ let selected_tx: [string, Transaction, number | null] | null = null;
   }
   :global(.disable-row) {
     background: rgba(0, 0, 0, 0.08) !important;
+    &:hover{
+      cursor: not-allowed;
+    }
+  }
+
+  table>tr:hover{
+    cursor: pointer;
   }
 </style>
