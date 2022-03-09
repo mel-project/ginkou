@@ -167,7 +167,8 @@ const create_chip = (contact: Contact) => {
         let:value
         bind:value={search_input}
         on:key_enter={() => select_contact(predictions, 0)}
-        on:click={()=>delete_addr(0)}
+        on:blur={()=>select_contact(predictions, 0)}
+        on:click={()=>console.log("clicked") || delete_addr(0)}
         label="To:"
         disabled={to_addrs.length > 0}
         autocomplete="off"
