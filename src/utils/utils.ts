@@ -6,16 +6,24 @@ import { derive_key, decrypt } from "./crypto";
 import JSONbig from "json-bigint";
 import fetch from "cross-fetch";
 import BigNumber from "bignumber.js";
-import type { WalletDump, TxHistory, TxHash, Transaction, CoinID, CoinData, PrivateKey, WalletSummary, WalletEntry } from "./types";
+import type {
+  WalletDump,
+  TxHistory,
+  TxHash,
+  Transaction,
+  CoinID,
+  CoinData,
+  PrivateKey,
+  WalletSummary,
+  WalletEntry,
+} from "./types";
 
-
-console.log('in utils', Either)
+console.log("in utils", Either);
 export const MEL = "6d";
 export const TESTNET = 1;
 export const MAINNET = 255;
 const home_addr = "http://127.0.0.1";
 const default_port = 11773;
-
 
 export const kind2str = (kind: number) => {
   if (kind === 0x00) {
@@ -49,7 +57,6 @@ export const denom2str = (denom: string) => {
   }
 };
 
-
 export const wallet_dump_default: WalletDump = {
   summary: {
     total_micromel: new BigNumber(0),
@@ -60,7 +67,7 @@ export const wallet_dump_default: WalletDump = {
   full: {
     unspent_coins: [],
     spent_coins: [],
-    tx_in_progress: {},
+    tx_in_progress_v2: {},
     tx_confirmed: {},
     my_covenant: "",
     network: 1,
@@ -100,7 +107,7 @@ function intoCdhTuple(x: any): Maybe<[TxHash, [Transaction, number]]> {
 }
 
 function intoTransaction(x: any): Maybe<Transaction> {
-  console.log("here",x)
+  console.log("here", x);
   if (
     "kind" in x &&
     typeof x.kind == "number" &&
@@ -280,7 +287,7 @@ export const tap_faucet = (
   port: number = default_port
 ): EitherAsync<string, TxHash> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
-    console.log('tapping')
+    console.log("tapping");
     const url = `${home_addr}:${port}/wallets/${wallet_name}/send-faucet`;
     let res = await fromPromise(fetch_json_or_err(url, { method: "POST" }));
     return liftEither(cast_to_either(intoTxHash(res)));
@@ -398,48 +405,49 @@ export const send_tx = (
     return liftEither(cast_to_either(intoTxHash(e_txhash)));
   });
 
-  export const prepare_mel_tx = (
-    wallet_name: string,
-    to: string[],
-    micromel: BigNumber[],
-    additional_data: string = "",
-    port: number = default_port
-  ): EitherAsync<string, Transaction> =>
-    EitherAsync(async ({ liftEither, fromPromise }) => {
-      const url_prepare_tx = `${home_addr}:${port}/wallets/${wallet_name}/prepare-tx`;
-      
-      if(to.length != micromel.length) 
-        return liftEither(Left("Size of `to` not equal to `micromel`: each recipient must have a matching mel value"))
-  
-      const outputs: CoinData[] =
-        to.map((address, idx)=>
-        ({
-          covhash: address,
-          value: micromel[idx],
-          denom: MEL,
-          additional_data: additional_data,
-        }));
-        
-        console.log(outputs)
-      // Prepare tx (get a json-encoded tx back)
-      const tx: Either<string, any> = await fromPromise(
-        fetch_json_or_err(url_prepare_tx, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSONbig.stringify({
-            outputs: outputs,
-          }),
-        })
+export const prepare_mel_tx = (
+  wallet_name: string,
+  to: string[],
+  micromel: BigNumber[],
+  additional_data: string = "",
+  port: number = default_port
+): EitherAsync<string, Transaction> =>
+  EitherAsync(async ({ liftEither, fromPromise }) => {
+    const url_prepare_tx = `${home_addr}:${port}/wallets/${wallet_name}/prepare-tx`;
+
+    if (to.length != micromel.length)
+      return liftEither(
+        Left(
+          "Size of `to` not equal to `micromel`: each recipient must have a matching mel value"
+        )
       );
-  
-      // Runtime type check and return
-      console.log(tx)
-      console.log(intoTransaction(tx))
-      return liftEither(cast_to_either(intoTransaction(tx)));
-    });
-  
+
+    const outputs: CoinData[] = to.map((address, idx) => ({
+      covhash: address,
+      value: micromel[idx],
+      denom: MEL,
+      additional_data: additional_data,
+    }));
+
+    console.log(outputs);
+    // Prepare tx (get a json-encoded tx back)
+    const tx: Either<string, any> = await fromPromise(
+      fetch_json_or_err(url_prepare_tx, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSONbig.stringify({
+          outputs: outputs,
+        }),
+      })
+    );
+
+    // Runtime type check and return
+    console.log(tx);
+    console.log(intoTransaction(tx));
+    return liftEither(cast_to_either(intoTransaction(tx)));
+  });
 
 export const send_mel = (
   wallet_name: string,
@@ -458,7 +466,9 @@ export const send_mel = (
       port
     );
 
-    const tx: Transaction = await liftEither(cast_to_either(intoTransaction(tx_res)))
+    const tx: Transaction = await liftEither(
+      cast_to_either(intoTransaction(tx_res))
+    );
     return liftEither(await send_tx(wallet_name, tx));
   });
 
@@ -480,22 +490,22 @@ export const wallet_dump = (
   EitherAsync(async ({ liftEither, fromPromise }) => {
     const url = `${home_addr}:${port}/wallets/${wallet_name}`;
     const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
-
+    console.log(res);
     // TODO cast this with runtime checks
     return liftEither(Right(res as WalletDump));
   });
 
-  // export const wallet_dump_from_entry = (
-  //   wallet_entry: WalletEntry,
-  //   port: number = default_port
-  // ): EitherAsync<string, WalletDump> =>
-  //   EitherAsync(async ({ liftEither, fromPromise }) => {
-  //     const url = `${home_addr}:${port}/wallets/${wallet_name}`;
-  //     const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
-  
-  //     // TODO cast this with runtime checks
-  //     return liftEither(Right(res as WalletDump));
-  //   });
+// export const wallet_dump_from_entry = (
+//   wallet_entry: WalletEntry,
+//   port: number = default_port
+// ): EitherAsync<string, WalletDump> =>
+//   EitherAsync(async ({ liftEither, fromPromise }) => {
+//     const url = `${home_addr}:${port}/wallets/${wallet_name}`;
+//     const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
+
+//     // TODO cast this with runtime checks
+//     return liftEither(Right(res as WalletDump));
+//   });
 
 // Get a TxHistory of a given wallet
 export const tx_history = (
@@ -507,4 +517,3 @@ export const tx_history = (
 
     return liftEither(cast_to_either(intoTxHistory(dump.full)));
   });
-

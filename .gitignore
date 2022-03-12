@@ -1,6 +1,6 @@
 /node_modules/
 /public/build/
-yarn.lock
+# yarn.lock
 yarn-error.log
 nohup.out
 build

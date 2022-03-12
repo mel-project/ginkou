@@ -1,4 +1,4 @@
 export enum InputVariant {
-    UNDERLINED = 'underlined',
-    DEFAULT = 'outlined'
-  }
+  UNDERLINED = "underlined",
+  DEFAULT = "outlined",
+}
