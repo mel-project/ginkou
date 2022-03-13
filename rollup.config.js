@@ -64,6 +64,9 @@ export default {
     svelte({
       preprocess: autoPreprocess({
         sourceMap: true,
+        scss: {
+          prependData: "@use 'src/res/styles/app.scss' as *;",
+        },
       }),
       compilerOptions: {
         // enable run-time checks when not in production

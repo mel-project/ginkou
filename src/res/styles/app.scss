@@ -1,101 +1,24 @@
-@import "reset";
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+$primary: #006e54;
+$dark: #003d2f;
+
+$theme-colors: (
+  "primary": #006e54,
+  "danger": #ff4136,
+);
+
+@import "../node_modules/bootstrap/scss/bootstrap";
 
 :global(:root) {
   --font-family: "Public Sans", sans-serif;
   --primary-color: "#006e54";
 }
+
 :global(*) {
-  font-family: var(--font-family) !important;
-  letter-spacing: normal !important;
+  font-family: var(--font-family);
+  letter-spacing: -0.02em !important;
 }
 
-$menu-height: 64px;
-
-#wallet-menu {
-  transition: width 0.7s ease;
-  width: 0px;
-  background: white;
-  z-index: 2;
-  &.active {
-    width: calc(100vw);
-  }
-}
-
-.hamburger-menu {
-  display: none;
-}
-
-#wallet-title-section {
-  width: 20em;
-  max-width: 20em;
-  display: flex;
-  align-items: center;
-  #wallet-title {
-    overflow: hidden;
-  }
-}
-
-.create-wallet-container {
-  padding: 3em;
-}
-
-main {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-#private-key-view {
-  width: 80%;
-  overflow: auto;
-}
-
-.top-bar {
-  /* background-color: #086d4d; */
-  display: flex;
-}
-
-.content {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: max-content 1fr;
-  grid-template-rows: calc(100vh - 64px);
-}
-
-.view-box {
-  overflow-y: auto;
-  border: 1px solid grey;
-  margin: 30px 5% 30px 5%;
-  padding: 30px 5% 30px 5%;
-  /* display: flex; */
-  background-color: #e0e0e0;
-  flex-grow: 1;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#sent-tx-notification-banner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #499348;
-  color: white;
-}
-#error-notification-banner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #db1a2d;
-  color: white;
-}
-#tabs-container {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: flex-end;
-  flex: 1;
-}
-.tab:hover {
-  color: black;
+.font-rubik {
+  font-family: "Rubik" !important;
 }

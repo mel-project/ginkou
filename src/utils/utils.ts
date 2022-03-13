@@ -49,7 +49,7 @@ export const denom2str = (denom: string) => {
   if (denom === "6d") {
     return "µMEL";
   } else if (denom === "64") {
-    return "µnomDOSC";
+    return "µERG";
   } else if (denom === "73") {
     return "µSYM";
   } else {
