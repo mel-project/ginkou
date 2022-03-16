@@ -3958,6 +3958,13 @@
   dependencies:
     "rollup-plugin-inject" "^3.0.0"
 
+"rollup-plugin-scss@^3.0.0":
+  "integrity" "sha512-UldNaNHEon2a5IusHvj/Nnwc7q13YDvbFxz5pfNbHBNStxGoUNyM+0XwAA/UafJ1u8XRPGdBMrhWFthrrGZdWQ=="
+  "resolved" "https://registry.npmjs.org/rollup-plugin-scss/-/rollup-plugin-scss-3.0.0.tgz"
+  "version" "3.0.0"
+  dependencies:
+    "rollup-pluginutils" "^2.3.3"
+
 "rollup-plugin-svelte@^7.0.0":
   "integrity" "sha512-vopCUq3G+25sKjwF5VilIbiY6KCuMNHP1PFvx2Vr3REBNMDllKHFZN2B9jwwC+MqNc3UPKkjXnceLPEjTjXGXg=="
   "resolved" "https://registry.npmjs.org/rollup-plugin-svelte/-/rollup-plugin-svelte-7.1.0.tgz"
@@ -3976,7 +3983,7 @@
     "serialize-javascript" "^4.0.0"
     "terser" "^5.0.0"
 
-"rollup-pluginutils@^2.8.1", "rollup-pluginutils@^2.8.2":
+"rollup-pluginutils@^2.3.3", "rollup-pluginutils@^2.8.1", "rollup-pluginutils@^2.8.2":
   "integrity" "sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ=="
   "resolved" "https://registry.npmjs.org/rollup-pluginutils/-/rollup-pluginutils-2.8.2.tgz"
   "version" "2.8.2"

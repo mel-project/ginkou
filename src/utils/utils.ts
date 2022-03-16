@@ -1,9 +1,8 @@
 import { EitherAsync } from "purify-ts/EitherAsync";
 import { Either, Left, Right } from "purify-ts/Either";
 import { Maybe, Just, Nothing } from "purify-ts/Maybe";
-import { get_wallet } from "./store";
 import { derive_key, decrypt } from "./crypto";
-import JSONbig from "json-bigint";
+import JSONbiggg from "json-bigint";
 import fetch from "cross-fetch";
 import BigNumber from "bignumber.js";
 import type {
@@ -18,14 +17,17 @@ import type {
   WalletEntry,
 } from "./types";
 
+const JSONbig = JSONbiggg({ alwaysParseAsBig: true });
+
 console.log("in utils", Either);
 export const MEL = "6d";
-export const TESTNET = 1;
-export const MAINNET = 255;
+export const TESTNET = new BigNumber(1);
+export const MAINNET = new BigNumber(255);
 const home_addr = "http://127.0.0.1";
 const default_port = 11773;
 
-export const kind2str = (kind: number) => {
+export const kind2str = (bkind: BigNumber) => {
+  const kind = bkind.toNumber();
   if (kind === 0x00) {
     return "Normal";
   } else if (kind === 0x10) {
@@ -47,22 +49,23 @@ export const kind2str = (kind: number) => {
 
 export const denom2str = (denom: string) => {
   if (denom === "6d") {
-    return "µMEL";
+    return "MEL";
   } else if (denom === "64") {
-    return "µERG";
+    return "ERG";
   } else if (denom === "73") {
-    return "µSYM";
+    return "SYM";
   } else {
-    return "other (" + denom + ")";
+    return "X-" + denom;
   }
 };
 
 export const wallet_dump_default: WalletDump = {
   summary: {
     total_micromel: new BigNumber(0),
-    network: 1,
+    network: new BigNumber(1),
     address: "",
     locked: true,
+    detailed_balance: {},
   },
   full: {
     unspent_coins: [],
@@ -70,7 +73,7 @@ export const wallet_dump_default: WalletDump = {
     tx_in_progress_v2: {},
     tx_confirmed: {},
     my_covenant: "",
-    network: 1,
+    network: new BigNumber(1),
   },
 };
 
@@ -177,16 +180,6 @@ function intoString(x: any): Maybe<string> {
 }
 
 // Helpers
-
-export async function get_priv_key(
-  active_wallet: string,
-  password: string
-): Promise<ArrayBuffer> {
-  const data = get_wallet(active_wallet);
-  const key = await derive_key(password, data.salt);
-  return decrypt(data.priv_key, key, data.iv);
-}
-
 // Return x in Just x or throw error on Nothing.
 // Convenient do-notation for maybe types.
 /*

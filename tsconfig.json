@@ -6,6 +6,7 @@
     "strict": true,
     "target": "es6",
     "lib": ["es2017"],
+    "importsNotUsedAsValues": "remove",
 
     "plugins": [
       { "transform": "typescript-is/lib/transform-inline/transformer" }

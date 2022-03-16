@@ -1,13 +1,34 @@
 <script lang="ts">
+  import WalletSelector from "../components/WalletSelector.svelte";
+  import HomeHero from "../components/HomeHero.svelte";
+  import DenomBubble from "../components/DenomBubble.svelte";
+  import { currentWalletSummary } from "../stores";
+  import BigNumber from "bignumber.js";
+  import { denom2str, kind2str } from "../utils/utils";
 </script>
 
-<div class="container">
-  <div class="row">
-    <div class="col">
-      <div class="big-balance">3.1415926 MEL</div>
-    </div>
+<div>
+  <WalletSelector />
+  <HomeHero
+    melBalance={$currentWalletSummary?.total_micromel.div(1000000).toFixed(6)}
+    otherBalance="3.14"
+    onSend={() => alert("send")}
+    onReceive={() => alert("receive")}
+  />
+  <div class="denom-bubbles">
+    {#if $currentWalletSummary}
+      {#each Object.entries($currentWalletSummary.detailed_balance) as [k, v]}
+        <DenomBubble value={v.div(1000000).toFixed(6)} denom={denom2str(k)} />
+      {/each}
+    {/if}
   </div>
 </div>
 
 <style lang="scss">
+  .denom-bubbles {
+    width: 100%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 4rem;
+  }
 </style>

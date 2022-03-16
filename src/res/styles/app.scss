@@ -1,6 +1,8 @@
 // 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 $primary: #006e54;
 $dark: #003d2f;
+$font-family-sans-serif: "Public Sans";
+$font-family-base: "Public Sans";
 
 $theme-colors: (
   "primary": #006e54,
@@ -9,16 +11,18 @@ $theme-colors: (
 
 @import "../node_modules/bootstrap/scss/bootstrap";
 
-:global(:root) {
+:root {
   --font-family: "Public Sans", sans-serif;
-  --primary-color: "#006e54";
+  --primary-color: #{$primary};
+  --dark-color: #{$dark};
 }
 
-:global(*) {
-  font-family: var(--font-family);
-  letter-spacing: -0.02em !important;
+body {
+  background-color: #f8fbf8;
+  font-family: "Public Sans";
+  letter-spacing: -0.02em;
 }
 
-.font-rubik {
-  font-family: "Rubik" !important;
+html {
+  font-size: 90%;
 }

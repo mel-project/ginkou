@@ -60,6 +60,7 @@
     "material-icons": "^1.10.8",
     "onsenui": "^2.11.2",
     "purify-ts": "^1.2.0",
+    "rollup-plugin-scss": "^3.0.0",
     "sass": "^1.49.9",
     "sirv-cli": "^1.0.0",
     "svelte-material-icons": "^2.0.0",

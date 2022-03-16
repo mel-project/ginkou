@@ -29,16 +29,17 @@
   .tabs {
     width: 100%;
     height: 4rem;
-    position: absolute;
+    position: fixed;
+    z-index: -1;
     bottom: 0;
     left: 0;
-    border-top: 1px solid $primary;
+    border-top: 1px solid var(--primary-color);
 
     display: flex;
     flex-direction: row;
     justify-content: space-around;
 
-    color: $dark;
+    color: var(--dark-color);
   }
 
   .tab {
@@ -51,7 +52,7 @@
   }
 
   .selected {
-    color: $primary;
+    color: var(--primary-color);
     opacity: 1;
   }
 
