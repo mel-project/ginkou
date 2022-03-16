@@ -33,7 +33,11 @@
 <div class="selector">
   <RoundButton label="" outline small onClick={() => (modalOpen = !modalOpen)}>
     <div>
-      <div class="icon" />
+      <div
+        class="icon"
+        class:icon-mainnet={$currentWalletSummary?.network.eq(MAINNET)}
+        class:icon-testnet={$currentWalletSummary?.network.eq(TESTNET)}
+      />
     </div>
     <div class="text" class:placeholder={$currentWalletName === null}>
       <b>{$currentWalletSummary?.network.eq(MAINNET) ? "Mainnet" : "Testnet"}</b
@@ -87,8 +91,17 @@
     border-radius: 100px;
     width: 1.2rem;
     height: 1.2rem;
-    background-color: gray;
+
     margin-left: 1rem;
+    background-size: contain;
+  }
+
+  .icon-mainnet {
+    background-image: url("/images/logo-only.png");
+  }
+
+  .icon-testnet {
+    background-image: url("/images/logo-testnet.png");
   }
 
   .text {
