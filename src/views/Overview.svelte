@@ -2,17 +2,31 @@
   import WalletSelector from "../components/WalletSelector.svelte";
   import HomeHero from "../components/HomeHero.svelte";
   import DenomBubble from "../components/DenomBubble.svelte";
+  import Modal from "../components/Modal.svelte";
   import { currentWalletSummary } from "../stores";
   import BigNumber from "bignumber.js";
   import { denom2str, kind2str } from "../utils/utils";
+  import SendDialog from "../components/SendDialog.svelte";
+
+  let sendOpen = false;
 </script>
 
 <div>
   <WalletSelector />
+
+  <Modal
+    pullup
+    title="Send assets"
+    open={sendOpen}
+    onClose={() => (sendOpen = false)}
+  >
+    <SendDialog />
+  </Modal>
+
   <HomeHero
     melBalance={$currentWalletSummary?.total_micromel.div(1000000).toFixed(6)}
     otherBalance="3.14"
-    onSend={() => alert("send")}
+    onSend={() => (sendOpen = true)}
     onReceive={() => alert("receive")}
   />
   <div class="denom-bubbles">

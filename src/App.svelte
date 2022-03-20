@@ -2,6 +2,7 @@
   import BottomTabs from "./components/BottomTabs.svelte";
   import RoundButton from "./components/RoundButton.svelte";
   import Overview from "./views/Overview.svelte";
+  import Transactions from "./views/Transactions.svelte";
 
   let selectedTab: number = 0;
 </script>
@@ -10,7 +11,9 @@
   <div class="main-container">
     {#if selectedTab === 0}
       <Overview />
-    {:else if selectedTab === 1}{:else if selectedTab === 2}{:else}{/if}
+    {:else if selectedTab === 1}
+      <Transactions />
+    {:else if selectedTab === 2}{:else}{/if}
   </div>
   <BottomTabs
     onSelect={(selection) => {

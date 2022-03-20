@@ -15,6 +15,7 @@ import type {
   PrivateKey,
   WalletSummary,
   WalletEntry,
+  NetworkStatus,
 } from "./types";
 
 const JSONbig = JSONbiggg({ alwaysParseAsBig: true });
@@ -254,11 +255,14 @@ export async function fetch_json_or_err(
   url: string,
   opts: any
 ): Promise<Either<string, any>> {
-  // Throws on a promise rejection, which will be caught by EitherAsync's run()
-  let res = await fetch(url, opts);
+  try {
+    let res = await fetch(url, opts);
 
-  if (!res.ok) return Left("(" + res.status + ") " + (await res.text()));
-  else return Right(JSONbig.parse(await res.text()));
+    if (!res.ok) return Left("(" + res.status + ") " + (await res.text()));
+    else return Right(JSONbig.parse(await res.text()));
+  } catch (e: any) {
+    return Left(e.to_string());
+  }
 }
 
 /// Fetch a url endpoint and parse as json, error if the HTTP response is not OK
@@ -476,37 +480,37 @@ export const list_wallets = (
     return liftEither(cast_to_either(intoListOf(res, intoWallet)));
   });
 
-export const wallet_dump = (
-  wallet_name: string,
+// Get a list of all stored wallets
+export const list_transactions = (
+  walletName: string,
   port: number = default_port
-): EitherAsync<string, WalletDump> =>
+): EitherAsync<string, [string, BigNumber | null][]> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
-    const url = `${home_addr}:${port}/wallets/${wallet_name}`;
+    const url = `${home_addr}:${port}/wallets/${walletName}/transactions`;
     const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
-    console.log(res);
-    // TODO cast this with runtime checks
-    return liftEither(Right(res as WalletDump));
+
+    return res;
   });
 
-// export const wallet_dump_from_entry = (
-//   wallet_entry: WalletEntry,
-//   port: number = default_port
-// ): EitherAsync<string, WalletDump> =>
-//   EitherAsync(async ({ liftEither, fromPromise }) => {
-//     const url = `${home_addr}:${port}/wallets/${wallet_name}`;
-//     const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
-
-//     // TODO cast this with runtime checks
-//     return liftEither(Right(res as WalletDump));
-//   });
-
-// Get a TxHistory of a given wallet
-export const tx_history = (
-  wallet_name: string,
+// Get the balance for one particular transaction
+export const transaction_balance = (
+  walletName: string,
+  txhash: string,
   port: number = default_port
-): EitherAsync<string, TxHistory> =>
+): EitherAsync<string, [boolean, { [key: string]: BigNumber }]> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
-    const dump = await fromPromise(wallet_dump(wallet_name, port));
+    const url = `${home_addr}:${port}/wallets/${walletName}/transactions/${txhash}/balance`;
+    const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
 
-    return liftEither(cast_to_either(intoTxHistory(dump.full)));
+    return res;
+  });
+
+// Get the network status
+export const network_status = (
+  testnet: boolean,
+  port: number = default_port
+): EitherAsync<string, NetworkStatus> =>
+  EitherAsync(async ({ liftEither, fromPromise }) => {
+    const url = `${home_addr}:${port}/summary` + (testnet ? "testnet" : "");
+    return await fromPromise(fetch_json_or_err(url, { method: "GET" }));
   });

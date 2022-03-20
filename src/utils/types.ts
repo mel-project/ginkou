@@ -121,3 +121,18 @@ export interface StateObject {
   // writable_settings: Writable<State<string>>;
   // set_setting: (name: string | Readable<string>, value: string | Readable<string>) => void;
 }
+
+// Network status
+export interface NetworkStatus {
+  network: BigNumber;
+  previous: string;
+  height: BigNumber;
+  history_hash: string;
+  coins_hash: string;
+  transactions_hash: string;
+  fee_pool: BigNumber;
+  fee_multiplier: BigNumber;
+  dosc_speed: BigNumber;
+  pools_hash: string;
+  stakes_hash: string;
+}

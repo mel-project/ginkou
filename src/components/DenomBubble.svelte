@@ -7,7 +7,7 @@
 
 <div class="wrap">
   <div class="root">
-    <div class="icon" />
+    <div class="icon" class:mel={denom === "MEL"} class:sym={denom === "SYM"} />
     <div class="label">
       <div><b>{value}</b> {denom}</div>
       {#if approxMelValue}<div class="approx">
@@ -56,6 +56,16 @@
     overflow-x: hidden;
     white-space: nowrap;
     // max-width: calc(70vw - 5rem);
+  }
+
+  .mel {
+    background-image: url("/images/mel-coin.png");
+    background-size: contain;
+  }
+
+  .sym {
+    background-image: url("/images/sym-coin.png");
+    background-size: contain;
   }
 
   .send {

@@ -1,134 +1,81 @@
 <script lang="ts">
-  import Dialog from "@/components/UI/windows/Dialog.svelte";
-  import Button from "@/components/UI/inputs/Button.svelte";
-  import { createEventDispatcher, getContext, onMount } from "svelte";
-  import TransactionSummary from "../components/TransactionSummary.svelte";
-
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
-  import type { Either } from "purify-ts/Either";
-  import { net_spent } from "../utils/utils";
-  import type { Transaction, WalletDump } from "../utils/types";
 
-  interface PendingDataTable<T> {
-    head: string[];
-    body: T[];
-  }
+  import WalletSelector from "../components/WalletSelector.svelte";
+  import TransactionBubble from "../components/TransactionBubble.svelte";
+  import { currentNetworkStatus, currentWalletName } from "../stores";
+  import type { WalletDump } from "../utils/types";
+  import { list_transactions } from "../utils/utils";
+  import { parse } from "json-bigint";
 
-  const mwdContext: any = getContext("melwalletd");
-  const current_wallet_dump =
-    mwdContext.current_wallet_dump as Readable<WalletDump>;
-  const sorted_confirmed_txx = mwdContext.sorted_confirmed_txx as Readable<
-    [string, [Transaction, number]][]
-  >;
+  const dateToTxhash: Readable<
+    { [key: string]: [string, number][] } | undefined
+  > = derived(
+    [currentWalletName, currentNetworkStatus],
+    ([name, netStatus], set) => {
+      if (!name || !netStatus) {
+        return;
+      }
 
-  // Whether a summary window i> open
-  let summary_open: boolean = false;
-  // Transaction to display in a summary window
-  let selected_tx: [string, Transaction, number | null] | null = null;
+      const heightToString = (height: number) => {
+        const latestHeight = netStatus ? netStatus.height.toNumber() : 1000000;
+        const heightDifference = latestHeight - height;
+        let heightTime = new Date(Date.now() - heightDifference * 30000);
+        if (height < 0) {
+          heightTime = new Date(Date.now());
+          console.log("subzero", heightTime);
+        }
+        heightTime.setHours(0, 0, 0, 0);
+        return heightTime.toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      };
 
-  // $: table: DataTable<Either_Transaction> = {
-  //   head: ["text","text", "text"],
-  //   body: (()=>{
-  //     let unconfirmed: UnconfirmedTransaction = Object.entries($current_wallet_dump.full.tx_in_progress);
-  //   })()
-  // }
+      (async () => {
+        let res = await list_transactions(name);
+        let toret: { [key: string]: [string, number][] } = {};
+        res
+          .ifLeft((err) => alert(err))
+          .ifRight((res) => {
+            res.forEach(([txhash, height]) => {
+              const real_height = height ? height.toNumber() : -1;
+              const key = heightToString(real_height);
+              if (!(key in toret)) {
+                toret[key] = [];
+              }
+              toret[key].push([txhash, real_height]);
+            });
+            console.log(toret);
+            set(toret);
+          });
+      })();
+    }
+  );
 
-  // // used for testing the layout of open dialogs
-  // $: {
-  //   if ($sorted_confirmed_txx) {
-  //     let [txhash, [tx, height]] = $sorted_confirmed_txx[0];
-  //     selected_tx = [txhash, tx, height];
-  //     summary_open = true;
-  //   }
-  // }
-  // // remove above in prod
+  const keyify = (x: number) => (x < 0 ? 1e1000 : x);
 </script>
 
-<Dialog
-  bind:open={summary_open}
-  on:close={() => (summary_open = false)}
-  fullscreen
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
->
-  <template>
-    {#if selected_tx && summary_open}
-      <TransactionSummary
-        txhash={selected_tx[0]}
-        tx={selected_tx[1]}
-        height={selected_tx[2]}
-        current_wallet_dump={$current_wallet_dump}
-      />
+<div>
+  <WalletSelector />
+
+  <div class="main">
+    {#if $dateToTxhash}
+      {#each Object.entries($dateToTxhash).sort((x, y) => Date.parse(y[0]) - Date.parse(x[0])) as [date, batch]}
+        <div class="dateline">{date}</div>
+        {#each batch.sort((x, y) => keyify(y[1]) - keyify(x[1])) as [txhash, height] (txhash)}
+          <div><TransactionBubble {txhash} {height} /></div>
+        {/each}
+      {/each}
     {/if}
-  </template>
-
-  <svelte:fragment let:close slot="actions">
-    <Button on:click={close}>Done</Button>
-  </svelte:fragment>
-</Dialog>
-
-{#if $current_wallet_dump && $sorted_confirmed_txx}
-  <table
-    class="transactions mdl-data-table mdl-js-data-table mdl-shadow--2dp"
-    style="max-width: 100%"
-  >
-    <tr>
-      <th class="cell" style="width: 50%">Hash</th>
-      <th class="cell">Spent (µMEL)</th>
-      <th class="cell">Block Height</th>
-    </tr>
-
-    {#each Object.entries($current_wallet_dump.full.tx_in_progress_v2) as [txhash, [tx, height]]}
-      <tr
-        class="row disable-row"
-        on:click={() => {
-          summary_open = false;
-          selected_tx = [txhash, tx, null];
-        }}
-      >
-        <td class="cell" style="overflow: hidden; text-overflow:ellipsis"
-          >{txhash}</td
-        >
-        <td class="cell"
-          >{net_spent(tx, $current_wallet_dump.summary.address)}</td
-        >
-        <td class="cell">pending</td>
-      </tr>
-    {/each}
-
-    {#each $sorted_confirmed_txx as [txhash, [tx, height]]}
-      <tr
-        class="row"
-        on:click={() => {
-          summary_open = true;
-          selected_tx = [txhash, tx, height];
-        }}
-      >
-        <td class="cell">{txhash}</td>
-        <td class="cell"
-          >{net_spent(tx, $current_wallet_dump.summary.address)}</td
-        >
-        <td class="cell">{height}</td>
-      </tr>
-    {/each}
-  </table>
-{:else}
-  <i>loading...</i>
-{/if}
+  </div>
+</div>
 
 <style lang="scss">
-  :global(table) {
-    width: 100%;
-  }
-  :global(.disable-row) {
-    background: rgba(0, 0, 0, 0.08) !important;
-    &:hover {
-      cursor: not-allowed;
-    }
-  }
-
-  table > tr:hover {
-    cursor: pointer;
+  .main {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 </style>
