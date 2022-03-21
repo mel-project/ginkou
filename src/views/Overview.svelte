@@ -8,7 +8,7 @@
   import { denom2str, kind2str } from "../utils/utils";
   import SendDialog from "../components/SendDialog.svelte";
 
-  let sendOpen = true;
+  let sendOpen = false;
 </script>
 
 <div>
@@ -20,7 +20,7 @@
     open={sendOpen}
     onClose={() => (sendOpen = false)}
   >
-    <SendDialog />
+    <SendDialog onTransactionSent={() => (sendOpen = false)} />
   </Modal>
 
   <HomeHero

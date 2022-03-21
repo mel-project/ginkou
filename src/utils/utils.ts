@@ -56,7 +56,7 @@ export const denom2str = (denom: string) => {
   } else if (denom === "73") {
     return "SYM";
   } else {
-    return "X-" + denom;
+    return "X-" + denom.substring(0, 8) + "...";
   }
 };
 
@@ -114,13 +114,13 @@ function intoTransaction(x: any): Maybe<Transaction> {
   console.log("here", x);
   if (
     "kind" in x &&
-    typeof x.kind == "number" &&
+    x.kind instanceof BigNumber &&
     "inputs" in x &&
     "outputs" in x &&
     "fee" in x &&
-    typeof x.fee == "number" &&
+    x.fee instanceof BigNumber &&
     "data" in x &&
-    typeof x.data == "string" &&
+    x.data instanceof BigNumber &&
     "sigs" in x
   ) {
     return intoListOf(x.inputs, intoCoinID)
@@ -394,7 +394,7 @@ export const send_tx = (
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(transaction),
+        body: JSONbig.stringify(transaction),
       })
     );
 
@@ -402,33 +402,15 @@ export const send_tx = (
     return liftEither(cast_to_either(intoTxHash(e_txhash)));
   });
 
-export const prepare_mel_tx = (
+export const prepare_tx = (
   wallet_name: string,
-  to: string[],
-  micromel: BigNumber[],
-  additional_data: string = "",
+  outputs: CoinData[],
   port: number = default_port
 ): EitherAsync<string, Transaction> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
     const url_prepare_tx = `${home_addr}:${port}/wallets/${wallet_name}/prepare-tx`;
-
-    if (to.length != micromel.length)
-      return liftEither(
-        Left(
-          "Size of `to` not equal to `micromel`: each recipient must have a matching mel value"
-        )
-      );
-
-    const outputs: CoinData[] = to.map((address, idx) => ({
-      covhash: address,
-      value: micromel[idx],
-      denom: MEL,
-      additional_data: additional_data,
-    }));
-
-    console.log(outputs);
     // Prepare tx (get a json-encoded tx back)
-    const tx: Either<string, any> = await fromPromise(
+    const tx = await fromPromise(
       fetch_json_or_err(url_prepare_tx, {
         method: "POST",
         headers: {
@@ -440,34 +422,25 @@ export const prepare_mel_tx = (
       })
     );
 
-    // Runtime type check and return
-    console.log(tx);
-    console.log(intoTransaction(tx));
-    return liftEither(cast_to_either(intoTransaction(tx)));
+    return tx;
   });
 
-export const send_mel = (
-  wallet_name: string,
-  wallet: WalletSummary,
-  to: string[],
-  mel: BigNumber[],
-  additional_data: string = "",
-  port: number = default_port
-): EitherAsync<string, TxHash> =>
-  EitherAsync(async ({ liftEither, fromPromise }) => {
-    let tx_res = await prepare_mel_tx(
-      wallet_name,
-      to,
-      mel,
-      additional_data,
-      port
-    );
+// export const send_mel = (
+//   wallet_name: string,
+//   wallet: WalletSummary,
+//   to: string[],
+//   mel: BigNumber[],
+//   additional_data: string = "",
+//   port: number = default_port
+// ): EitherAsync<string, TxHash> =>
+//   EitherAsync(async ({ liftEither, fromPromise }) => {
+//     let tx_res = await prepare_tx(wallet_name, to, mel, additional_data, port);
 
-    const tx: Transaction = await liftEither(
-      cast_to_either(intoTransaction(tx_res))
-    );
-    return liftEither(await send_tx(wallet_name, tx));
-  });
+//     const tx: Transaction = await liftEither(
+//       cast_to_either(intoTransaction(tx_res))
+//     );
+//     return liftEither(await send_tx(wallet_name, tx));
+//   });
 
 // Get a list of all stored wallets
 export const list_wallets = (

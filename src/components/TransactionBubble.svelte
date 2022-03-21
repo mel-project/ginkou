@@ -12,6 +12,8 @@
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
+  import JSONbig from "json-bigint";
+  const JBig = JSONbig({ alwaysParseAsBig: true });
 
   let balance: Writable<[boolean, { [key: string]: BigNumber }] | null> =
     writable(null);
@@ -23,15 +25,23 @@
         console.log("something becoming visible");
         (async () => {
           if ($currentWalletName) {
-            let res = await transaction_balance(
-              $currentWalletName,
-              txhash
-            ).run();
-            res
-              .ifLeft((err) => console.log(err))
-              .ifRight((res) => {
-                balance.set(res);
-              });
+            const key = "txbalance." + $currentWalletName + "." + txhash;
+            let existing = localStorage.getItem(key);
+            if (existing) {
+              console.log(existing);
+              balance.set(JBig.parse(existing));
+            } else {
+              let res = await transaction_balance(
+                $currentWalletName,
+                txhash
+              ).run();
+              res
+                .ifLeft((err) => console.log(err))
+                .ifRight((res) => {
+                  balance.set(res);
+                  localStorage.setItem(key, JBig.stringify(res));
+                });
+            }
           }
         })();
         observer.unobserve(target);

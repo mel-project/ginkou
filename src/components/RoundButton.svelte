@@ -3,7 +3,7 @@
   export let outline: boolean = false;
   export let bold: boolean = false;
   export let small: boolean = false;
-
+  export let disabled: boolean = false;
   export let onClick = () => {};
 </script>
 
@@ -14,6 +14,7 @@
   class:btn-outline-primary={outline}
   class:heavy={bold}
   class:small
+  {disabled}
   on:click={() => onClick()}
 >
   <slot />
@@ -36,5 +37,9 @@
 
   .heavy {
     font-weight: 500;
+  }
+
+  .btn-outline-primary {
+    border-width: 0.15rem;
   }
 </style>
