@@ -8,7 +8,7 @@
   import { denom2str, kind2str } from "../utils/utils";
   import SendDialog from "../components/SendDialog.svelte";
 
-  let sendOpen = false;
+  let sendOpen = true;
 </script>
 
 <div>

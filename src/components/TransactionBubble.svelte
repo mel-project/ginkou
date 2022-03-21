@@ -6,7 +6,6 @@
   import { onDestroy } from "svelte";
   import { derived, writable } from "svelte/store";
   import type { Readable, Writable } from "svelte/store";
-  import { number } from "purify-ts";
   export let txhash: string;
   export let height: number;
 
@@ -80,7 +79,13 @@
   }
 </script>
 
-<div class="wrap" bind:this={self} class:loading class:loaded={!loading}>
+<div
+  class="wrap"
+  bind:this={self}
+  class:loading
+  class:loaded={!loading}
+  class:pending={height < 0}
+>
   <div class="root">
     <div class="icon">
       {#if direction > 0}
@@ -95,6 +100,7 @@
       <div class="rx-tx">{rxText}</div>
       <div class="height">
         {#if height < 0}
+          <div class="spinner-border" role="status" />
           Pending
         {:else}
           Confirmed at {height}
@@ -132,13 +138,18 @@
     color: #666;
   }
 
+  .spinner-border {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
   .loaded {
-    filter: none;
+    opacity: 1;
     transition: all 0.2s ease-in-out;
   }
 
   .loading {
-    filter: blur(16px);
+    opacity: 0;
   }
 
   b {
@@ -149,6 +160,10 @@
     font-size: calc(min(1.7vw, 8px));
     margin-top: -2px;
     font-family: "Iosevka";
+  }
+
+  .pending {
+    opacity: 0.5;
   }
 
   .rx-tx {
