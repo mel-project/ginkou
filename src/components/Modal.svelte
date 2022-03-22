@@ -12,7 +12,7 @@
   <div class="blocker" transition:fade>
     <div class="modal" tabindex="-1">
       <div class="modal-dialog">
-        <div class="modal-content" class:pullup transition:slide>
+        <div class="modal-content" class:pullup>
           <div class="modal-header">
             <h5 class="modal-title">{title}</h5>
             <button
@@ -28,6 +28,8 @@
       </div>
     </div>
   </div>
+{:else}
+  <div style="display:none" />
 {/if}
 
 <style lang="scss">
@@ -72,7 +74,6 @@
     width: 100vh;
     height: 100vh;
     z-index: 100;
-    backdrop-filter: blur(10px);
   }
   .modal {
     display: block;

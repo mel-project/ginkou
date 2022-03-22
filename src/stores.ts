@@ -82,3 +82,5 @@ export const currentNetworkStatus: Readable<NetworkStatus | null> = derived(
     }
   }
 );
+
+export const miscSettings: Writable<{ [key: string]: any }> = writable({});

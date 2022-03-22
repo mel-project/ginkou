@@ -31,7 +31,25 @@
     sendError = e;
   };
 
+  $: ensureUnlocked = async () => {
+    if ($currentWalletSummary && $currentWalletName) {
+      console.log("WALLET SUMMARY", $currentWalletSummary);
+      if ($currentWalletSummary.locked) {
+        let pwd = prompt("Enter wallet password");
+        if (pwd) {
+          let result = await unlock_wallet($currentWalletName, pwd).run();
+          result.ifLeft((err) => {
+            onError(err);
+            return;
+          });
+        }
+      }
+      console.log("unlocked");
+    }
+  };
+
   $: onPrepare = async () => {
+    await ensureUnlocked();
     pending = true;
     setTimeout(async () => {
       let coinData = {
@@ -59,31 +77,20 @@
   };
 
   $: onConfirm = async () => {
+    await ensureUnlocked();
     pending = true;
     if ($currentWalletName && $currentWalletSummary && preparedTx) {
       try {
-        if ($currentWalletSummary.locked) {
-          let pwd = prompt("Enter wallet password");
-          if (pwd) {
-            let result = await unlock_wallet($currentWalletName, pwd).run();
-            result.ifLeft((err) => {
-              onError(err);
-              return;
-            });
-          }
-        }
-        console.log("unlocked");
         let result = await send_tx($currentWalletName, preparedTx).run();
         result
           .ifLeft((err) => {
             onError(err);
           })
           .ifRight((_) => {
-            preparedTx = null;
-            onTransactionSent();
+            setTimeout(() => onTransactionSent(), 200);
           });
       } finally {
-        pending = false;
+        setTimeout(() => (pending = false), 500);
       }
     }
   };
@@ -98,7 +105,7 @@
 
   {#if $currentWalletSummary}
     {#if preparedTx}
-      <div>
+      <div transition:slide>
         <TxSummary
           transaction={preparedTx}
           changeAddr={$currentWalletSummary.address}
@@ -122,7 +129,7 @@
         </div>
       </div>
     {:else}
-      <div>
+      <div transition:slide>
         <div class="section">
           <div class="header">Recipient 1</div>
           <div class="input-group">
