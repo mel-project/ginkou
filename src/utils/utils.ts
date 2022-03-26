@@ -17,6 +17,7 @@ import type {
   WalletEntry,
   NetworkStatus,
 } from "./types";
+import Toastify from "toastify-js";
 
 const JSONbig = JSONbiggg({ alwaysParseAsBig: true });
 
@@ -478,6 +479,19 @@ export const transaction_balance = (
     return res;
   });
 
+// Get the full value for one particular transaction
+export const transaction_full = (
+  walletName: string,
+  txhash: string,
+  port: number = default_port
+): EitherAsync<string, Transaction> =>
+  EitherAsync(async ({ liftEither, fromPromise }) => {
+    const url = `${home_addr}:${port}/wallets/${walletName}/transactions/${txhash}`;
+    const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
+
+    return res.raw;
+  });
+
 // Get the network status
 export const network_status = (
   testnet: boolean,
@@ -487,3 +501,26 @@ export const network_status = (
     const url = `${home_addr}:${port}/summary` + (testnet ? "testnet" : "");
     return await fromPromise(fetch_json_or_err(url, { method: "GET" }));
   });
+
+// Simple toast
+export const showToast = (m: string) => {
+  Toastify({
+    text: m,
+    position: "center",
+    style: {
+      background: "black",
+      boxShadow: "none",
+    },
+  }).showToast();
+};
+
+// Copy to clipboard
+export const copyToClipboard = (text: string) => {
+  var input = document.createElement("textarea");
+  input.innerHTML = text;
+  document.body.appendChild(input);
+  input.select();
+  var result = document.execCommand("copy");
+  document.body.removeChild(input);
+  return result;
+};

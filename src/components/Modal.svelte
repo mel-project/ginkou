@@ -9,10 +9,14 @@
 </script>
 
 {#if open}
-  <div class="blocker" transition:fade>
+  <div class="blocker" transition:fade on:click={() => onClose()}>
     <div class="modal" tabindex="-1">
       <div class="modal-dialog">
-        <div class="modal-content" class:pullup>
+        <div
+          class="modal-content"
+          class:pullup
+          on:click={(e) => e.stopPropagation()}
+        >
           <div class="modal-header">
             <h5 class="modal-title">{title}</h5>
             <button

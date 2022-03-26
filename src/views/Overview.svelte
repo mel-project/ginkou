@@ -7,8 +7,10 @@
   import BigNumber from "bignumber.js";
   import { denom2str, kind2str } from "../utils/utils";
   import SendDialog from "../components/SendDialog.svelte";
+  import ReceiveDialog from "../components/ReceiveDialog.svelte";
 
   let sendOpen = false;
+  let recvOpen = false;
 </script>
 
 <div>
@@ -23,11 +25,20 @@
     <SendDialog onTransactionSent={() => (sendOpen = false)} />
   </Modal>
 
+  <Modal
+    pullup
+    title="Receive assets"
+    open={recvOpen}
+    onClose={() => (recvOpen = false)}
+  >
+    <ReceiveDialog />
+  </Modal>
+
   <HomeHero
     melBalance={$currentWalletSummary?.total_micromel.div(1000000).toFixed(6)}
     otherBalance="3.14"
     onSend={() => (sendOpen = true)}
-    onReceive={() => alert("receive")}
+    onReceive={() => (recvOpen = true)}
   />
   <div class="denom-bubbles">
     {#if $currentWalletSummary}

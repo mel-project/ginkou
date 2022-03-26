@@ -65,7 +65,7 @@
     {#if $dateToTxhash}
       {#each Object.entries($dateToTxhash).sort((x, y) => Date.parse(y[0]) - Date.parse(x[0])) as [date, batch]}
         <div class="dateline">{date}</div>
-        {#each batch.sort((x, y) => keyify(y[1]) - keyify(x[1])) as [txhash, height] (txhash)}
+        {#each batch.sort((x, y) => keyify(y[1]) - keyify(x[1])) as [txhash, height] ($currentWalletName + txhash)}
           <div><TransactionBubble {txhash} {height} /></div>
         {/each}
       {/each}

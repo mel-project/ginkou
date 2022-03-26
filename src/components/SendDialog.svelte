@@ -16,9 +16,8 @@
 
   export let onTransactionSent = () => {};
 
-  let recipient: string =
-    "t1m9v0fhkbr7q1sfg59prke1sbpt0gm2qgrb166mp8n8m59962gdm0";
-  let amount: string = "100";
+  let recipient: string = "";
+  let amount: string = "";
   let denom: string = "6d";
 
   let pending: boolean = false;
@@ -108,7 +107,8 @@
       <div transition:slide>
         <TxSummary
           transaction={preparedTx}
-          changeAddr={$currentWalletSummary.address}
+          selfAddr={$currentWalletSummary.address}
+          simplified
         />
 
         <div class="section final">

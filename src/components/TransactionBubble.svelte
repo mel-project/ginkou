@@ -2,7 +2,13 @@
   import type { Transaction } from "../utils/types";
   import BigNumber from "bignumber.js";
   import { currentWalletName, currentWalletSummary } from "../stores";
-  import { denom2str, kind2str, transaction_balance } from "../utils/utils";
+  import {
+    denom2str,
+    kind2str,
+    showToast,
+    transaction_balance,
+    transaction_full,
+  } from "../utils/utils";
   import { onDestroy } from "svelte";
   import { derived, writable } from "svelte/store";
   import type { Readable, Writable } from "svelte/store";
@@ -13,6 +19,8 @@
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import JSONbig from "json-bigint";
+  import Modal from "./Modal.svelte";
+  import TxSummary from "./TxSummary.svelte";
   const JBig = JSONbig({ alwaysParseAsBig: true });
 
   let balance: Writable<[boolean, { [key: string]: BigNumber }] | null> =
@@ -25,23 +33,15 @@
         console.log("something becoming visible");
         (async () => {
           if ($currentWalletName) {
-            const key = "txbalance." + $currentWalletName + "." + txhash;
-            let existing = localStorage.getItem(key);
-            if (existing) {
-              console.log(existing);
-              balance.set(JBig.parse(existing));
-            } else {
-              let res = await transaction_balance(
-                $currentWalletName,
-                txhash
-              ).run();
-              res
-                .ifLeft((err) => console.log(err))
-                .ifRight((res) => {
-                  balance.set(res);
-                  localStorage.setItem(key, JBig.stringify(res));
-                });
-            }
+            let res = await transaction_balance(
+              $currentWalletName,
+              txhash
+            ).run();
+            res
+              .ifLeft((err) => console.log(err))
+              .ifRight((res) => {
+                balance.set(res);
+              });
           }
         })();
         observer.unobserve(target);
@@ -87,6 +87,21 @@
       }
     }
   }
+
+  let modalOpen = false;
+  let loadedTx: Transaction | null = null;
+
+  $: loadDetails = async () => {
+    if ($currentWalletName) {
+      modalOpen = true;
+      let txn = await transaction_full($currentWalletName, txhash).run();
+      txn
+        .ifLeft((err) => showToast(err))
+        .ifRight((res) => {
+          loadedTx = res;
+        });
+    }
+  };
 </script>
 
 <div
@@ -96,7 +111,22 @@
   class:loaded={!loading}
   class:pending={height < 0}
 >
-  <div class="root">
+  <Modal
+    open={modalOpen}
+    title="Transaction details"
+    onClose={() => (modalOpen = false)}
+  >
+    {#if loadedTx}
+      <TxSummary
+        transaction={loadedTx}
+        selfAddr={$currentWalletSummary?.address}
+        {txhash}
+        {height}
+      />
+    {/if}
+  </Modal>
+
+  <div class="root" on:click={() => height > 0 && loadDetails()}>
     <div class="icon">
       {#if direction > 0}
         <ArrowBottomLeft width="1.5rem" height="1.5rem" />
