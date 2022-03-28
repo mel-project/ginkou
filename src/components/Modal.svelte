@@ -1,6 +1,6 @@
 <script lang="ts">
   export let open: boolean;
-  import { slide, fade } from "svelte/transition";
+  import { fade } from "svelte/transition";
   export let onClose: () => any;
 
   export let title: string;

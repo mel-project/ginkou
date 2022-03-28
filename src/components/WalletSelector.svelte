@@ -1,7 +1,11 @@
 <script lang="ts">
   import RoundButton from "./RoundButton.svelte";
+  import WalletCreator from "./WalletCreator.svelte";
+  import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
+  import Plus from "svelte-material-icons/Plus.svelte";
   import Modal from "./Modal.svelte";
+  import { slide } from "svelte/transition";
   import {
     currentWalletName,
     currentWalletSummary,
@@ -28,6 +32,8 @@
     ($walletSummaries) =>
       Object.entries($walletSummaries).filter((w) => w[1].network.eq(TESTNET))
   );
+
+  let creatorOpen = false;
 </script>
 
 <div class="selector">
@@ -49,40 +55,63 @@
   <Modal
     title="Select a wallet"
     open={modalOpen}
-    onClose={() => (modalOpen = false)}
+    onClose={() => {
+      creatorOpen = false;
+      modalOpen = false;
+    }}
   >
-    <div class="network-subtitle">Mainnet</div>
+    {#if creatorOpen}
+      <RoundButton
+        label="back"
+        small
+        outline
+        onClick={() => (creatorOpen = false)}><ArrowLeft /></RoundButton
+      >
+      <WalletCreator onCreate={() => (creatorOpen = false)} />
+    {:else}
+      <div transition:slide>
+        <div class="network-subtitle">
+          <div>Mainnet</div>
+          <RoundButton
+            label="create"
+            small
+            outline
+            onClick={() => (creatorOpen = true)}><Plus /></RoundButton
+          >
+        </div>
 
-    <ul class="list-group">
-      {#each $mainnetWallets as [name, wallet]}
-        <li
-          class="list-group-item"
-          class:active={name === $currentWalletName}
-          on:click={() => {
-            $currentWalletName = name;
-            modalOpen = false;
-          }}
-        >
-          {name}
-        </li>
-      {/each}
-    </ul>
+        <ul class="list-group">
+          {#each $mainnetWallets as [name, wallet]}
+            <li
+              class="list-group-item"
+              class:active={name === $currentWalletName}
+              on:click={() => {
+                $currentWalletName = name;
+                modalOpen = false;
+              }}
+            >
+              {name}
+            </li>
+          {/each}
+        </ul>
 
-    <div class="network-subtitle">Testnet</div>
-    <ul class="list-group">
-      {#each $testnetWallets as [name, wallet]}
-        <li
-          class="list-group-item"
-          class:active={name === $currentWalletName}
-          on:click={() => {
-            $currentWalletName = name;
-            modalOpen = false;
-          }}
-        >
-          {name}
-        </li>
-      {/each}
-    </ul>
+        <div class="network-subtitle">Testnet</div>
+        <ul class="list-group">
+          {#each $testnetWallets as [name, wallet]}
+            <li
+              class="list-group-item"
+              class:active={name === $currentWalletName}
+              on:click={() => {
+                $currentWalletName = name;
+                modalOpen = false;
+              }}
+            >
+              {name}
+            </li>
+          {/each}
+        </ul>
+      </div>
+    {/if}
   </Modal>
 </div>
 
@@ -125,10 +154,13 @@
 
   .network-subtitle {
     font-weight: 700;
-    text-transform: uppercase;
-    font-size: 80%;
+    font-size: 100%;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    opacity: 0.6;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--dark-color);
   }
 </style>

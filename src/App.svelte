@@ -1,6 +1,10 @@
 <script lang="ts">
 	import Settings from './views/Settings.svelte';
   import BottomTabs from "./components/BottomTabs.svelte";
+  import Modal from "./components/Modal.svelte";
+  import RoundButton from "./components/RoundButton.svelte";
+  import WalletCreator from "./components/WalletCreator.svelte";
+  import { currentWalletName } from "./stores";
   import Overview from "./views/Overview.svelte";
   import Transactions from "./views/Transactions.svelte";
 	import { slide } from "svelte/transition"
@@ -9,9 +13,15 @@
 
 
   if(!$persistent_tabs) $last_tab = $default_tab;
+  let selectedTab: number = 0;
+  let firstDialog = $currentWalletName === null;
 </script>
 
 <main>
+  <Modal open={firstDialog} onClose={() => {}} title="Get started">
+    <WalletCreator onCreate={() => (firstDialog = false)} />
+  </Modal>
+
   <div class="main-container">
     {#if $last_tab === 0}
       <div transition:slide>
