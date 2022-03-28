@@ -1,13 +1,21 @@
 <script lang="ts">
   import BottomTabs from "./components/BottomTabs.svelte";
+  import Modal from "./components/Modal.svelte";
   import RoundButton from "./components/RoundButton.svelte";
+  import WalletCreator from "./components/WalletCreator.svelte";
+  import { currentWalletName } from "./stores";
   import Overview from "./views/Overview.svelte";
   import Transactions from "./views/Transactions.svelte";
 
   let selectedTab: number = 0;
+  let firstDialog = $currentWalletName === null;
 </script>
 
 <main>
+  <Modal open={firstDialog} onClose={() => {}} title="Get started">
+    <WalletCreator onCreate={() => (firstDialog = false)} />
+  </Modal>
+
   <div class="main-container">
     {#if selectedTab === 0}
       <Overview />
