@@ -1,25 +1,34 @@
 <script lang="ts">
+	import Settings from './views/Settings.svelte';
   import BottomTabs from "./components/BottomTabs.svelte";
-  import RoundButton from "./components/RoundButton.svelte";
   import Overview from "./views/Overview.svelte";
   import Transactions from "./views/Transactions.svelte";
+	import { slide } from "svelte/transition"
 
-  let selectedTab: number = 0;
+  import {last_tab, default_tab, persistent_tabs} from "./stores"
+
+
+  if(!$persistent_tabs) $last_tab = $default_tab;
 </script>
 
 <main>
   <div class="main-container">
-    {#if selectedTab === 0}
-      <Overview />
-    {:else if selectedTab === 1}
+    {#if $last_tab === 0}
+      <div transition:slide>
+        <Overview />
+      </div>
+    {:else if $last_tab === 1}
+    <div transition:slide>
       <Transactions />
-    {:else if selectedTab === 2}{:else}{/if}
+    </div>
+    {:else if $last_tab === 2}
+      <div transition:slide>
+        <Settings/>
+      </div>
+    {/if}
   </div>
   <BottomTabs
-    onSelect={(selection) => {
-      selectedTab = selection;
-    }}
-    selected={selectedTab}
+    bind:selected={$last_tab}
   />
 </main>
 

@@ -5,7 +5,7 @@
 
   export let selected: number = 0;
 
-  export let onSelect = (selection: number) => {};
+  export let onSelect = (selection: number) => {selected=selection};
 </script>
 
 <div class="tabs">

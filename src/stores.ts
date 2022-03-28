@@ -8,14 +8,13 @@ import type {
 import { list_wallets, network_status, TESTNET } from "./utils/utils";
 import JSONbig from "json-bigint";
 
-const persistentWritable = (storage_name: string): Writable<any> => {
+function persistentWritable<T> (storage_name: string, default_value: T): Writable<T> {
   let initString = localStorage.getItem(storage_name);
   let initValue = null;
-  try {
-    initValue = initString && JSONbig.parse(initString);
-  } catch {}
+  initValue = initString && JSONbig.parse(initString) || default_value;
   let w = writable(initValue);
-  w.subscribe((value: any) => {
+  w.subscribe((value: T) => {
+    console.log("storing", value)
     localStorage.setItem(storage_name, JSONbig.stringify(value));
   });
   return w;
@@ -49,7 +48,7 @@ export const walletSummaries: Readable<Obj<WalletSummary>> = readable(
 
 // Name of current wallet, as a string.
 export const currentWalletName: Writable<string | null> = persistentWritable(
-  "current_wallet"
+  "current_wallet", null
 );
 
 // Summary of current wallet.
@@ -68,7 +67,7 @@ export const currentNetworkStatus: Readable<NetworkStatus | null> = derived(
         const list = await network_status(summary.network.eq(TESTNET));
         list
           .ifLeft((e) =>
-            console.log(
+            console.error(
               `error encountered in network_status: ${JSON.stringify(e)}`
             )
           )
@@ -83,4 +82,8 @@ export const currentNetworkStatus: Readable<NetworkStatus | null> = derived(
   }
 );
 
+
+export const persistent_tabs: Writable<boolean> = persistentWritable("persistent_tabs", false)
+export const last_tab: Writable<number> = persistentWritable("last_tab", 0)
+export const default_tab: Writable<number> = persistentWritable("default_tab", 0)
 export const miscSettings: Writable<{ [key: string]: any }> = writable({});
