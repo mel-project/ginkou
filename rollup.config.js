@@ -10,6 +10,8 @@ import typescript from "@rollup/plugin-typescript";
 import nodePolyfills from "rollup-plugin-node-polyfills";
 import inlineSvg from "rollup-plugin-inline-svg";
 import alias from "@rollup/plugin-alias";
+import scss from "rollup-plugin-scss";
+
 const path = require("path");
 
 const rootDir = path.resolve(__dirname, "src");
@@ -64,6 +66,9 @@ export default {
     svelte({
       preprocess: autoPreprocess({
         sourceMap: true,
+        // scss: {
+        //   prependData: "@use 'src/res/styles/app.scss' as *;",
+        // },
       }),
       compilerOptions: {
         // enable run-time checks when not in production
@@ -71,6 +76,7 @@ export default {
         // enableSourcemap: true, // Set to  true if you want them
       },
     }),
+    scss(),
     typescript({ sourceMap: !production }),
     // we'll extract any component CSS out into
     // a separate file - better for performance

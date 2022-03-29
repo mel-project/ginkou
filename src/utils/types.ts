@@ -17,9 +17,10 @@ export interface WalletCryptoData {
 
 export interface WalletSummary {
   total_micromel: BigNumber;
-  network: number;
+  network: BigNumber;
   address: string;
   locked: boolean;
+  detailed_balance: Obj<BigNumber>;
 }
 
 export type WalletEntry = { [key: string]: WalletSummary };
@@ -33,16 +34,16 @@ export interface CoinData {
 
 export interface CoinDataHeight {
   coin_data: CoinData;
-  height: number;
+  height: BigNumber;
 }
 
 export interface CoinID {
   txhash: TxHash;
-  index: number;
+  index: BigNumber;
 }
 
 export interface Transaction {
-  kind: number;
+  kind: BigNumber;
   inputs: CoinID[];
   outputs: CoinData[];
   fee: BigNumber;
@@ -53,7 +54,7 @@ export interface Transaction {
 
 export interface TxHistory {
   tx_in_progress: [TxHash, Transaction][];
-  tx_confirmed: [TxHash, [Transaction, number]][];
+  tx_confirmed: [TxHash, [Transaction, BigNumber]][];
 }
 
 export interface WalletDump {
@@ -61,15 +62,15 @@ export interface WalletDump {
   full: {
     unspent_coins: [CoinID, CoinDataHeight][];
     spent_coins: [CoinID, CoinDataHeight][];
-    tx_in_progress_v2: { [key: string]: [Transaction, number] };
-    tx_confirmed: { [key: string]: [Transaction, number] };
+    tx_in_progress_v2: { [key: string]: [Transaction, BigNumber] };
+    tx_confirmed: { [key: string]: [Transaction, BigNumber] };
     my_covenant: string;
-    network: number;
+    network: BigNumber;
   };
 }
 
 export type UnconfirmedTransaction = [TxHash, [Transaction]];
-export type ConfirmedTransaction = [TxHash, [Transaction, number]];
+export type ConfirmedTransaction = [TxHash, [Transaction, BigNumber]];
 export type Either_Transaction = Either<
   UnconfirmedTransaction,
   ConfirmedTransaction
@@ -119,4 +120,19 @@ export interface StateObject {
   settings: State<Writable<string>>;
   // writable_settings: Writable<State<string>>;
   // set_setting: (name: string | Readable<string>, value: string | Readable<string>) => void;
+}
+
+// Network status
+export interface NetworkStatus {
+  network: BigNumber;
+  previous: string;
+  height: BigNumber;
+  history_hash: string;
+  coins_hash: string;
+  transactions_hash: string;
+  fee_pool: BigNumber;
+  fee_multiplier: BigNumber;
+  dosc_speed: BigNumber;
+  pools_hash: string;
+  stakes_hash: string;
 }

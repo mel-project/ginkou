@@ -1,79 +1,36 @@
 <script lang="ts">
-  import SettingComp from "@/components/Setting.svelte";
-  import type { State, SettingConfig, Obj } from "../utils/types";
-  import type { Writable, Readable, readable } from "svelte/store";
+import Setting from "../components/Setting.svelte";
+import Select from "../components/UI/inputs/Select.svelte"
+import Button from "../components/UI/inputs/Button.svelte"
+import BooleanInput from "../components/UI/inputs/Boolean.svelte"
 
-  interface NamedObject {
-    name: string;
-    setting: { [key: string]: SettingConfig };
-  }
+import {persistent_tabs, default_tab} from "../stores"
 
-  export let setting_types: State<SettingConfig>;
-  export let settings: State<Writable<any>>;
-  // export let writable_settings: Readable<Settings<string>>;
-  let { network, persistent_tabs, default_tab, current_wallet, active_tab } =
-    settings;
+// import Settings from "../stores";
 
-  // this is a hack
-  // basically without this svelte has no way of knowing a list of stores is passed to the Setting component
-  // so it doesn't make that component reactive to a change in `settings`
-  // the code below takes advantage of computed properties ability to update components (checkout the disabled property)
-  // this is very fragile to changes in settings
-  // adding a new setting can sometimes break this
-  $: all_settings = [
-    $network,
-    $persistent_tabs,
-    $default_tab,
-    $current_wallet,
-    $active_tab,
-  ];
 
-  const NamedEntries = (obj: State<SettingConfig>): [NamedObject] => {
-    const named_entries = Object.entries(obj).map((entry) => {
-      const name: string = entry[0];
-      const setting: SettingConfig = entry[1];
-      return { name, setting };
-    });
-    return named_entries as unknown as [NamedObject];
-  };
-  const get_store_value = (store: any) => {
-    let value;
-    store.subscribe((v: any) => (value = v))();
-    return value;
-  };
-  const check_matching_dependencies = (
-    settings: State<Readable<any>>,
-    dependencies: Obj<string | number | boolean>
-  ) => {
-    return !Object.entries(dependencies).reduce((reduced, dep) => {
-      const dep_name = dep[0];
-      const dep_value = dep[1];
-      let setting_value = get_store_value(settings[dep_name]);
-      return reduced && setting_value == dep_value;
-    }, true);
-  };
+
 </script>
 
 <template>
   <div class="settings-menu">
-    <div class="top" />
+    <div class="top"></div>
+    <div class="title">
+      <h1>Settings</h1>
+    </div>
     <div class="container">
       <div class="settings-list">
-        {#each NamedEntries(setting_types) as { name, setting }}
-          {#if setting.visible}
-            <div class="setting">
-              <SettingComp
-                bind:setting
-                value={all_settings && get_store_value(settings[name])}
-                {name}
-                on:change={({ detail }) => settings[name].set(detail.value)}
-                disabled={all_settings &&
-                  setting.depends &&
-                  check_matching_dependencies(settings, setting.depends)}
-              />
-            </div>
-          {/if}
-        {/each}
+
+        <Setting name="Persistent Tabs" label="Persistent Tabs" 
+          description="Save and reload the previous tab on page refresh">
+          <BooleanInput bind:value={$persistent_tabs}/>
+        </Setting>
+        
+        <Setting name="Default Tab" label="Default Tab"
+        description="The tab to load on page startup (not available with persistent tabs)">
+          <Select disabled={$persistent_tabs} bind:value={$default_tab} options={[["Home",0], ["Transactions",1], ["Settings",2]]}></Select>
+        </Setting>
+
       </div>
     </div>
   </div>
@@ -97,9 +54,12 @@
       padding-top: 0em;
     }
   }
-  h3 {
-    width: 100%;
-    display: flex;
-    justify-content: left;
+  .title{
+    border-bottom: solid 2px theme.$primary;
+    h1{
+      padding: 1em;
+      font-weight: 700;
+    }
+    margin-bottom: 1em;
   }
 </style>
