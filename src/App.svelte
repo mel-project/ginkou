@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Settings from './views/Settings.svelte';
+  import Settings from "./views/Settings.svelte";
   import BottomTabs from "./components/BottomTabs.svelte";
   import Modal from "./components/Modal.svelte";
   import RoundButton from "./components/RoundButton.svelte";
@@ -7,12 +7,12 @@
   import { currentWalletName } from "./stores";
   import Overview from "./views/Overview.svelte";
   import Transactions from "./views/Transactions.svelte";
-	import { slide } from "svelte/transition"
+  import WalletSelector from "./components/WalletSelector.svelte";
+  import { slide } from "svelte/transition";
 
-  import {last_tab, default_tab, persistent_tabs} from "./stores"
+  import { last_tab, default_tab, persistent_tabs } from "./stores";
 
-
-  if(!$persistent_tabs) $last_tab = $default_tab;
+  if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;
   let firstDialog = $currentWalletName === null;
 </script>
@@ -21,25 +21,24 @@
   <Modal open={firstDialog} onClose={() => {}} title="Get started">
     <WalletCreator onCreate={() => (firstDialog = false)} />
   </Modal>
-
   <div class="main-container">
+    <WalletSelector />
+
     {#if $last_tab === 0}
       <div transition:slide>
         <Overview />
       </div>
     {:else if $last_tab === 1}
-    <div transition:slide>
-      <Transactions />
-    </div>
+      <div transition:slide>
+        <Transactions />
+      </div>
     {:else if $last_tab === 2}
       <div transition:slide>
-        <Settings/>
+        <Settings />
       </div>
     {/if}
   </div>
-  <BottomTabs
-    bind:selected={$last_tab}
-  />
+  <BottomTabs bind:selected={$last_tab} />
 </main>
 
 <svelte:head>

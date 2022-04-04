@@ -1,49 +1,50 @@
 <script lang="ts">
-
-
-
-export let label: string = "";
-export let description: string;
-export let name: string;
-
+  export let label: string = "";
+  export let description: string;
+  export let name: string;
 </script>
 
 <template>
-    <div class="setting">
-        <div class="info">
-            <label for={name}>{label}</label>
-            <div>{description}</div>
-        </div>
-        <slot>
-        </slot>
+  <div class="setting">
+    <div class="info">
+      <label for={name}>{label}</label>
+      <div class="description">{description}</div>
     </div>
-    <!-- {Object.keys(setting)} -->
+    <slot />
+  </div>
+  <!-- {Object.keys(setting)} -->
 </template>
 
 <style lang="scss">
-@use "../res/styles/theme.scss" as theme;
-
-select, input{
+  select,
+  input {
     width: 12em;
-}
-.info{
+  }
+  .info {
     display: flex;
     flex-direction: column;
-}
-label{
+    width: 65%;
+    flex-grow: 1;
+    padding-right: 0.5rem;
+  }
+  label {
     // color: theme.$primary;
     display: inline;
     padding-right: 1em;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    font-size:1.5em;
-
-}
-.setting{
+  }
+  .setting {
     display: flex;
     width: 100%;
     justify-content: space-between;
-    padding: 1em;
-}
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 110%;
+  }
+  .description {
+    opacity: 0.8;
+    font-size: 90%;
+  }
 </style>

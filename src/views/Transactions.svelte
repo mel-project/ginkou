@@ -59,8 +59,6 @@
 </script>
 
 <div>
-  <WalletSelector />
-
   <div class="main">
     {#if $dateToTxhash}
       {#each Object.entries($dateToTxhash).sort((x, y) => Date.parse(y[0]) - Date.parse(x[0])) as [date, batch]}

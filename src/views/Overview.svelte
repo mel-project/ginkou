@@ -14,8 +14,6 @@
 </script>
 
 <div>
-  <WalletSelector />
-
   <Modal
     pullup
     title="Send assets"

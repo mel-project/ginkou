@@ -183,13 +183,13 @@
     height: 0.9rem;
   }
 
-  .loaded {
-    opacity: 1;
+  .loaded > div > div {
+    filter: none;
     transition: all 0.2s ease-in-out;
   }
 
-  .loading {
-    opacity: 0;
+  .loading > div > div {
+    filter: blur(3px);
   }
 
   b {
@@ -249,7 +249,7 @@
 
   .amount {
     text-align: right;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   .mel {

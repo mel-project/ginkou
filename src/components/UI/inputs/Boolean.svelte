@@ -25,24 +25,29 @@
 </script>
 
 <template>
-  <div class="_container">
-    <div class="input {_class}" on:click|stopPropagation>
-      <input type="checkbox"
-        name="input"
-        bind:checked={value}
-        on:click|stopPropagation
-        on:change
-        on:input
-        on:blur={handleBlur}
-        on:focus={handleFocus}
-        on:keypress={handleKeyPress}
-        {...$$props}
-        disabled={false}
-      />
-    </div>
+  <div class="form-check form-switch input {_class}" on:click|stopPropagation>
+    <input
+      type="checkbox"
+      name="input"
+      class="form-check-input"
+      role="switch"
+      bind:checked={value}
+      on:click|stopPropagation
+      on:change
+      on:input
+      on:blur={handleBlur}
+      on:focus={handleFocus}
+      on:keypress={handleKeyPress}
+      {...$$props}
+      disabled={false}
+    />
   </div>
 </template>
 
 <style lang="scss">
-  @use "../../../res/styles/theme.scss" as theme;
+  input {
+    height: 1.5rem;
+    display: block;
+    width: 2.5rem !important;
+  }
 </style>

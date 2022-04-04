@@ -153,7 +153,7 @@
   }
 
   .network-subtitle {
-    font-weight: 700;
+    font-weight: 600;
     font-size: 100%;
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -162,5 +162,6 @@
     align-items: center;
     justify-content: space-between;
     color: var(--dark-color);
+    opacity: 0.8;
   }
 </style>
