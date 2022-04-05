@@ -37,11 +37,6 @@
         ><ArrowBottomLeft width="1.5rem" height="1.5rem" />&nbsp;</RoundButton
       >
     </div>
-    <div>
-      <RoundButton secondary label="Swap" bold onClick={onSwap}
-        ><SwapVertical width="1.5rem" height="1.5rem" />&nbsp;</RoundButton
-      >
-    </div>
   </div>
 </div>
 
