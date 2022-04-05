@@ -15,6 +15,7 @@ $theme-colors: (
 :root {
   --font-family: "Public Sans", sans-serif;
   --primary-color: #{$primary};
+  --secondary-color: #660B6E;
   --dark-color: #{$dark};
   --bubble-color: #006e5410;
   --background-color: #f8fbf8;
@@ -28,4 +29,9 @@ body {
 
 html {
   font-size: 95%;
+}
+
+@font-face {
+  font-family: "Rubik";
+  src: url("/Rubik[wght].ttf") format("ttf");
 }

@@ -2,12 +2,14 @@
   import RoundButton from "../components/RoundButton.svelte";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
+  import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
 
   export let melBalance: string | null = null;
   export let otherBalance: string | null = null;
 
   export let onSend = () => {};
   export let onReceive = () => {};
+  export let onSwap = () => {};
 </script>
 
 <div class="hero">
@@ -33,6 +35,11 @@
     <div>
       <RoundButton label="Receive" outline bold onClick={onReceive}
         ><ArrowBottomLeft width="1.5rem" height="1.5rem" />&nbsp;</RoundButton
+      >
+    </div>
+    <div>
+      <RoundButton secondary label="Swap" bold onClick={onSwap}
+        ><SwapVertical width="1.5rem" height="1.5rem" />&nbsp;</RoundButton
       >
     </div>
   </div>

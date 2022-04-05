@@ -1,6 +1,7 @@
 <script lang="ts">
   export let label: string = "";
   export let outline: boolean = false;
+  export let secondary: boolean = false;
   export let bold: boolean = false;
   export let small: boolean = false;
   export let disabled: boolean = false;
@@ -12,6 +13,7 @@
   class="btn btn-round"
   class:btn-primary={!outline}
   class:btn-outline-primary={outline}
+  class:secondary
   class:heavy={bold}
   class:small
   {disabled}
@@ -29,6 +31,10 @@
     justify-content: space-around;
     align-items: center;
     height: 2.4rem;
+  }
+
+  .secondary {
+    background-color: var(--secondary-color);
   }
 
   .small {
