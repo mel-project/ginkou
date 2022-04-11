@@ -19,13 +19,13 @@
     </div>
     MEL
   </div>
-  <div class="small-balance">
+  <!-- <div class="small-balance">
     ≈ <b class="small-balance-number" class:placeholder={otherBalance === null}
       >{otherBalance || "0.00"}</b
     >
     MEL
     <span class="fw-light">other assets</span>
-  </div>
+  </div> -->
   <div class="hero-buttons">
     <div>
       <RoundButton label="Send" bold onClick={onSend}
