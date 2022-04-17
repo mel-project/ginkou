@@ -3,6 +3,7 @@
   import { slide, fade } from "svelte/transition";
   import {
     denom2str,
+    ensure_unlocked,
     prepare_tx,
     send_tx,
     unlock_wallet,
@@ -15,13 +16,14 @@
   import TxSummary from "./TxSummary.svelte";
 
   export let onTransactionSent = () => {};
+  export let noCancel = false;
 
   let recipient: string = "";
   let amount: string = "";
   let denom: string = "6d";
 
   let pending: boolean = false;
-  let preparedTx: Transaction | null = null;
+  export let preparedTx: Transaction | null = null;
 
   let sendError: string | null = null;
 
@@ -31,19 +33,11 @@
   };
 
   $: ensureUnlocked = async () => {
-    if ($currentWalletSummary && $currentWalletName) {
-      console.log("WALLET SUMMARY", $currentWalletSummary);
-      if ($currentWalletSummary.locked) {
-        let pwd = prompt("Enter wallet password");
-        if (pwd) {
-          let result = await unlock_wallet($currentWalletName, pwd).run();
-          result.ifLeft((err) => {
-            onError(err);
-            return;
-          });
-        }
-      }
-      console.log("unlocked");
+    try {
+      if ($currentWalletName && $currentWalletSummary)
+        ensure_unlocked($currentWalletName, $currentWalletSummary);
+    } catch (err) {
+      onError(err);
     }
   };
 
@@ -86,10 +80,10 @@
             onError(err);
           })
           .ifRight((_) => {
-            setTimeout(() => onTransactionSent(), 200);
+            onTransactionSent();
           });
       } finally {
-        setTimeout(() => (pending = false), 500);
+        setTimeout(() => (pending = false), 1500);
       }
     }
   };
@@ -119,13 +113,15 @@
               <Check width="1.5rem" height="1.5rem" />
             {/if}&nbsp;
           </RoundButton>
-          &nbsp;&nbsp;
-          <RoundButton
-            label="Cancel"
-            disabled={pending}
-            onClick={onCancel}
-            outline
-          />
+          {#if !noCancel}
+            &nbsp;&nbsp;
+            <RoundButton
+              label="Cancel"
+              disabled={pending}
+              onClick={onCancel}
+              outline
+            />
+          {/if}
         </div>
       </div>
     {:else}

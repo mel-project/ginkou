@@ -56,7 +56,7 @@
     height: 40vmin;
     margin: 1rem;
     mix-blend-mode: darken;
-    filter: blur(0.5px) brightness(500%);
+    filter: brightness(500%);
     opacity: 0.8;
   }
 

@@ -11,6 +11,7 @@
   import { slide } from "svelte/transition";
 
   import { last_tab, default_tab, persistent_tabs } from "./stores";
+  import Swap from "./views/Swap.svelte";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;
@@ -30,9 +31,13 @@
       </div>
     {:else if $last_tab === 1}
       <div transition:slide>
-        <Transactions />
+        <Swap />
       </div>
     {:else if $last_tab === 2}
+      <div transition:slide>
+        <Transactions />
+      </div>
+    {:else if $last_tab === 3}
       <div transition:slide>
         <Settings />
       </div>

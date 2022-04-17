@@ -79,6 +79,7 @@
     height: 100vh;
     z-index: 100;
   }
+
   .modal {
     display: block;
     z-index: 1000;

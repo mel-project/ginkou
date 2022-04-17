@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Transaction } from "../utils/types";
-  import { denom2str } from "../utils/utils";
+  import { denom2str, kind2str } from "../utils/utils";
 
   export let transaction: Transaction;
   export let txhash: string | null = null;
@@ -21,8 +21,8 @@
   <div class="header">Output coins</div>
   <table class="table table-borderless">
     <tbody>
-      {#each transaction.outputs as output}
-        {#if !simplified || output.covhash != selfAddr}
+      {#each transaction.outputs as output, i}
+        {#if !simplified || output.covhash != selfAddr || (kind2str(transaction.kind) === "Swap" && i == 0)}
           <tr class:self={output.covhash === selfAddr}>
             <td class="covhash">
               {output.covhash == selfAddr ? "(self)" : output.covhash}

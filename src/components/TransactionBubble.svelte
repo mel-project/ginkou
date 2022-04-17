@@ -188,10 +188,6 @@
     transition: all 0.2s ease-in-out;
   }
 
-  .loading > div > div {
-    filter: blur(3px);
-  }
-
   b {
     font-weight: 600;
   }

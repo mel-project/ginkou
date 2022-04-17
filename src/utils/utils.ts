@@ -18,6 +18,7 @@ import type {
   NetworkStatus,
 } from "./types";
 import Toastify from "toastify-js";
+import { walletSummaries } from "../stores";
 
 const JSONbig = JSONbiggg({ alwaysParseAsBig: true });
 
@@ -380,6 +381,42 @@ export const add_coin = (
     );
   });
 
+export interface SwapInfo {
+  result: BigNumber;
+  price_impact: BigNumber;
+  poolkey: string;
+}
+
+export const swap_info = (
+  from: string,
+  to: string,
+  value: BigNumber,
+  testnet: boolean,
+  port: number = default_port
+): EitherAsync<string, SwapInfo> =>
+  EitherAsync(async ({ liftEither, fromPromise }) => {
+    const url_swap_info = `${home_addr}:${port}/pool_info`;
+
+    // Send tx
+    const nfo: any = await fromPromise(
+      fetch_json_or_err(url_swap_info, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSONbig.stringify({
+          from: from,
+          to: to,
+          value: value,
+          testnet: testnet,
+        }),
+      })
+    );
+
+    // Runtime type check and return
+    return nfo;
+  });
+
 export const send_tx = (
   wallet_name: string,
   transaction: Transaction,
@@ -400,8 +437,49 @@ export const send_tx = (
     );
 
     // Runtime type check and return
-    return liftEither(cast_to_either(intoTxHash(e_txhash)));
+    return e_txhash;
   });
+
+export const prepare_swap_tx = (
+  wallet_name: string,
+  poolkey: string,
+  outputs: CoinData[],
+  port: number = default_port
+): EitherAsync<string, Transaction> =>
+  EitherAsync(async ({ liftEither, fromPromise }) => {
+    const url_prepare_tx = `${home_addr}:${port}/wallets/${wallet_name}/prepare-tx`;
+    // Prepare tx (get a json-encoded tx back)
+    const tx = await fromPromise(
+      fetch_json_or_err(url_prepare_tx, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSONbig.stringify({
+          kind: 0x51,
+          data: poolkey,
+          outputs,
+        }),
+      })
+    );
+
+    return tx;
+  });
+
+export const ensure_unlocked = async (
+  walletName: string,
+  walletSummary: WalletSummary
+) => {
+  if (walletSummary.locked) {
+    let pwd = prompt("Enter wallet password");
+    if (pwd) {
+      let result = await unlock_wallet(walletName, pwd).run();
+      result.ifLeft((err) => {
+        throw err;
+      });
+    }
+  }
+};
 
 export const prepare_tx = (
   wallet_name: string,

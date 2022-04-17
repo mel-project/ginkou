@@ -1,11 +1,14 @@
 <script lang="ts">
   import ViewDashboardOutline from "svelte-material-icons/ViewDashboardOutline.svelte";
   import HistoryIcon from "svelte-material-icons/History.svelte";
+  import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import CogOutline from "svelte-material-icons/CogOutline.svelte";
 
   export let selected: number = 0;
 
-  export let onSelect = (selection: number) => {selected=selection};
+  export let onSelect = (selection: number) => {
+    selected = selection;
+  };
 </script>
 
 <div class="tabs">
@@ -16,10 +19,14 @@
     <div class="tab-label">Overview</div>
   </div>
   <div class="tab" class:selected={selected === 1} on:click={() => onSelect(1)}>
+    <div class="tab-icon"><SwapVertical width="2rem" height="2rem" /></div>
+    <div class="tab-label">Swap</div>
+  </div>
+  <div class="tab" class:selected={selected === 2} on:click={() => onSelect(2)}>
     <div class="tab-icon"><HistoryIcon width="2rem" height="2rem" /></div>
     <div class="tab-label">Transactions</div>
   </div>
-  <div class="tab" class:selected={selected === 2} on:click={() => onSelect(2)}>
+  <div class="tab" class:selected={selected === 3} on:click={() => onSelect(3)}>
     <div class="tab-icon"><CogOutline width="2rem" height="2rem" /></div>
     <div class="tab-label">Settings</div>
   </div>
