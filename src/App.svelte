@@ -10,12 +10,23 @@
   import WalletSelector from "./components/WalletSelector.svelte";
   import { slide } from "svelte/transition";
 
-  import { last_tab, default_tab, persistent_tabs } from "./stores";
+  import { last_tab, default_tab, persistent_tabs, getWalletSummaries } from "./stores";
   import Swap from "./views/Swap.svelte";
+import { onMount } from "svelte";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;
-  let firstDialog = $currentWalletName === null;
+  let firstDialog = false;
+  onMount(async ()=>{
+    let either = await getWalletSummaries();
+    let list = either.unsafeCoerce() 
+    console.log(list)
+    $currentWalletName =  $currentWalletName || Object.keys(list)[0] || null;
+    console.log($currentWalletName)
+    firstDialog = $currentWalletName === null;
+  
+  })
+  
 </script>
 
 <main>
