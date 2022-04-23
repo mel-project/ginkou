@@ -9,7 +9,7 @@
 </script>
 
 {#if open}
-  <div class="blocker" transition:fade on:click={() => onClose()}>
+  <div class="blocker" on:click={() => onClose()}>
     <div class="modal" tabindex="-1">
       <div class="modal-dialog">
         <div
