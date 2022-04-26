@@ -4,7 +4,7 @@
   import RoundButton from "./RoundButton.svelte";
   import PlusCircleOutline from "svelte-material-icons/PlusCircleOutline.svelte";
   import DownloadCircleOutline from "svelte-material-icons/DownloadCircleOutline.svelte";
-  import { new_wallet } from "../utils/utils";
+  import { new_wallet, showToast } from "../utils/utils";
   import { currentWalletName } from "../stores";
 
   let state = "start";
@@ -18,6 +18,10 @@
   $: doCreate = async () => {
     pending = true;
     try {
+      if (newPassword === "") {
+        alert("must set a passphrase");
+        return;
+      }
       let lala = await new_wallet(newName, testnet, newPassword).run();
       lala
         .ifLeft((err) => alert(err))
@@ -46,7 +50,11 @@
         </div>
       </div>
 
-      <div class="card">
+      <div
+        class="card"
+        on:click={() =>
+          showToast("Not supported yet. Will be added in version 0.3.0")}
+      >
         <div class="card-body">
           <h5 class="card-title">
             <DownloadCircleOutline width="3rem" height="3rem" />
