@@ -14,7 +14,7 @@
           ≈ <b>{approxMelValue}</b> MEL
         </div>{/if}
     </div>
-    <div class="send"><ArrowTopRight width="1.5rem" height="1.5rem" /></div>
+    <!-- <div class="send"><ArrowTopRight width="1.5rem" height="1.5rem" /></div> -->
   </div>
 </div>
 

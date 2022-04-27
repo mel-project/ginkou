@@ -18,7 +18,7 @@ export function persistentWritable<T>(
   initValue = (initString && JSONbig.parse(initString)) || default_value;
   let w = writable(initValue);
   w.subscribe((value: T) => {
-    console.log("storing", value);
+    // console.log("storing", value);
     localStorage.setItem(storage_name, JSONbig.stringify(value));
   });
   return w;
@@ -28,7 +28,7 @@ export const getWalletSummaries = async ()=>{
   const list = await list_wallets();
   list
     .ifLeft((e) =>
-      console.log(`error encountered in list_wallets: ${JSON.stringify(e)}`)
+      console.error(`error encountered in list_wallets: ${JSON.stringify(e)}`)
     )
     .map((list) => {
       // console.info("obtained list_wallets");

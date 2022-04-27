@@ -31,11 +31,21 @@
           bind:value={$default_tab}
           options={[
             ["Home", 0],
-            ["Transactions", 1],
-            ["Settings", 2],
+            ["Swap", 1],
+            ["Transactions", 2],
+            ["Settings", 3],
           ]}
         />
       </Setting>
+      <Setting
+        name="Download Logs"
+        label="Download Logs"
+        description="CAUTION: These logs might contain deanonymizing information like your wallet addresses"
+      >
+      <Button on:click={()=>window._ipc_handler('download-logs')}>
+        Download
+      </Button>
+    </Setting>
     </div>
   </div>
 </template>

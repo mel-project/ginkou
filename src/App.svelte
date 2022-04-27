@@ -12,8 +12,8 @@
 
   import { last_tab, default_tab, persistent_tabs, getWalletSummaries } from "./stores";
   import Swap from "./views/Swap.svelte";
-import { onMount } from "svelte";
-
+  import { onMount } from "svelte";
+  
   if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;
   let firstDialog = false;
@@ -30,7 +30,7 @@ import { onMount } from "svelte";
 </script>
 
 <main>
-  <Modal open={firstDialog} onClose={() => {}} title="Get started">
+  <Modal open={firstDialog} onClose={() => {firstDialog = false}} title="Get started">
     <WalletCreator onCreate={() => (firstDialog = false)} />
   </Modal>
   <div class="main-container">

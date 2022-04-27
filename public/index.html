@@ -13,6 +13,24 @@
 	<link rel='stylesheet' href='/publicsans.css'>
 	<link rel='stylesheet' href='/rubik.css'>
 	<script defer src='/build/bundle.js'></script>
+	<script>
+		function log(mode) {
+			let logger = console[mode]
+			function inner(){
+				_ipc_handler(log,{loglevel:mode, args: arguments})
+				logger(...arguments)
+			}
+			return inner
+		}  
+		$log = log('log')
+		$debug = log('debug')
+		$error = log('error')
+		$info = log('info')
+		$warn = log('warn')
+
+		let temp = ()=>{};
+		window._ipc_handler = window._ipc_handler || temp;
+	</script>
 </head>
 
 <body>
