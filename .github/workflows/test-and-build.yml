@@ -57,11 +57,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      #      - name: Run NPM Install
-      #        run: npm ci --prefix ginkou
+      - name: Show NPM Cache Directory
+        run: npm config get cache
 
       - name: Run NPM Install
-        run: npm install
+        run: npm ci
+
+#      - name: Run NPM Install
+#        run: npm install
 
 #      - name: Run NPM Build
 #        env:
