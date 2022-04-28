@@ -47,7 +47,7 @@ jobs:
         - /var/lib/docker:/var/lib/docker
 
     needs:
-      - ginkou-test
+      - test
 
     steps:
       - name: Checkout repository
