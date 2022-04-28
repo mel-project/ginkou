@@ -63,7 +63,7 @@ jobs:
       - name: Run NPM Install
         run: npm install
 
-      - name: Run NPM Build
-        env:
-          BUILD: "development"
-        run: npm run build
+#      - name: Run NPM Build
+#        env:
+#          BUILD: "development"
+#        run: npm run build
