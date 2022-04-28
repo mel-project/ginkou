@@ -58,13 +58,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: List NPM Contents
-        run: ls -la /usr/local/npm-cache
+        run: sudo npm install -g pnpm@next-7
 
-      - name: List Docker Contents
-        run: ls -la /var/lib/docker
+      - name: Run PNPM Install
+        run: pnpm install
 
-      - name: Run NPM Install
-        run: npm ci
+#      - name: Run NPM Install
+#        run: npm ci
 
 #      - name: Run NPM Install
 #        run: npm install
