@@ -57,8 +57,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Show NPM Cache Directory
-        run: npm config get cache
+      - name: List Contents
+        run: ls -la /usr/local/npm-cache
 
       - name: Run NPM Install
         run: npm ci
