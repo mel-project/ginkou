@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "build": "mkdir -p public/build && rollup -c",
+    "dev": "mkdir -p public/build && rollup -c -w",
+    "ci-build": "rollup -c -w",
     "start": "sirv public --no-clear --host",
     "test": "jest"
   },
