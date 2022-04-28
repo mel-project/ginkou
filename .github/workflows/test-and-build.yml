@@ -57,8 +57,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: List Contents
+      - name: List NPM Contents
         run: ls -la /usr/local/npm-cache
+
+      - name: List Docker Contents
+        run: ls -la /var/lib/docker
 
       - name: Run NPM Install
         run: npm ci
