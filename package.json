@@ -5,7 +5,7 @@
   "scripts": {
     "build": "mkdir -p public/build && rollup -c",
     "dev": "mkdir -p public/build && rollup -c -w",
-    "ci-build": "rollup -c -w",
+    "ci-build": "rollup -c",
     "start": "sirv public --no-clear --host",
     "test": "jest"
   },
