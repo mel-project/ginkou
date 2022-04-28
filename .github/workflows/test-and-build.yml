@@ -34,7 +34,7 @@ jobs:
         run: yarn install --prefer-offline
 
       - name: Run NPM Test
-        run: npm run test --prefix ginkou
+        run: npm run test
 
 
   build:
