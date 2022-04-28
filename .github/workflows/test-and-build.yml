@@ -56,6 +56,9 @@ jobs:
       - name: Create Build Directory
         run: mkdir -p public/build
 
+      - name: Change Directory Permissions
+        run: chmod 777 public/build
+
       - name: Run NPM Build
         env:
           BUILD: "development"
