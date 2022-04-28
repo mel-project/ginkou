@@ -8,22 +8,45 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+#  build:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: actions/setup-node@v2
+#
+#      - name: Update Apt
+#        run: sudo apt update
+#
+#      - name: Install NPM Packages
+#        run: npm install
+#
+#      - name: Run NPM Tests
+#        run: npm run test
+#
+#      - name: Run NPM Build
+#        run: npm run build
 
-    runs-on: ubuntu-latest
+  ginkou-build:
+    runs-on: self-hosted
+
+    container:
+      image: node:latest
+      volumes:
+        - /usr/local/npm-cache:/usr/local/npm-cache
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Update Apt
-        run: sudo apt update
+      #      - name: Run NPM Install
+      #        run: npm ci --prefix ginkou
 
-      - name: Install NPM Packages
-        run: npm install
-
-      - name: Run NPM Tests
-        run: npm run test
+      - name: Run NPM Install
+        run: npm install --prefix ginkou
 
       - name: Run NPM Build
-        run: npm run build
+        env:
+          BUILD: "development"
+        run: npm run build --prefix ginkou
