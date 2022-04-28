@@ -44,9 +44,9 @@ jobs:
       #        run: npm ci --prefix ginkou
 
       - name: Run NPM Install
-        run: npm install --prefix ginkou
+        run: npm install
 
       - name: Run NPM Build
         env:
           BUILD: "development"
-        run: npm run build --prefix ginkou
+        run: npm run build
