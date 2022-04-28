@@ -6,35 +6,52 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  npm_config_cache: "/usr/local/npm-cache"
 
 jobs:
-#  build:
+#  test:
+#    runs-on: self-hosted
 #
-#    runs-on: ubuntu-latest
+#    container:
+#      image: node:latest
+#      volumes:
+#        - /usr/local/npm-cache:/usr/local/npm-cache
+#        - /var/lib/docker:/var/lib/docker
 #
 #    steps:
-#      - uses: actions/checkout@v3
-#      - uses: actions/setup-node@v2
+#      - name: Currently Disabled
+#        run: echo "Tests are currently disabled."
 #
-#      - name: Update Apt
-#        run: sudo apt update
-#
-#      - name: Install NPM Packages
-#        run: npm install
-#
-#      - name: Run NPM Tests
-#        run: npm run test
-#
-#      - name: Run NPM Build
-#        run: npm run build
+#  #      - name: Checkout repository
+#  #        uses: actions/checkout@v3
+#  #
+#  #      - name: Update Apt
+#  #        run: sudo apt update
+#  #
+#  #      - name: Install NPM
+#  #        run: sudo apt install -y npm
+#  #
+#  #      - name: Clone Ginkou Submodule
+#  #        run: git submodule update --init --recursive --remote ginkou
+#  #
+#  #      - name: Run NPM Install
+#  #        run: npm install --prefix ginkou
+#  #
+#  #      - name: Run NPM Test
+#  #        run: npm run test --prefix ginkou
 
-  ginkou-build:
+
+  build:
     runs-on: self-hosted
 
     container:
       image: node:latest
       volumes:
         - /usr/local/npm-cache:/usr/local/npm-cache
+        - /var/lib/docker:/var/lib/docker
+
+#    needs:
+#      - ginkou-test
 
     steps:
       - name: Checkout repository
