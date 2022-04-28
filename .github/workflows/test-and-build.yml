@@ -1,6 +1,10 @@
 name: TestAndBuild
 
 on:
+  push:
+    branches:
+      - master
+
   pull_request:
     branches: [ master ]
 
@@ -10,36 +14,27 @@ env:
   YARN_CACHE_FOLDER: "/usr/local/npm-cache"
 
 jobs:
-#  test:
-#    runs-on: self-hosted
-#
-#    container:
-#      image: node:latest
-#      volumes:
-#        - /usr/local/npm-cache:/usr/local/npm-cache
-#        - /var/lib/docker:/var/lib/docker
-#
-#    steps:
+  test:
+    runs-on: self-hosted
+
+    container:
+      image: node:latest
+      volumes:
+        - /usr/local/npm-cache:/usr/local/npm-cache
+        - /var/lib/docker:/var/lib/docker
+
+    steps:
 #      - name: Currently Disabled
 #        run: echo "Tests are currently disabled."
-#
-#  #      - name: Checkout repository
-#  #        uses: actions/checkout@v3
-#  #
-#  #      - name: Update Apt
-#  #        run: sudo apt update
-#  #
-#  #      - name: Install NPM
-#  #        run: sudo apt install -y npm
-#  #
-#  #      - name: Clone Ginkou Submodule
-#  #        run: git submodule update --init --recursive --remote ginkou
-#  #
-#  #      - name: Run NPM Install
-#  #        run: npm install --prefix ginkou
-#  #
-#  #      - name: Run NPM Test
-#  #        run: npm run test --prefix ginkou
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run NPM Install
+        run: yarn install --prefer-offline
+
+      - name: Run NPM Test
+        run: npm run test --prefix ginkou
 
 
   build:
@@ -51,8 +46,8 @@ jobs:
         - /usr/local/npm-cache:/usr/local/npm-cache
         - /var/lib/docker:/var/lib/docker
 
-#    needs:
-#      - ginkou-test
+    needs:
+      - ginkou-test
 
     steps:
       - name: Checkout repository
