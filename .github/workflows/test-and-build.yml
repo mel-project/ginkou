@@ -6,7 +6,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-#  npm_config_cache: "/usr/local/npm-cache"
+  npm_config_cache: "/usr/local/npm-cache"
 
 jobs:
 #  test:
@@ -47,7 +47,7 @@ jobs:
     container:
       image: node:latest
       volumes:
-#        - /usr/local/npm-cache:/usr/local/npm-cache
+        - /usr/local/npm-cache:/usr/local/npm-cache
         - /var/lib/docker:/var/lib/docker
 
 #    needs:
