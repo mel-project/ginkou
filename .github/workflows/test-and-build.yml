@@ -57,7 +57,7 @@ jobs:
         run: mkdir -p public/build
 
       - name: Change Directory Permissions
-        run: chmod 777 public/build
+        run: chown $USER:$USER public/build
 
       - name: Run NPM Build
         env:
