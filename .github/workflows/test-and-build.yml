@@ -57,8 +57,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: List NPM Contents
-        run: sudo npm install -g pnpm@next-7
+      - name: Install PNPM
+        run: npm install -g pnpm@next-7
 
       - name: Run PNPM Install
         run: pnpm install
