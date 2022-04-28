@@ -7,6 +7,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   npm_config_cache: "/usr/local/npm-cache"
+  yarn_cache_folder: "/usr/local/npm-cache"
 
 jobs:
 #  test:
