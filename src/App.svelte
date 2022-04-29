@@ -9,10 +9,10 @@
   import Transactions from "./views/Transactions.svelte";
   import WalletSelector from "./components/WalletSelector.svelte";
   import { slide } from "svelte/transition";
-
   import { last_tab, default_tab, persistent_tabs, getWalletSummaries } from "./stores";
   import Swap from "./views/Swap.svelte";
 import { onMount } from "svelte";
+import PasswordPrompt from "./components/PasswordPrompt.svelte";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;
@@ -26,7 +26,9 @@ import { onMount } from "svelte";
     firstDialog = $currentWalletName === null;
   
   })
-  
+  let handleEvent = (event: CustomEvent)=>{
+    event.detail._callback()
+  }
 </script>
 
 <main>
@@ -34,6 +36,8 @@ import { onMount } from "svelte";
     <WalletCreator onCreate={() => (firstDialog = false)} />
   </Modal>
   <div class="main-container">
+    <!-- <PasswordPrompt on:idk={handleEvent}/> -->
+
     <WalletSelector />
 
     {#if $last_tab === 0}
