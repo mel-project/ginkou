@@ -9,7 +9,7 @@
   import SendDialog from "../components/SendDialog.svelte";
   import ReceiveDialog from "../components/ReceiveDialog.svelte";
 
-  let sendOpen = false;
+  let sendOpen = true;
   let recvOpen = false;
 </script>
 

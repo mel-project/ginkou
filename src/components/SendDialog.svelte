@@ -9,12 +9,14 @@
     unlock_wallet,
   } from "../utils/utils";
   import RoundButton from "./RoundButton.svelte";
+  import QrScanWindow from "./QrScanWindow.svelte";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
+  import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
   import BigNumber from "bignumber.js";
   import type { Transaction } from "../utils/types";
   import TxSummary from "./TxSummary.svelte";
-
+  import { onMount, tick } from "svelte";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
@@ -87,6 +89,8 @@
       }
     }
   };
+
+  let scannerOpen = false;
 </script>
 
 <div on:click={() => (sendError = null)}>
@@ -124,10 +128,20 @@
           {/if}
         </div>
       </div>
+    {:else if scannerOpen}
+      <div class="qr-canvas-wrap" transition:slide>
+        <QrScanWindow
+          onScan={(s) => {
+            recipient = s;
+            scannerOpen = false;
+          }}
+        />
+      </div>
     {:else}
       <div transition:slide>
         <div class="section">
           <div class="header">Recipient 1</div>
+
           <div class="input-group">
             <span class="input-group-text">Recipient</span>
             <input
@@ -137,6 +151,12 @@
               disabled={pending}
               bind:value={recipient}
             />
+            <button
+              class="btn btn-outline-primary qrbutton"
+              on:click={() => (scannerOpen = true)}
+            >
+              <QrcodeScan width="1.6rem" height="1.6rem" />
+            </button>
           </div>
 
           <div class="input-group">
@@ -188,6 +208,12 @@
     width: 6rem;
   }
 
+  .qrbutton {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
   .spinner-border {
     height: 1.5rem;
     width: 1.5rem;
@@ -209,6 +235,21 @@
   }
   .form-control {
     flex-grow: 1;
+  }
+
+  .qr-canvas {
+    width: 40vmin;
+    height: 40vmin;
+    object-fit: cover;
+    border-radius: 1rem;
+    border: var(--primary-color) 0.2rem solid;
+  }
+
+  .qr-canvas-wrap {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .section {
