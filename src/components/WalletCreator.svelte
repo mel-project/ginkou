@@ -19,12 +19,12 @@
     pending = true;
     try {
       if (newPassword === "") {
-        alert("must set a passphrase");
+        showToast("must set a passphrase");
         return;
       }
       let lala = await new_wallet(newName, testnet, newPassword).run();
       lala
-        .ifLeft((err) => alert(err))
+        .ifLeft((err) => showToast(err))
         .ifRight((_) => {
           $currentWalletName = newName;
           onCreate();
@@ -37,7 +37,7 @@
 
 <div>
   {#if state == "start"}
-    <div class="page1" transition:slide>
+    <div class="page1">
       <div class="card" on:click={() => (state = "create")}>
         <div class="card-body">
           <h5 class="card-title">
@@ -69,7 +69,7 @@
   {/if}
 
   {#if state == "create"}
-    <div class="createpage" transition:slide>
+    <div class="createpage">
       <div class="input-group">
         <span class="input-group-text">Name</span>
         <input

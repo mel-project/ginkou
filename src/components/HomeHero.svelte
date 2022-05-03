@@ -47,7 +47,7 @@
     padding-right: 2.5rem;
   }
   .big-balance {
-    font-size: calc(min(3rem, 10vw));
+    font-size: calc(min(3rem, 9.5vw));
     font-family: "Rubik";
     color: var(--dark-color);
     font-weight: 300;

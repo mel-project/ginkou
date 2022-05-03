@@ -9,7 +9,7 @@
   import SendDialog from "../components/SendDialog.svelte";
   import ReceiveDialog from "../components/ReceiveDialog.svelte";
 
-  let sendOpen = true;
+  let sendOpen = false;
   let recvOpen = false;
 </script>
 
@@ -20,7 +20,12 @@
     open={sendOpen}
     onClose={() => (sendOpen = false)}
   >
-    <SendDialog onTransactionSent={() => (sendOpen = false)} />
+    <SendDialog
+      onTransactionSent={() => {
+        console.log("TRANSACTION IS SENT!");
+        sendOpen = false;
+      }}
+    />
   </Modal>
 
   <Modal

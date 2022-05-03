@@ -33,7 +33,7 @@
   };
 </script>
 
-<div transition:slide class="root">
+<div class="root">
   <img class="qrcode" src={qrCodeUrl} alt="qr code" />
   <div class="qrblurb">Scan for wallet address</div>
   <div class="address" on:click={onCopy}>

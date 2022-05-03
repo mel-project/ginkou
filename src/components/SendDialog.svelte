@@ -95,14 +95,14 @@
 
 <div on:click={() => (sendError = null)}>
   {#if sendError}
-    <div class="alert alert-danger" role="alert" transition:slide>
+    <div class="alert alert-danger" role="alert">
       {sendError}
     </div>
   {/if}
 
   {#if $currentWalletSummary}
     {#if preparedTx}
-      <div transition:slide>
+      <div>
         <TxSummary
           transaction={preparedTx}
           selfAddr={$currentWalletSummary.address}
@@ -129,7 +129,7 @@
         </div>
       </div>
     {:else if scannerOpen}
-      <div class="qr-canvas-wrap" transition:slide>
+      <div class="qr-canvas-wrap">
         <QrScanWindow
           onScan={(s) => {
             recipient = s;
@@ -138,7 +138,7 @@
         />
       </div>
     {:else}
-      <div transition:slide>
+      <div>
         <div class="section">
           <div class="header">Recipient 1</div>
 
