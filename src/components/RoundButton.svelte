@@ -1,6 +1,5 @@
 <script lang="ts">
-import { onMount } from "svelte";
-
+  import { onMount } from "svelte";
 
   export let label: string = "";
   export let outline: boolean = false;
@@ -8,19 +7,21 @@ import { onMount } from "svelte";
   export let bold: boolean = false;
   export let small: boolean = false;
   export let fill: boolean = false;
+  export let submit: boolean = false;
   export let disabled: boolean = false;
-  export let onClick: (()=>void) | undefined = undefined;
+  export let onClick: (() => void) | undefined = undefined;
 
-  onMount(()=>{
-    if(onClick){
-      console.warn("`RoundButton.svelte` attribute `onClick` will be depreciated")
+  onMount(() => {
+    if (onClick) {
+      console.warn(
+        "`RoundButton.svelte` attribute `onClick` will be depreciated"
+      );
     }
-  })
-
+  });
 </script>
 
 <button
-  type="button"
+  type={submit ? "submit" : "button"}
   class="btn btn-round"
   class:btn-primary={!outline}
   class:btn-outline-primary={outline}
@@ -45,7 +46,7 @@ import { onMount } from "svelte";
     align-items: center;
     height: 2.4rem;
   }
-  .fill{
+  .fill {
     width: 100%;
     height: 100%;
     justify-content: center;

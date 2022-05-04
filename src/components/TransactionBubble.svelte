@@ -23,8 +23,9 @@
   import TxSummary from "./TxSummary.svelte";
   const JBig = JSONbig({ alwaysParseAsBig: true });
 
-  let balance: Writable<[boolean, { [key: string]: BigNumber }] | null> =
-    writable(null);
+  let balance: Writable<
+    [boolean, number, { [key: string]: BigNumber }] | null
+  > = writable(null);
 
   // Fire off whe nthis element is first observaable
   const onIntersection = (entries: any, observer: any) => {
@@ -67,7 +68,7 @@
     if ($balance) {
       let seenOut = false;
       let seenIn = false;
-      Object.entries($balance[1]).forEach((a) => {
+      Object.entries($balance[2]).forEach((a) => {
         if (a[1].lt(0)) {
           seenOut = true;
         }
@@ -75,7 +76,7 @@
           seenIn = true;
         }
       });
-      if (seenIn && seenOut) {
+      if (kind2str(new BigNumber($balance[1])) === "Swap") {
         rxText = "Swap funds";
         direction = 0;
       } else if (seenOut) {
@@ -150,7 +151,7 @@
     </div>
     <div class="amount">
       {#if $balance}
-        {#each Object.entries($balance[1]) as [denom, num]}
+        {#each Object.entries($balance[2]) as [denom, num]}
           {#if num.toNumber()}
             <div>
               {#if num.gte(0)}
