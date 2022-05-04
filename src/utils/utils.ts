@@ -306,7 +306,11 @@ export const new_wallet = (
     await fromPromise(
       fetch_text_or_err(url, {
         method: "PUT",
-        body: JSONbig.stringify({ testnet: use_testnet, password: password, secret }),
+        body: JSONbig.stringify({
+          testnet: use_testnet,
+          password: password,
+          secret,
+        }),
       })
     );
 
@@ -319,8 +323,7 @@ export const lock_wallet = (
   port: number = default_port
 ): EitherAsync<string, void> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
-
-    console.log('locking')
+    console.log("locking");
     const url = `${home_addr}:${port}/wallets/${wallet_name}/lock`;
     await fromPromise(
       fetch_text_or_err(url, {
@@ -469,23 +472,28 @@ export const prepare_swap_tx = (
 
     return tx;
   });
-export function WaitableEvent<T> (type: string,dispatcher: EventDispatcher, callback: PromiseCallback<T>): 
-  (detail?: any, timeout?: number)=>Promise<T> {
-  return (detail={},timeout)=>
-       new Promise((resolve, reject)=>{
-          if(timeout) setTimeout(()=>reject("Promise Failure"), timeout);
-          dispatcher(type, Object.assign(detail, {_callback: callback(resolve, reject)}))
-  })
-  
+export function WaitableEvent<T>(
+  type: string,
+  dispatcher: EventDispatcher,
+  callback: PromiseCallback<T>
+): (detail?: any, timeout?: number) => Promise<T> {
+  return (detail = {}, timeout) =>
+    new Promise((resolve, reject) => {
+      if (timeout) setTimeout(() => reject("Promise Failure"), timeout);
+      dispatcher(
+        type,
+        Object.assign(detail, { _callback: callback(resolve, reject) })
+      );
+    });
 }
 export const ensure_unlocked = async (
   walletName: string,
   walletSummary: WalletSummary,
-  pwd: string,
+  pwd: string
 ) => {
   if (walletSummary.locked) {
     if (pwd != undefined) {
-      console.log('unlock wallet')
+      console.log("unlock wallet");
       let result = await unlock_wallet(walletName, pwd).run();
       result.ifLeft((err) => {
         throw err;
@@ -562,7 +570,7 @@ export const transaction_balance = (
   walletName: string,
   txhash: string,
   port: number = default_port
-): EitherAsync<string, [boolean, { [key: string]: BigNumber }]> =>
+): EitherAsync<string, [boolean, number, { [key: string]: BigNumber }]> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
     const url = `${home_addr}:${port}/wallets/${walletName}/transactions/${txhash}/balance`;
     const res = await fromPromise(fetch_json_or_err(url, { method: "GET" }));
