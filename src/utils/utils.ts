@@ -352,6 +352,26 @@ export const unlock_wallet = (
     return liftEither(Right(undefined));
   });
 
+  // Unlocks a wallet.
+export const export_sk = (
+  wallet_name: string,
+  password: string,
+  port: number = default_port
+): EitherAsync<string, void> =>
+  EitherAsync(async ({ liftEither, fromPromise }) => {
+    const url = `${home_addr}:${port}/wallets/${wallet_name}/export-sk`;
+    await fromPromise(
+      fetch_text_or_err(url, {
+        method: "POST",
+        body: JSONbig.stringify({
+          password: password,
+        }),
+      })
+    );
+
+    return liftEither(Right(undefined));
+  });
+
 // // Poll daemon to check tx until it is confirmed
 // // TODO handle when daemon returns failed tx
 // export const confirm_tx = async (

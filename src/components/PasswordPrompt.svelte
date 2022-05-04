@@ -5,9 +5,9 @@ import { ensure_unlocked } from "../utils/utils";
 import { slide } from "svelte/transition";
 
 import RoundButton from "../components/RoundButton.svelte";
-let password="";
+export let password="";
 let unsuccessful: Error | undefined;
-
+let return_password = false;
 export let try_unlock = async (password: string) =>{
     if($currentWalletName && $currentWalletSummary){
         try{
