@@ -1,7 +1,7 @@
 <script lang="ts">
   export let open: boolean;
-  import { fade } from "svelte/transition";
-  export let onClose: () => any = ()=>{};
+  import { slide, fade } from "svelte/transition";
+  export let onClose: () => any = () => {};
 
   export let title: string;
 
@@ -15,6 +15,7 @@
         <div
           class="modal-content"
           class:pullup
+          transition:fade
           on:click={(e) => e.stopPropagation()}
         >
           <div class="modal-header">

@@ -5,7 +5,6 @@
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
   import Plus from "svelte-material-icons/Plus.svelte";
   import Modal from "./Modal.svelte";
-  import { slide } from "svelte/transition";
   import {
     currentWalletName,
     currentWalletSummary,
@@ -69,7 +68,7 @@
       >
       <WalletCreator onCreate={() => (creatorOpen = false)} />
     {:else}
-      <div transition:slide>
+      <div>
         <div class="network-subtitle">
           <div>Mainnet</div>
           <RoundButton
