@@ -298,6 +298,7 @@ export const new_wallet = (
   wallet_name: string,
   use_testnet: boolean,
   password: string,
+  secret?: string,
   port: number = default_port
 ): EitherAsync<string, void> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
@@ -305,7 +306,7 @@ export const new_wallet = (
     await fromPromise(
       fetch_text_or_err(url, {
         method: "PUT",
-        body: JSONbig.stringify({ testnet: use_testnet, password: password }),
+        body: JSONbig.stringify({ testnet: use_testnet, password: password, secret }),
       })
     );
 

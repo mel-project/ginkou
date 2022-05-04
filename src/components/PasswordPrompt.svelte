@@ -1,27 +1,47 @@
 <script lang="ts">
 	import TextField from './UI/inputs/TextField.svelte';
-import { createEventDispatcher } from "svelte";
 import { currentWalletName, currentWalletSummary } from "../stores";
-import { ensure_unlocked, WaitableEvent } from "../utils/utils";
+import { ensure_unlocked } from "../utils/utils";
+import { slide } from "svelte/transition";
+
 import RoundButton from "../components/RoundButton.svelte";
 let password="";
+let unsuccessful: Error | undefined;
 
-
-export let try_unlock = (password: string) =>{
+export let try_unlock = async (password: string) =>{
     if($currentWalletName && $currentWalletSummary){
-        ensure_unlocked($currentWalletName, $currentWalletSummary, password);
+        try{
+            await ensure_unlocked($currentWalletName, $currentWalletSummary, password);
+        }
+        catch(err){
+            unsuccessful = err as Error
+        }
     }
 }
 
 
+let handleInputClick = ()=>{
+    if(unsuccessful){
+        password = ""
+        unsuccessful = undefined;
+    }
+}
 </script>
 
 <template>
     <div class="content">
         <div class="logo">
             <img src="images/logo-only.png" alt="" srcset="">
-        </div>
-        <TextField bind:value={password} label="password: " class="underlined"></TextField>
+        </div>        
+        {#if unsuccessful}
+            <div class="alert-container centered">
+                <div class="alert alert-danger" transition:slide role="alert">
+                    {unsuccessful}
+                </div>
+            </div>
+        {/if}
+        <TextField bind:value={password} on:click={()=>handleInputClick()} label="password: " class="underlined"></TextField>
+
         <div class="unlock-wrapper">
             <div class="unlock">
                 <RoundButton on:click={(x)=>try_unlock(password)} fill>Unlock</RoundButton>
@@ -32,6 +52,15 @@ export let try_unlock = (password: string) =>{
 </template>
 
 <style lang="scss">
+    @use "../res/styles/alerts.scss";
+    .alert-container.centered{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    .alert{
+        width: 50%;
+    }
     .logo{
         width: 100%;
         display: flex;

@@ -186,10 +186,8 @@
 </div>
 
 <style lang="scss">
-  .alert {
-    border-radius: 1rem;
-    margin-bottom: 2rem;
-  }
+  @use "../res/styles/alerts.scss";
+ 
   .header {
     font-weight: 600;
     opacity: 0.8;

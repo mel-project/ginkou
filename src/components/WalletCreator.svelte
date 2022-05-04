@@ -14,15 +14,16 @@
   let newPassword = "";
   let pending = false;
   let testnet = false;
-
-  $: doCreate = async () => {
+  let secretKey = "";
+  $: doCreate = async (secret?: string) => {
+    secret = secret || undefined
     pending = true;
     try {
       if (newPassword === "") {
         showToast("must set a passphrase");
         return;
       }
-      let lala = await new_wallet(newName, testnet, newPassword).run();
+      let lala = await new_wallet(newName, testnet, newPassword, secret).run();
       lala
         .ifLeft((err) => showToast(err))
         .ifRight((_) => {
@@ -33,6 +34,16 @@
       pending = false;
     }
   };
+
+  let doImport = (secret: string)=>{
+    if(secret === ""){
+      showToast("must input a secret key");
+      return;
+    }
+    doCreate(secret)
+
+  }
+
 </script>
 
 <div>
@@ -52,8 +63,7 @@
 
       <div
         class="card"
-        on:click={() =>
-          showToast("Not supported yet. Will be added in version 0.3.0")}
+        on:click={() => state="import"}
       >
         <div class="card-body">
           <h5 class="card-title">
@@ -104,7 +114,54 @@
         />
       </div>
     </div>
-  {/if}
+    {:else if state == "import"}
+
+    <div class="createpage">
+      <div class="input-group">
+        <span class="input-group-text">Name</span>
+        <input
+          type="text"
+          placeholder="Enter an arbitrary name"
+          class="form-control"
+          bind:value={newName}
+        />
+      </div>
+      
+      <div class="input-group">
+        <span class="input-group-text">Secret Key</span>
+        <input
+          type="password"
+          placeholder="Enter your wallets Secret Key"
+          class="form-control"
+          bind:value={secretKey}
+        />
+      </div>
+      <div class="input-group">
+        <span class="input-group-text">Passphrase</span>
+        <input
+          type="password"
+          placeholder="Enter a strong passphrase"
+          class="form-control"
+          bind:value={newPassword}
+        />
+      </div>
+      <div class="final">
+        <RoundButton
+          label="Import"
+          onClick={()=>doImport(secretKey)}
+          disabled={pending}
+        />
+        &nbsp;&nbsp;
+        <RoundButton
+          label="Cancel"
+          onClick={() => (state = "start")}
+          outline
+          disabled={pending}
+        />
+      </div>
+  </div>
+    {/if}
+  
 </div>
 
 <style lang="scss">
