@@ -19,6 +19,7 @@ import type {
 } from "./types";
 import Toastify from "toastify-js";
 import { walletSummaries } from "../stores";
+import { EventDispatcher, PromiseCallback } from "./svelte-types";
 
 const JSONbig = JSONbiggg({ alwaysParseAsBig: true });
 
@@ -297,6 +298,7 @@ export const new_wallet = (
   wallet_name: string,
   use_testnet: boolean,
   password: string,
+  secret?: string,
   port: number = default_port
 ): EitherAsync<string, void> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
@@ -304,7 +306,7 @@ export const new_wallet = (
     await fromPromise(
       fetch_text_or_err(url, {
         method: "PUT",
-        body: JSONbig.stringify({ testnet: use_testnet, password: password }),
+        body: JSONbig.stringify({ testnet: use_testnet, password: password, secret }),
       })
     );
 
@@ -317,6 +319,8 @@ export const lock_wallet = (
   port: number = default_port
 ): EitherAsync<string, void> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
+
+    console.log('locking')
     const url = `${home_addr}:${port}/wallets/${wallet_name}/lock`;
     await fromPromise(
       fetch_text_or_err(url, {
@@ -465,14 +469,23 @@ export const prepare_swap_tx = (
 
     return tx;
   });
-
+export function WaitableEvent<T> (type: string,dispatcher: EventDispatcher, callback: PromiseCallback<T>): 
+  (detail?: any, timeout?: number)=>Promise<T> {
+  return (detail={},timeout)=>
+       new Promise((resolve, reject)=>{
+          if(timeout) setTimeout(()=>reject("Promise Failure"), timeout);
+          dispatcher(type, Object.assign(detail, {_callback: callback(resolve, reject)}))
+  })
+  
+}
 export const ensure_unlocked = async (
   walletName: string,
-  walletSummary: WalletSummary
+  walletSummary: WalletSummary,
+  pwd: string,
 ) => {
   if (walletSummary.locked) {
-    let pwd = prompt("Enter wallet password");
-    if (pwd) {
+    if (pwd != undefined) {
+      console.log('unlock wallet')
       let result = await unlock_wallet(walletName, pwd).run();
       result.ifLeft((err) => {
         throw err;

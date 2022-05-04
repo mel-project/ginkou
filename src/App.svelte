@@ -4,18 +4,29 @@
   import Modal from "./components/Modal.svelte";
   import RoundButton from "./components/RoundButton.svelte";
   import WalletCreator from "./components/WalletCreator.svelte";
-  import { currentWalletName } from "./stores";
+  import { currentWalletName, currentWalletSummary } from "./stores";
   import Overview from "./views/Overview.svelte";
   import Transactions from "./views/Transactions.svelte";
   import WalletSelector from "./components/WalletSelector.svelte";
   import { slide } from "svelte/transition";
-
-  import { last_tab, default_tab, persistent_tabs } from "./stores";
+  import { last_tab, default_tab, persistent_tabs, getWalletSummaries } from "./stores";
   import Swap from "./views/Swap.svelte";
+import { onMount } from "svelte";
+import PasswordPrompt from "./components/PasswordPrompt.svelte";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;
-  let firstDialog = $currentWalletName === null;
+  let firstDialog = false;
+  onMount(async ()=>{
+    let either = await getWalletSummaries();
+    let list = either.unsafeCoerce() 
+    $currentWalletName =  $currentWalletName || Object.keys(list)[0] || null;
+    firstDialog = $currentWalletName === null;
+  
+  })
+  let handleEvent = (event: CustomEvent)=>{
+    event.detail._callback()
+  }
 </script>
 
 <main>
@@ -23,27 +34,32 @@
     <WalletCreator onCreate={() => (firstDialog = false)} />
   </Modal>
   <div class="main-container">
-    <WalletSelector />
+    <WalletSelector></WalletSelector>
 
-    {#if $last_tab === 0}
-      <div transition:slide>
-        <Overview />
-      </div>
-    {:else if $last_tab === 1}
-      <div transition:slide>
-        <Swap />
-      </div>
-    {:else if $last_tab === 2}
-      <div transition:slide>
-        <Transactions />
-      </div>
-    {:else if $last_tab === 3}
-      <div transition:slide>
-        <Settings />
-      </div>
+    {#if $currentWalletSummary && $currentWalletSummary.locked}
+      <PasswordPrompt on:idk={handleEvent}/>
+    {:else}
+      {#if $last_tab === 0}
+        <div transition:slide>
+          <Overview />
+        </div>
+      {:else if $last_tab === 1}
+        <div transition:slide>
+          <Swap />
+        </div>
+      {:else if $last_tab === 2}
+        <div transition:slide>
+          <Transactions />
+        </div>
+      {:else if $last_tab === 3}
+        <div transition:slide>
+          <Settings />
+        </div>
+      {/if}
+    <BottomTabs bind:selected={$last_tab} />
     {/if}
   </div>
-  <BottomTabs bind:selected={$last_tab} />
+
 </main>
 
 <svelte:head>

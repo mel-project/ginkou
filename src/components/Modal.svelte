@@ -1,7 +1,7 @@
 <script lang="ts">
   export let open: boolean;
   import { slide, fade } from "svelte/transition";
-  export let onClose: () => any;
+  export let onClose: () => any = () => {};
 
   export let title: string;
 
@@ -15,7 +15,7 @@
         <div
           class="modal-content"
           class:pullup
-          transition:slide
+          transition:fade
           on:click={(e) => e.stopPropagation()}
         >
           <div class="modal-header">
@@ -23,7 +23,7 @@
             <button
               type="button"
               class="btn-close"
-              on:click={() => onClose()}
+              on:click={() => {open=false;onClose()}}
             />
           </div>
           <div class="modal-body">

@@ -7,6 +7,7 @@ import type {
 } from "./utils/types";
 import { list_wallets, network_status, TESTNET } from "./utils/utils";
 import JSONbig from "json-bigint";
+import { Either } from "purify-ts";
 
 export function persistentWritable<T>(
   storage_name: string,
@@ -23,6 +24,20 @@ export function persistentWritable<T>(
   return w;
 }
 
+export const getWalletSummaries = async ()=>{
+  const list = await list_wallets();
+  list
+    .ifLeft((e) =>
+      console.log(`error encountered in list_wallets: ${JSON.stringify(e)}`)
+    )
+    .map((list) => {
+      // console.info("obtained list_wallets");
+      if (JSON.stringify(list) !== lastSummaries) {
+        lastSummaries = JSON.stringify(list);
+      }
+    })
+    return list
+}
 // List of all wallets, both mainnet and testnet
 let lastSummaries: any = 0;
 export const walletSummaries: Readable<Obj<WalletSummary>> = readable(
@@ -30,18 +45,10 @@ export const walletSummaries: Readable<Obj<WalletSummary>> = readable(
   (set) => {
     const refresh = async () => {
       // fetch the stuff and set
-      const list = await list_wallets();
-      list
-        .ifLeft((e) =>
-          console.log(`error encountered in list_wallets: ${JSON.stringify(e)}`)
-        )
-        .map((list) => {
-          // console.info("obtained list_wallets");
-          if (JSON.stringify(list) !== lastSummaries) {
-            lastSummaries = JSON.stringify(list);
-            set(list);
-          }
-        });
+      let list = await getWalletSummaries();
+      if((list).isRight()){
+        set((list).unsafeCoerce())
+      }
     };
     refresh();
     const interval = setInterval(refresh, 1000);
@@ -96,3 +103,5 @@ export const default_tab: Writable<number> = persistentWritable(
   0
 );
 export const miscSettings: Writable<{ [key: string]: any }> = writable({});
+
+
