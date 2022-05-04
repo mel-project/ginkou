@@ -318,6 +318,8 @@ export const lock_wallet = (
   port: number = default_port
 ): EitherAsync<string, void> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
+
+    console.log('locking')
     const url = `${home_addr}:${port}/wallets/${wallet_name}/lock`;
     await fromPromise(
       fetch_text_or_err(url, {
@@ -481,7 +483,8 @@ export const ensure_unlocked = async (
   pwd: string,
 ) => {
   if (walletSummary.locked) {
-    if (pwd) {
+    if (pwd != undefined) {
+      console.log('unlock wallet')
       let result = await unlock_wallet(walletName, pwd).run();
       result.ifLeft((err) => {
         throw err;

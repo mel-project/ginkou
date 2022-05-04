@@ -3,7 +3,6 @@
   import BigNumber from "bignumber.js";
   import {
     denom2str,
-    ensure_unlocked,
     prepare_swap_tx,
     showToast,
     swap_info,
@@ -78,7 +77,6 @@
     pending = true;
     if ($currentWalletName && swapInfo && $currentWalletSummary) {
       try {
-        await ensure_unlocked($currentWalletName, $currentWalletSummary);
         let res = await prepare_swap_tx($currentWalletName, swapInfo.poolkey, [
           {
             covhash: $currentWalletSummary.address,

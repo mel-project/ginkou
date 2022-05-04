@@ -20,9 +20,7 @@ import PasswordPrompt from "./components/PasswordPrompt.svelte";
   onMount(async ()=>{
     let either = await getWalletSummaries();
     let list = either.unsafeCoerce() 
-    console.log(list)
     $currentWalletName =  $currentWalletName || Object.keys(list)[0] || null;
-    console.log($currentWalletName)
     firstDialog = $currentWalletName === null;
   
   })
@@ -36,10 +34,10 @@ import PasswordPrompt from "./components/PasswordPrompt.svelte";
     <WalletCreator onCreate={() => (firstDialog = false)} />
   </Modal>
   <div class="main-container">
+    <WalletSelector></WalletSelector>
 
     {#if $currentWalletSummary && $currentWalletSummary.locked}
-
-    <PasswordPrompt on:idk={handleEvent}/>
+      <PasswordPrompt on:idk={handleEvent}/>
     {:else}
       {#if $last_tab === 0}
         <div transition:slide>

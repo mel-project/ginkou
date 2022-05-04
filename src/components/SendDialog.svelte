@@ -3,7 +3,6 @@
   import { slide, fade } from "svelte/transition";
   import {
     denom2str,
-    ensure_unlocked,
     prepare_tx,
     send_tx,
     unlock_wallet,
@@ -34,17 +33,9 @@
     sendError = e;
   };
 
-  $: ensureUnlocked = async () => {
-    try {
-      if ($currentWalletName && $currentWalletSummary)
-        ensure_unlocked($currentWalletName, $currentWalletSummary);
-    } catch (err) {
-      onError(err);
-    }
-  };
+
 
   $: onPrepare = async () => {
-    await ensureUnlocked();
     pending = true;
     setTimeout(async () => {
       let coinData = {
@@ -72,7 +63,6 @@
   };
 
   $: onConfirm = async () => {
-    await ensureUnlocked();
     pending = true;
     if ($currentWalletName && $currentWalletSummary && preparedTx) {
       try {
