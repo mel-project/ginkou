@@ -4,7 +4,7 @@
   import Modal from "./components/Modal.svelte";
   import RoundButton from "./components/RoundButton.svelte";
   import WalletCreator from "./components/WalletCreator.svelte";
-  import { currentWalletName } from "./stores";
+  import { currentWalletName, currentWalletSummary } from "./stores";
   import Overview from "./views/Overview.svelte";
   import Transactions from "./views/Transactions.svelte";
   import WalletSelector from "./components/WalletSelector.svelte";
@@ -36,29 +36,32 @@ import PasswordPrompt from "./components/PasswordPrompt.svelte";
     <WalletCreator onCreate={() => (firstDialog = false)} />
   </Modal>
   <div class="main-container">
-    <!-- <PasswordPrompt on:idk={handleEvent}/> -->
 
-    <WalletSelector />
+    {#if $currentWalletSummary && $currentWalletSummary.locked}
 
-    {#if $last_tab === 0}
-      <div transition:slide>
-        <Overview />
-      </div>
-    {:else if $last_tab === 1}
-      <div transition:slide>
-        <Swap />
-      </div>
-    {:else if $last_tab === 2}
-      <div transition:slide>
-        <Transactions />
-      </div>
-    {:else if $last_tab === 3}
-      <div transition:slide>
-        <Settings />
-      </div>
+    <PasswordPrompt on:idk={handleEvent}/>
+    {:else}
+      {#if $last_tab === 0}
+        <div transition:slide>
+          <Overview />
+        </div>
+      {:else if $last_tab === 1}
+        <div transition:slide>
+          <Swap />
+        </div>
+      {:else if $last_tab === 2}
+        <div transition:slide>
+          <Transactions />
+        </div>
+      {:else if $last_tab === 3}
+        <div transition:slide>
+          <Settings />
+        </div>
+      {/if}
+    <BottomTabs bind:selected={$last_tab} />
     {/if}
   </div>
-  <BottomTabs bind:selected={$last_tab} />
+
 </main>
 
 <svelte:head>

@@ -1,7 +1,7 @@
 <script lang="ts">
   export let open: boolean;
   import { fade } from "svelte/transition";
-  export let onClose: () => any;
+  export let onClose: () => any = ()=>{};
 
   export let title: string;
 
@@ -22,7 +22,7 @@
             <button
               type="button"
               class="btn-close"
-              on:click={() => onClose()}
+              on:click={() => {open=false;onClose()}}
             />
           </div>
           <div class="modal-body">

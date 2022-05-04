@@ -19,6 +19,7 @@ import type {
 } from "./types";
 import Toastify from "toastify-js";
 import { walletSummaries } from "../stores";
+import { EventDispatcher, PromiseCallback } from "./svelte-types";
 
 const JSONbig = JSONbiggg({ alwaysParseAsBig: true });
 
@@ -465,13 +466,21 @@ export const prepare_swap_tx = (
 
     return tx;
   });
-
+export function WaitableEvent<T> (type: string,dispatcher: EventDispatcher, callback: PromiseCallback<T>): 
+  (detail?: any, timeout?: number)=>Promise<T> {
+  return (detail={},timeout)=>
+       new Promise((resolve, reject)=>{
+          if(timeout) setTimeout(()=>reject("Promise Failure"), timeout);
+          dispatcher(type, Object.assign(detail, {_callback: callback(resolve, reject)}))
+  })
+  
+}
 export const ensure_unlocked = async (
   walletName: string,
-  walletSummary: WalletSummary
+  walletSummary: WalletSummary,
+  pwd: string,
 ) => {
   if (walletSummary.locked) {
-    let pwd = prompt("Enter wallet password");
     if (pwd) {
       let result = await unlock_wallet(walletName, pwd).run();
       result.ifLeft((err) => {
