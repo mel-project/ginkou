@@ -5,18 +5,27 @@
   import { slide } from "svelte/transition";
 
   import RoundButton from "../components/RoundButton.svelte";
+  import { createEventDispatcher } from "svelte";
   let password = "";
   let unsuccessful: Error | undefined;
+  let dispatch = createEventDispatcher();
 
+  export let close_button = false;
+  export let confirm_label = "Unlock";
   export let try_unlock = async (password: string) => {
     if ($currentWalletName && $currentWalletSummary) {
       try {
+          console.log('idk')
         await ensure_unlocked(
           $currentWalletName,
           $currentWalletSummary,
           password
         );
+        dispatch('unlock_success', {walletName: $currentWalletName, password})
+        
       } catch (err) {
+          console.log('wtf')
+        dispatch('unlock_failure')
         unsuccessful = err as Error;
       }
     }
@@ -51,8 +60,15 @@
 
   <div class="unlock-wrapper">
     <div class="unlock">
+      {#if close_button}
+        <div class="close_button">
+          <RoundButton on:click={(x) => dispatch("close")} fill
+            >Close</RoundButton
+          >
+        </div>
+      {/if}
       <RoundButton on:click={(x) => try_unlock(password)} fill outline submit
-        >Unlock</RoundButton
+        >{confirm_label}</RoundButton
       >
     </div>
   </div>
@@ -92,5 +108,8 @@
   .unlock {
     width: 90%;
     height: 3rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
   }
 </style>

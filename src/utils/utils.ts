@@ -360,10 +360,10 @@ export const export_sk = (
   wallet_name: string,
   password: string,
   port: number = default_port
-): EitherAsync<string, void> =>
+): EitherAsync<string, string> =>
   EitherAsync(async ({ liftEither, fromPromise }) => {
     const url = `${home_addr}:${port}/wallets/${wallet_name}/export-sk`;
-    await fromPromise(
+    let res = await fromPromise(
       fetch_text_or_err(url, {
         method: "POST",
         body: JSONbig.stringify({
@@ -372,7 +372,7 @@ export const export_sk = (
       })
     );
 
-    return liftEither(Right(undefined));
+    return liftEither(Right(res));
   });
 
 // // Poll daemon to check tx until it is confirmed
@@ -511,14 +511,12 @@ export const ensure_unlocked = async (
   walletSummary: WalletSummary,
   pwd: string
 ) => {
-  if (walletSummary.locked) {
     if (pwd != undefined) {
       console.log("unlock wallet");
       let result = await unlock_wallet(walletName, pwd).run();
       result.ifLeft((err) => {
         throw err;
       });
-    }
   }
 };
 

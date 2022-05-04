@@ -2,13 +2,15 @@
   export let label: string = "";
   export let description: string;
   export let name: string;
+  let _class = "";
+  export {_class as class}
 </script>
 
 <template>
   <div class="setting">
     <div class="info">
       <label for={name}>{label}</label>
-      <div class="description">{description}</div>
+      <div class="description {_class}" >{description}</div>
     </div>
     <slot />
   </div>
@@ -16,6 +18,10 @@
 </template>
 
 <style lang="scss">
+  .text-overflow-ellipsis{
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
   select,
   input {
     width: 12em;
