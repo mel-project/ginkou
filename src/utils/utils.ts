@@ -355,6 +355,26 @@ export const unlock_wallet = (
     return liftEither(Right(undefined));
   });
 
+  // Unlocks a wallet.
+export const export_sk = (
+  wallet_name: string,
+  password: string,
+  port: number = default_port
+): EitherAsync<string, string> =>
+  EitherAsync(async ({ liftEither, fromPromise }) => {
+    const url = `${home_addr}:${port}/wallets/${wallet_name}/export-sk`;
+    let res = await fromPromise(
+      fetch_text_or_err(url, {
+        method: "POST",
+        body: JSONbig.stringify({
+          password: password,
+        }),
+      })
+    );
+
+    return liftEither(Right(res));
+  });
+
 // // Poll daemon to check tx until it is confirmed
 // // TODO handle when daemon returns failed tx
 // export const confirm_tx = async (
@@ -491,14 +511,12 @@ export const ensure_unlocked = async (
   walletSummary: WalletSummary,
   pwd: string
 ) => {
-  if (walletSummary.locked) {
     if (pwd != undefined) {
       console.log("unlock wallet");
       let result = await unlock_wallet(walletName, pwd).run();
       result.ifLeft((err) => {
         throw err;
       });
-    }
   }
 };
 
