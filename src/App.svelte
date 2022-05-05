@@ -9,24 +9,28 @@
   import Transactions from "./views/Transactions.svelte";
   import WalletSelector from "./components/WalletSelector.svelte";
   import { slide } from "svelte/transition";
-  import { last_tab, default_tab, persistent_tabs, getWalletSummaries } from "./stores";
+  import {
+    last_tab,
+    default_tab,
+    persistent_tabs,
+    getWalletSummaries,
+  } from "./stores";
   import Swap from "./views/Swap.svelte";
-import { onMount } from "svelte";
-import PasswordPrompt from "./components/PasswordPrompt.svelte";
+  import { onMount } from "svelte";
+  import PasswordPrompt from "./components/PasswordPrompt.svelte";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;
   let firstDialog = false;
-  onMount(async ()=>{
+  onMount(async () => {
     let either = await getWalletSummaries();
-    let list = either.unsafeCoerce() 
-    $currentWalletName =  $currentWalletName || Object.keys(list)[0] || null;
+    let list = either.unsafeCoerce();
+    $currentWalletName = $currentWalletName || Object.keys(list)[0] || null;
     firstDialog = $currentWalletName === null;
-  
-  })
-  let handleEvent = (event: CustomEvent)=>{
-    event.detail._callback()
-  }
+  });
+  let handleEvent = (event: CustomEvent) => {
+    event.detail._callback();
+  };
 </script>
 
 <main>
@@ -34,12 +38,11 @@ import PasswordPrompt from "./components/PasswordPrompt.svelte";
     <WalletCreator onCreate={() => (firstDialog = false)} />
   </Modal>
   <div class="main-container">
-    <WalletSelector></WalletSelector>
-
-    {#if $currentWalletSummary && $currentWalletSummary.locked}
-      <PasswordPrompt on:idk={handleEvent}/>
-    {:else}
-      {#if $last_tab === 0}
+    <WalletSelector />
+    {#if $currentWalletSummary}
+      {#if $currentWalletSummary.locked}
+        <PasswordPrompt on:idk={handleEvent} />
+      {:else if $last_tab === 0}
         <div transition:slide>
           <Overview />
         </div>
@@ -56,10 +59,9 @@ import PasswordPrompt from "./components/PasswordPrompt.svelte";
           <Settings />
         </div>
       {/if}
-    <BottomTabs bind:selected={$last_tab} />
+      <BottomTabs bind:selected={$last_tab} />
     {/if}
   </div>
-
 </main>
 
 <svelte:head>

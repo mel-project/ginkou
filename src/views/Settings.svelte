@@ -7,6 +7,8 @@
   import { persistent_tabs, default_tab } from "../stores";
   import PasswordPrompt from "../components/PasswordPrompt.svelte";
   import { export_sk, showToast, copyToClipboard } from "../utils/utils";
+  import Modal from "../components/Modal.svelte";
+  import RoundButton from "../components/RoundButton.svelte";
 
   // import Settings from "../stores";
 
@@ -16,10 +18,7 @@
   let handleUnlock = async (ev: CustomEvent) => {
     let { walletName, password } = ev.detail;
     let either = await export_sk(walletName, password);
-    console.log(sk)
     sk = either.extract() as string;
-    copyToClipboard(sk)
-    showToast('copied secret to clipboard')
     show_sk = false;
   };
 </script>
@@ -36,12 +35,39 @@
         />
       </div>
     {/if}
+    <Modal title="Secret key" open={sk !== ""} onClose={() => (sk = "")}>
+      <div class="sk-wrap">
+        <div class="sk-warning ">
+          <b class="text-danger">Warning:</b> Your secret key controls access to
+          all your funds. <i>Do not share it with anybody else!</i>
+        </div>
+        <textarea class="sk-area">{sk}</textarea>
+        <RoundButton
+          label="Copy to clipboard"
+          onClick={() => {
+            copyToClipboard(sk);
+            showToast("key copied to clipboard!");
+          }}
+        />
+      </div>
+    </Modal>
+    <div class="settings-list">
+      <div class="settings-header">Backup</div>
+      <Setting
+        name="Show Secret"
+        label="Secret key"
+        description="Export wallet secret key"
+        class="text-overflow-ellipsis"
+      >
+        <RoundButton onClick={() => (show_sk = true)} label="Export" outline />
+      </Setting>
+    </div>
     <div class="settings-list">
       <div class="settings-header">Miscellaneous</div>
       <Setting
         name="Persistent Tabs"
         label="Persistent Tabs"
-        description="Save and reload the previous tab on page refresh"
+        description="Open the last-opened tab on startup"
       >
         <BooleanInput bind:value={$persistent_tabs} />
       </Setting>
@@ -57,14 +83,6 @@
           ]}
         />
       </Setting>
-      <Setting
-        name="Show Secret"
-        label="Show your wallets secret key"
-        description="Key: {sk || '<hidden>'}"
-        class="text-overflow-ellipsis"
-      >
-        <button on:click={() => (show_sk = true)}>Show</button>
-      </Setting>
     </div>
   </div>
 </template>
@@ -76,7 +94,7 @@
     height: 100vh;
     width: 100vw;
     left: 0;
-  
+
     background: var(--background-color);
   }
   .settings-menu {
@@ -87,5 +105,22 @@
     font-weight: 600;
     color: var(--dark-color);
     opacity: 0.8;
+  }
+
+  .settings-list {
+    padding-top: 1rem;
+  }
+
+  .sk-area {
+    width: 100%;
+    font-family: monospace;
+  }
+
+  .sk-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 50vw;
+    justify-content: space-around;
   }
 </style>

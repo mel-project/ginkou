@@ -6,6 +6,7 @@
   export let disabled = false;
   let focused = false;
   export let password = false;
+  export let autofocus = false;
   let _class: string = "";
   let variant: InputVariant = InputVariant.DEFAULT;
   let labeled: boolean = true;
@@ -45,6 +46,7 @@
           placeholder={!labeled ? label : ""}
           {...$$props}
           disabled={false}
+          {autofocus}
         />
       {:else}
         <input
@@ -60,6 +62,7 @@
           placeholder={!labeled ? label : ""}
           {...$$props}
           disabled={false}
+          {autofocus}
         />
       {/if}
     </div>

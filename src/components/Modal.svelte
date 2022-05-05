@@ -15,7 +15,7 @@
         <div
           class="modal-content"
           class:pullup
-          transition:fade
+          transition:slide
           on:click={(e) => e.stopPropagation()}
         >
           <div class="modal-header">
@@ -23,7 +23,10 @@
             <button
               type="button"
               class="btn-close"
-              on:click={() => {open=false;onClose()}}
+              on:click={() => {
+                open = false;
+                onClose();
+              }}
             />
           </div>
           <div class="modal-body">

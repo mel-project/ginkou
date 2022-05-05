@@ -15,17 +15,19 @@
   export let try_unlock = async (password: string) => {
     if ($currentWalletName && $currentWalletSummary) {
       try {
-          console.log('idk')
+        console.log("idk");
         await ensure_unlocked(
           $currentWalletName,
           $currentWalletSummary,
           password
         );
-        dispatch('unlock_success', {walletName: $currentWalletName, password})
-        
+        dispatch("unlock_success", {
+          walletName: $currentWalletName,
+          password,
+        });
       } catch (err) {
-          console.log('wtf')
-        dispatch('unlock_failure')
+        console.log("wtf");
+        dispatch("unlock_failure");
         unsuccessful = err as Error;
       }
     }
@@ -45,7 +47,7 @@
   </div>
   {#if unsuccessful}
     <div class="alert-container centered">
-      <div class="alert alert-danger" transition:slide role="alert">
+      <div class="alert alert-danger" role="alert">
         {unsuccessful}
       </div>
     </div>
@@ -56,6 +58,7 @@
     label="passphrase: "
     class="underlined"
     password
+    autofocus
   />
 
   <div class="unlock-wrapper">
