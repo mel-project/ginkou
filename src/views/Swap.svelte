@@ -147,11 +147,12 @@
     <RoundButton
       label=""
       outline
+      small
       onClick={() => {
         let pd = payDenom;
         payDenom = recvDenom;
         recvDenom = pd;
-      }}><SwapVertical width="1.5rem" height="1.5rem" /></RoundButton
+      }}><SwapVertical width="1rem" height="1rem" /></RoundButton
     >
   </div>
 
@@ -210,6 +211,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    height: 5rem;
   }
 
   .tiny {
@@ -221,7 +223,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 0.5rem;
   }
 
   .button-protector {
@@ -229,7 +231,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 2rem;
+    padding-top: 1rem;
   }
 
   .main {
@@ -243,6 +245,7 @@
     border: none;
     border-radius: 1rem;
     padding: 1rem;
+    font-size: 90%;
   }
 
   .success {
@@ -272,10 +275,10 @@
 
   .gigantic {
     // height: 10rem;
-    padding: 2rem;
+    padding: 1rem;
     font-size: 2rem;
     line-height: 2rem;
-    height: 6rem;
+
     border: none;
     background: none;
     flex-grow: 100;

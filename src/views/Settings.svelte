@@ -24,74 +24,79 @@
 </script>
 
 <template>
-  <div class="settings-menu">
-    {#if show_sk}
-      <div class="password_window" transition:slide>
-        <PasswordPrompt
-          confirm_label="Show Secret"
-          close_button
-          on:close={() => (show_sk = false)}
-          on:unlock_success={handleUnlock}
-        />
-      </div>
-    {/if}
-    <Modal title="Secret key" open={sk !== ""} onClose={() => (sk = "")}>
-      <div class="sk-wrap">
-        <div class="sk-warning ">
-          <b class="text-danger">Warning:</b> Your secret key controls access to
-          all your funds. <i>Do not share it with anybody else!</i>
+  {#if show_sk}
+    <div class="password_window">
+      <PasswordPrompt
+        confirm_label="Show Secret"
+        close_button
+        on:close={() => (show_sk = false)}
+        on:unlock_success={handleUnlock}
+      />
+    </div>
+  {:else}
+    <div class="settings-menu">
+      <Modal title="Secret key" open={sk !== ""} onClose={() => (sk = "")}>
+        <div class="sk-wrap">
+          <div class="sk-warning ">
+            <b class="text-danger">Warning:</b> Your secret key controls access
+            to all your funds. <i>Do not share it with anybody else!</i>
+          </div>
+          <textarea class="sk-area">{sk}</textarea>
+          <RoundButton
+            label="Copy to clipboard"
+            onClick={() => {
+              copyToClipboard(sk);
+              showToast("key copied to clipboard!");
+            }}
+          />
         </div>
-        <textarea class="sk-area">{sk}</textarea>
-        <RoundButton
-          label="Copy to clipboard"
-          onClick={() => {
-            copyToClipboard(sk);
-            showToast("key copied to clipboard!");
-          }}
-        />
+      </Modal>
+      <div class="settings-list">
+        <div class="settings-header">Backup</div>
+        <Setting
+          name="Show Secret"
+          label="Secret key"
+          description="Export wallet secret key"
+          class="text-overflow-ellipsis"
+        >
+          <RoundButton
+            onClick={() => (show_sk = true)}
+            label="Export"
+            outline
+          />
+        </Setting>
       </div>
-    </Modal>
-    <div class="settings-list">
-      <div class="settings-header">Backup</div>
-      <Setting
-        name="Show Secret"
-        label="Secret key"
-        description="Export wallet secret key"
-        class="text-overflow-ellipsis"
-      >
-        <RoundButton onClick={() => (show_sk = true)} label="Export" outline />
-      </Setting>
-    </div>
-    <div class="settings-list">
-      <div class="settings-header">Miscellaneous</div>
-      <Setting
-        name="Persistent Tabs"
-        label="Persistent Tabs"
-        description="Open the last-opened tab on startup"
-      >
-        <BooleanInput bind:value={$persistent_tabs} />
-      </Setting>
+      <div class="settings-list">
+        <div class="settings-header">Miscellaneous</div>
+        <Setting
+          name="Persistent Tabs"
+          label="Persistent Tabs"
+          description="Open the last-opened tab on startup"
+        >
+          <BooleanInput bind:value={$persistent_tabs} />
+        </Setting>
 
-      <Setting name="Default Tab" label="Default Tab" description="">
-        <Select
-          disabled={$persistent_tabs}
-          bind:value={$default_tab}
-          options={[
-            ["Home", 0],
-            ["Transactions", 1],
-            ["Settings", 3],
-          ]}
-        />
-      </Setting>
+        <Setting name="Default Tab" label="Default Tab" description="">
+          <Select
+            disabled={$persistent_tabs}
+            bind:value={$default_tab}
+            options={[
+              ["Home", 0],
+              ["Transactions", 1],
+              ["Settings", 3],
+            ]}
+          />
+        </Setting>
+      </div>
     </div>
-  </div>
+  {/if}
 </template>
 
 <style lang="scss">
   .password_window {
     z-index: 100;
     position: absolute;
-    height: 100vh;
+    height: 70vh;
     width: 100vw;
     left: 0;
 

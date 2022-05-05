@@ -12,9 +12,11 @@
 
   export let close_button = false;
   export let confirm_label = "Unlock";
+  export let pending = false;
   export let try_unlock = async (password: string) => {
     if ($currentWalletName && $currentWalletSummary) {
       try {
+        pending = true;
         console.log("idk");
         await ensure_unlocked(
           $currentWalletName,
@@ -29,6 +31,8 @@
         console.log("wtf");
         dispatch("unlock_failure");
         unsuccessful = err as Error;
+      } finally {
+        pending = false;
       }
     }
   };
@@ -59,6 +63,7 @@
     class="underlined"
     password
     autofocus
+    disabled={pending}
   />
 
   <div class="unlock-wrapper">
@@ -70,8 +75,12 @@
           >
         </div>
       {/if}
-      <RoundButton on:click={(x) => try_unlock(password)} fill outline submit
-        >{confirm_label}</RoundButton
+      <RoundButton
+        on:click={(x) => try_unlock(password)}
+        fill
+        outline
+        submit
+        disabled={pending}>{confirm_label}</RoundButton
       >
     </div>
   </div>
