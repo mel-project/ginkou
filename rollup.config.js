@@ -2,8 +2,6 @@ import svelte from "rollup-plugin-svelte";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import livereload from "rollup-plugin-livereload";
-import babel from "rollup-plugin-babel";
-import { terser } from "rollup-plugin-terser";
 import css from "rollup-plugin-css-only";
 import autoPreprocess from "svelte-preprocess";
 import { pug } from "svelte-preprocess";
@@ -12,6 +10,8 @@ import nodePolyfills from "rollup-plugin-node-polyfills";
 import inlineSvg from "rollup-plugin-inline-svg";
 import alias from "@rollup/plugin-alias";
 import scss from "rollup-plugin-scss";
+import buble from "rollup-plugin-buble";
+import babel from "rollup-plugin-babel";
 
 const path = require("path");
 
@@ -94,6 +94,7 @@ export default {
       dedupe: ["svelte"],
     }),
     commonjs(),
+
     babel({
       extensions: [".js", ".mjs", ".html", ".svelte"],
       runtimeHelpers: true,
@@ -103,6 +104,8 @@ export default {
           "@babel/preset-env",
           {
             targets: "> 0.25%, not dead",
+            useBuiltIns: "usage",
+            corejs: 3,
           },
         ],
       ],
@@ -117,6 +120,8 @@ export default {
       ],
     }),
 
+    buble({ transforms: { generator: false, dangerousForOf: true } }),
+
     // In dev mode, call `npm run start` once
     // the bundle has been generated
     !production && serve(),
@@ -125,9 +130,9 @@ export default {
     // browser on changes when not in production
     !production && livereload("public"),
 
-    // If we're building for production (npm run build
-    // instead of npm run dev), minify
-    production && terser(),
+    // // If we're building for production (npm run build
+    // // instead of npm run dev), minify
+    // production && terser(),
   ],
   watch: {
     clearScreen: false,
