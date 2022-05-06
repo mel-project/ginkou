@@ -6,4 +6,4 @@ nohup.out
 build
 tmux-workspace.sh
 .DS_Store
-package-lock.json
+#package-lock.json
