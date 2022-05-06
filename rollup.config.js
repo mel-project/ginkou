@@ -96,9 +96,9 @@ export default {
     commonjs(),
 
     babel({
-      extensions: [".js", ".mjs", ".html", ".svelte"],
+      extensions: [".js", ".mjs", ".html", ".svelte", ".ts"],
       runtimeHelpers: true,
-      exclude: ["node_modules/@babel/**"],
+      exclude: ["node_modules/@babel/**", "node_modules/core-js/**"],
       presets: [
         [
           "@babel/preset-env",
@@ -108,19 +108,19 @@ export default {
             corejs: 3,
           },
         ],
+        "@babel/preset-typescript",
       ],
       plugins: [
         "@babel/plugin-syntax-dynamic-import",
         [
           "@babel/plugin-transform-runtime",
           {
-            useESModules: true,
+            useESModules: false,
           },
         ],
       ],
     }),
-
-    buble({ transforms: { generator: false, dangerousForOf: true } }),
+    // If w
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated
