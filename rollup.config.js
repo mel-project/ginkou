@@ -2,6 +2,7 @@ import svelte from "rollup-plugin-svelte";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import livereload from "rollup-plugin-livereload";
+import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
 import css from "rollup-plugin-css-only";
 import autoPreprocess from "svelte-preprocess";
@@ -93,6 +94,28 @@ export default {
       dedupe: ["svelte"],
     }),
     commonjs(),
+    babel({
+      extensions: [".js", ".mjs", ".html", ".svelte"],
+      runtimeHelpers: true,
+      exclude: ["node_modules/@babel/**"],
+      presets: [
+        [
+          "@babel/preset-env",
+          {
+            targets: "> 0.25%, not dead",
+          },
+        ],
+      ],
+      plugins: [
+        "@babel/plugin-syntax-dynamic-import",
+        [
+          "@babel/plugin-transform-runtime",
+          {
+            useESModules: true,
+          },
+        ],
+      ],
+    }),
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated
