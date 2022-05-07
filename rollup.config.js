@@ -103,7 +103,7 @@ export default {
         [
           "@babel/preset-env",
           {
-            targets: "> 0.25%, not dead, ie 11",
+            targets: "ie 10",
             useBuiltIns: "entry",
             corejs: 3,
           },
