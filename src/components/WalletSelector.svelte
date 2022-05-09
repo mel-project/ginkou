@@ -3,16 +3,17 @@
   import WalletCreator from "./WalletCreator.svelte";
   import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
+  import Lock from "svelte-material-icons/LockOutline.svelte";
+  import LockOpen from "svelte-material-icons/LockOpenOutline.svelte";
   import Plus from "svelte-material-icons/Plus.svelte";
   import Modal from "./Modal.svelte";
-  import { slide } from "svelte/transition";
   import {
     currentWalletName,
     currentWalletSummary,
     walletSummaries,
   } from "../stores";
   import type { WalletSummary } from "../utils/types";
-  import { MAINNET, TESTNET } from "../utils/utils";
+  import { MAINNET, TESTNET, lock_wallet } from "../utils/utils";
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
@@ -52,6 +53,22 @@
     </div>
     <ChevronDown width="1.8rem" height="1.8rem" />
   </RoundButton>
+  <div
+    class="lock-indicator"
+    on:click={async () => {
+      if ($currentWalletName) {
+        await lock_wallet($currentWalletName);
+      }
+    }}
+  >
+    {#if $currentWalletSummary?.locked}
+      <span class="text-primary"><Lock width="1.4rem" height="1.4rem" /></span>
+    {:else}
+      <span class="text-danger"
+        ><LockOpen width="1.4rem" height="1.4rem" /></span
+      >
+    {/if}
+  </div>
   <Modal
     title="Select a wallet"
     open={modalOpen}
@@ -69,7 +86,7 @@
       >
       <WalletCreator onCreate={() => (creatorOpen = false)} />
     {:else}
-      <div transition:slide>
+      <div>
         <div class="network-subtitle">
           <div>Mainnet</div>
           <RoundButton
@@ -116,6 +133,12 @@
 </div>
 
 <style lang="scss">
+  .lock-indicator {
+    height: 2em;
+  }
+  ::global(svg) {
+    height: 10em;
+  }
   .icon {
     border-radius: 100px;
     width: 1.2rem;

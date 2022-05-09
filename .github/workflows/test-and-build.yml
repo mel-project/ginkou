@@ -1,29 +1,64 @@
 name: TestAndBuild
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 env:
   CARGO_TERM_COLOR: always
+  npm_config_cache: "/usr/local/npm-cache"
+  YARN_CACHE_FOLDER: "/usr/local/npm-cache"
 
 jobs:
-  build:
+  test:
+    runs-on: self-hosted
 
-    runs-on: ubuntu-latest
+    container:
+      image: node:latest
+      volumes:
+        - /usr/local/npm-cache:/usr/local/npm-cache
+        - /var/lib/docker:/var/lib/docker
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Update Apt
-        run: sudo apt update
+      - name: Run NPM Install
+        run: yarn install --prefer-offline
 
-      - name: Install NPM Packages
-        run: npm install
-
-      - name: Run NPM Tests
+      - name: Run NPM Test
         run: npm run test
 
+  build:
+    runs-on: self-hosted
+
+    container:
+      image: node:latest
+      volumes:
+        - /usr/local/npm-cache:/usr/local/npm-cache
+        - /var/lib/docker:/var/lib/docker
+
+    needs:
+      - test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run Yarn Install
+        run: yarn install --prefer-offline
+
+      - name: Create Build Directory
+        run: mkdir -p public/build
+
+      - name: Change Directory Permissions
+        run: chmod 777 public/build
+
       - name: Run NPM Build
-        run: npm run build
+        env:
+          BUILD: "development"
+        run: npm run ci-build

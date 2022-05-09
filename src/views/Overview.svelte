@@ -20,7 +20,12 @@
     open={sendOpen}
     onClose={() => (sendOpen = false)}
   >
-    <SendDialog onTransactionSent={() => (sendOpen = false)} />
+    <SendDialog
+      onTransactionSent={() => {
+        console.log("TRANSACTION IS SENT!");
+        sendOpen = false;
+      }}
+    />
   </Modal>
 
   <Modal

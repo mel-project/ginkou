@@ -5,6 +5,7 @@
   "scripts": {
     "build": "mkdir -p public/build && rollup -c",
     "dev": "mkdir -p public/build && rollup -c -w",
+    "ci-build": "rollup -c",
     "start": "sirv public --no-clear --host",
     "test": "jest"
   },
@@ -64,6 +65,7 @@
     "material-icons": "^1.10.8",
     "onsenui": "^2.11.2",
     "purify-ts": "^1.2.0",
+    "qr-scanner": "^1.4.1",
     "qrcode": "^1.5.0",
     "rollup-plugin-scss": "^3.0.0",
     "sass": "^1.49.9",

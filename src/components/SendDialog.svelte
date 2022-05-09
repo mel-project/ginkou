@@ -3,18 +3,19 @@
   import { slide, fade } from "svelte/transition";
   import {
     denom2str,
-    ensure_unlocked,
     prepare_tx,
     send_tx,
     unlock_wallet,
   } from "../utils/utils";
   import RoundButton from "./RoundButton.svelte";
+  import QrScanWindow from "./QrScanWindow.svelte";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
+  import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
   import BigNumber from "bignumber.js";
   import type { Transaction } from "../utils/types";
   import TxSummary from "./TxSummary.svelte";
-
+  import { onMount, tick } from "svelte";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
@@ -32,17 +33,9 @@
     sendError = e;
   };
 
-  $: ensureUnlocked = async () => {
-    try {
-      if ($currentWalletName && $currentWalletSummary)
-        ensure_unlocked($currentWalletName, $currentWalletSummary);
-    } catch (err) {
-      onError(err);
-    }
-  };
+
 
   $: onPrepare = async () => {
-    await ensureUnlocked();
     pending = true;
     setTimeout(async () => {
       let coinData = {
@@ -70,7 +63,6 @@
   };
 
   $: onConfirm = async () => {
-    await ensureUnlocked();
     pending = true;
     if ($currentWalletName && $currentWalletSummary && preparedTx) {
       try {
@@ -87,18 +79,20 @@
       }
     }
   };
+
+  let scannerOpen = false;
 </script>
 
 <div on:click={() => (sendError = null)}>
   {#if sendError}
-    <div class="alert alert-danger" role="alert" transition:slide>
+    <div class="alert alert-danger" role="alert">
       {sendError}
     </div>
   {/if}
 
   {#if $currentWalletSummary}
     {#if preparedTx}
-      <div transition:slide>
+      <div>
         <TxSummary
           transaction={preparedTx}
           selfAddr={$currentWalletSummary.address}
@@ -124,10 +118,20 @@
           {/if}
         </div>
       </div>
+    {:else if scannerOpen}
+      <div class="qr-canvas-wrap">
+        <QrScanWindow
+          onScan={(s) => {
+            recipient = s;
+            scannerOpen = false;
+          }}
+        />
+      </div>
     {:else}
-      <div transition:slide>
+      <div>
         <div class="section">
           <div class="header">Recipient 1</div>
+
           <div class="input-group">
             <span class="input-group-text">Recipient</span>
             <input
@@ -137,6 +141,12 @@
               disabled={pending}
               bind:value={recipient}
             />
+            <button
+              class="btn btn-outline-primary qrbutton"
+              on:click={() => (scannerOpen = true)}
+            >
+              <QrcodeScan width="1.6rem" height="1.6rem" />
+            </button>
           </div>
 
           <div class="input-group">
@@ -176,16 +186,20 @@
 </div>
 
 <style lang="scss">
-  .alert {
-    border-radius: 1rem;
-    margin-bottom: 2rem;
-  }
+  @use "../res/styles/alerts.scss";
+ 
   .header {
     font-weight: 600;
     opacity: 0.8;
   }
   .input-group-text {
     width: 6rem;
+  }
+
+  .qrbutton {
+    align-items: center;
+    display: flex;
+    justify-content: center;
   }
 
   .spinner-border {
@@ -209,6 +223,21 @@
   }
   .form-control {
     flex-grow: 1;
+  }
+
+  .qr-canvas {
+    width: 40vmin;
+    height: 40vmin;
+    object-fit: cover;
+    border-radius: 1rem;
+    border: var(--primary-color) 0.2rem solid;
+  }
+
+  .qr-canvas-wrap {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .section {
