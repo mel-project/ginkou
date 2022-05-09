@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RoundButton from "./inputs/Button.svelte";
+  import RoundButton from "../atoms/inputs/Button.svelte";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";

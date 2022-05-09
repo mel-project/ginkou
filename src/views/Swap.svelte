@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DenomPicker from "../components/DenomPicker.svelte";
+  import DenomPicker from "../components/atoms/themelio/DenomPicker.svelte";
   import BigNumber from "bignumber.js";
   import {
     denom2str,
@@ -10,11 +10,11 @@
   import type { SwapInfo } from "../utils/utils";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import { debounce } from "debounce";
-  import RoundButton from "../components/inputs/Button.svelte";
+  import RoundButton from "../components/atoms/inputs/Button.svelte";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import SendDialog from "../components/SendDialog.svelte";
   import type { Transaction } from "../utils/types";
-  import Modal from "../components/Modal.svelte";
+  import Modal from "../components/atoms/Modal.svelte";
   let payDenom = "6d";
   let recvDenom = "73";
 

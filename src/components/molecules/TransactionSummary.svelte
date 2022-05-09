@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { denom2str, kind2str } from "../utils/utils";
-  import type { Transaction } from "../utils/types";
   import BigNumber from "bignumber.js";
+  import { Transaction } from "../../utils/types";
+  import { denom2str,kind2str } from "../../utils/utils";
   // Transaction to display
   export let tx: Transaction;
   export let txhash: string;

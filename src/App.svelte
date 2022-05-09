@@ -1,12 +1,12 @@
 <script lang="ts">
   import Settings from "./views/Settings.svelte";
-  import BottomTabs from "./components/windows/BottomTabs.svelte";
-  import Modal from "./components/Modal.svelte";
-  import WalletCreator from "./components/WalletCreator.svelte";
+  import BottomTabs from "./components/molecules/BottomTabs.svelte";
+  import Modal from "./components/atoms/Modal.svelte";
+  import WalletCreator from "./components/templates/WalletCreator.svelte";
   import { currentWalletName, currentWalletSummary } from "./stores";
   import Overview from "./views/Overview.svelte";
   import Transactions from "./views/Transactions.svelte";
-  import WalletSelector from "./components/WalletSelector.svelte";
+  import WalletSelector from "./components/templates/WalletSelector.svelte";
   import { slide } from "svelte/transition";
   import {
     last_tab,

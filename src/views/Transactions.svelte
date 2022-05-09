@@ -2,8 +2,8 @@
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
-  import WalletSelector from "../components/WalletSelector.svelte";
-  import TransactionBubble from "../components/TransactionBubble.svelte";
+  import WalletSelector from "../components/templates/WalletSelector.svelte";
+  import TransactionBubble from "../components/templates/TransactionBubble.svelte";
   import { currentNetworkStatus, currentWalletName } from "../stores";
   import type { WalletDump } from "../utils/types";
   import { list_transactions } from "../utils/utils";
