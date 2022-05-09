@@ -1,7 +1,7 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { text } from "svelte/internal";
-  import RoundButton from "./RoundButton.svelte";
+  import RoundButton from "./inputs/Button.svelte";
   import PlusCircleOutline from "svelte-material-icons/PlusCircleOutline.svelte";
   import DownloadCircleOutline from "svelte-material-icons/DownloadCircleOutline.svelte";
   import { new_wallet, showToast } from "../utils/utils";

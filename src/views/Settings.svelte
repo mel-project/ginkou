@@ -1,14 +1,14 @@
 <script lang="ts">
   import Setting from "../components/Setting.svelte";
-  import Select from "../components/UI/inputs/Select.svelte";
-  import Button from "../components/UI/inputs/Button.svelte";
-  import BooleanInput from "../components/UI/inputs/Boolean.svelte";
+  import Select from "../components/inputs/Select.svelte";
+  import Button from "../components/inputs/Button.svelte";
+  import BooleanInput from "../components/inputs/Boolean.svelte";
   import { slide } from "svelte/transition";
   import { persistent_tabs, default_tab } from "../stores";
-  import PasswordPrompt from "../components/PasswordPrompt.svelte";
+  import PasswordPrompt from "./PasswordPrompt.svelte";
   import { export_sk, showToast, copyToClipboard } from "../utils/utils";
   import Modal from "../components/Modal.svelte";
-  import RoundButton from "../components/RoundButton.svelte";
+  import RoundButton from "../components/inputs/Button.svelte";
 
   // import Settings from "../stores";
 
@@ -82,7 +82,8 @@
             bind:value={$default_tab}
             options={[
               ["Home", 0],
-              ["Transactions", 1],
+              ["Swap", 1],
+              ["Transactions", 2],
               ["Settings", 3],
             ]}
           />

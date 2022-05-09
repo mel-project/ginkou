@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RoundButton from "./RoundButton.svelte";
+  import RoundButton from "./inputs/Button.svelte";
   import WalletCreator from "./WalletCreator.svelte";
   import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
@@ -165,10 +165,13 @@
   .selector {
     height: 6rem;
     width: 100%;
+    // max-width: 30rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    // overflow: hidden;
+    // text-o
   }
 
   b {

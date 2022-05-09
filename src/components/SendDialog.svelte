@@ -7,7 +7,7 @@
     send_tx,
     unlock_wallet,
   } from "../utils/utils";
-  import RoundButton from "./RoundButton.svelte";
+  import RoundButton from "./inputs/Button.svelte";
   import QrScanWindow from "./QrScanWindow.svelte";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";

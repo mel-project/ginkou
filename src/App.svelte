@@ -1,8 +1,7 @@
 <script lang="ts">
   import Settings from "./views/Settings.svelte";
-  import BottomTabs from "./components/BottomTabs.svelte";
+  import BottomTabs from "./components/windows/BottomTabs.svelte";
   import Modal from "./components/Modal.svelte";
-  import RoundButton from "./components/RoundButton.svelte";
   import WalletCreator from "./components/WalletCreator.svelte";
   import { currentWalletName, currentWalletSummary } from "./stores";
   import Overview from "./views/Overview.svelte";
@@ -17,7 +16,7 @@
   } from "./stores";
   import Swap from "./views/Swap.svelte";
   import { onMount } from "svelte";
-  import PasswordPrompt from "./components/PasswordPrompt.svelte";
+  import PasswordPrompt from "./views/PasswordPrompt.svelte";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;

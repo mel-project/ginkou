@@ -10,7 +10,7 @@
   import type { SwapInfo } from "../utils/utils";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import { debounce } from "debounce";
-  import RoundButton from "../components/RoundButton.svelte";
+  import RoundButton from "../components/inputs/Button.svelte";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import SendDialog from "../components/SendDialog.svelte";
   import type { Transaction } from "../utils/types";
