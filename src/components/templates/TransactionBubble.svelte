@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { Transaction } from "../../../utils/types";
+  import type { Transaction } from "../../utils/types";
   import BigNumber from "bignumber.js";
-  import { currentWalletName, currentWalletSummary } from "../../../stores";
+  import { currentWalletName, currentWalletSummary } from "../../stores";
   import {
     denom2str,
     kind2str,
     showToast,
     transaction_balance,
     transaction_full,
-  } from "../../../utils/utils";
+  } from "../../utils/utils";
   import { onDestroy } from "svelte";
   import { derived, writable } from "svelte/store";
   import type { Readable, Writable } from "svelte/store";
@@ -19,7 +19,8 @@
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import JSONbig from "json-bigint";
-  import TxSummary from ".../TxSummary.svelte";
+  import TxSummary from "../molecules/TxSummary.svelte";
+import { Modal } from "../atoms";
   const JBig = JSONbig({ alwaysParseAsBig: true });
 
   let balance: Writable<

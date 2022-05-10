@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Button from "@/components/UI/inputs/Button.svelte";
-  import Textfield from "@/components/UI/inputs/TextField.svelte";
+
   import { getContext, createEventDispatcher } from "svelte";
+import { Button, Textfield } from "../components/atoms";
 import { add_coin, tap_faucet, TESTNET } from "../utils/utils";
 
   const {settings} = getContext("settings")

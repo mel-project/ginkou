@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RoundButton from "../atoms/inputs/Button.svelte";
+  import Button from "../atoms/Button.svelte";
   import WalletCreator from "./WalletCreator.svelte";
   import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
@@ -38,7 +38,7 @@
 </script>
 
 <div class="selector">
-  <RoundButton label="" outline small onClick={() => (modalOpen = !modalOpen)}>
+  <Button label="" outline small onClick={() => (modalOpen = !modalOpen)}>
     <div>
       <div
         class="icon"
@@ -52,7 +52,7 @@
       / {$currentWalletName}
     </div>
     <ChevronDown width="1.8rem" height="1.8rem" />
-  </RoundButton>
+  </Button>
   <div
     class="lock-indicator"
     on:click={async () => {
@@ -78,22 +78,22 @@
     }}
   >
     {#if creatorOpen}
-      <RoundButton
+      <Button
         label="back"
         small
         outline
-        onClick={() => (creatorOpen = false)}><ArrowLeft /></RoundButton
+        onClick={() => (creatorOpen = false)}><ArrowLeft /></Button
       >
       <WalletCreator onCreate={() => (creatorOpen = false)} />
     {:else}
       <div>
         <div class="network-subtitle">
           <div>Mainnet</div>
-          <RoundButton
+          <Button
             label="create"
             small
             outline
-            onClick={() => (creatorOpen = true)}><Plus /></RoundButton
+            onClick={() => (creatorOpen = true)}><Plus /></Button
           >
         </div>
 

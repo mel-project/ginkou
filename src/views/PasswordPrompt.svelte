@@ -1,10 +1,9 @@
 <script lang="ts">
-  import TextField from "../components/atoms/inputs/TextField.svelte";
+  import {Textfield, Button} from "../components/atoms";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import { ensure_unlocked } from "../utils/utils";
   import { slide } from "svelte/transition";
 
-  import RoundButton from "../components/atoms/inputs/Button.svelte";
   import { createEventDispatcher } from "svelte";
   let password = "";
   let unsuccessful: Error | undefined;
@@ -56,7 +55,7 @@
       </div>
     </div>
   {/if}
-  <TextField
+  <Textfield
     bind:value={password}
     on:click={() => handleInputClick()}
     label="passphrase: "
@@ -70,17 +69,17 @@
     <div class="unlock">
       {#if close_button}
         <div class="close_button">
-          <RoundButton on:click={(x) => dispatch("close")} fill
-            >Close</RoundButton
+          <Button on:click={(x) => dispatch("close")} fill
+            >Close</Button
           >
         </div>
       {/if}
-      <RoundButton
+      <Button
         on:click={(x) => try_unlock(password)}
         fill
         outline
         submit
-        disabled={pending}>{confirm_label}</RoundButton
+        disabled={pending}>{confirm_label}</Button
       >
     </div>
   </div>

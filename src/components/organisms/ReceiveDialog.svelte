@@ -1,8 +1,8 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import { currentWalletSummary } from "../../../stores";
+  import { currentWalletSummary } from "../../stores";
   import QRCode from "qrcode";
-  import { copyToClipboard, showToast } from "../../../utils/utils";
+  import { copyToClipboard, showToast } from "../../utils/utils";
   let qrCodeUrl =
     "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="; // empty image
 

@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { currentWalletName, currentWalletSummary } from "../stores";
+  import { currentWalletName, currentWalletSummary } from "../../stores";
   import { slide, fade } from "svelte/transition";
   import {
     denom2str,
     prepare_tx,
     send_tx,
     unlock_wallet,
-  } from "../utils/utils";
-  import RoundButton from "./atoms/inputs/Button.svelte";
-  import QrScanWindow from "./atoms/inputs/QrScanWindow.svelte";
+  } from "../../utils/utils";
+  
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
   import BigNumber from "bignumber.js";
-  import type { Transaction } from "../utils/types";
-  import TxSummary from "./TxSummary.svelte";
   import { onMount, tick } from "svelte";
+import TxSummary from "../molecules/TxSummary.svelte";
+import { Button, QrScanWindow } from "../atoms";
+import { Transaction } from "../../utils/types";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
@@ -100,16 +100,16 @@
         />
 
         <div class="section final">
-          <RoundButton label="Confirm" disabled={pending} onClick={onConfirm}>
+          <Button label="Confirm" disabled={pending} onClick={onConfirm}>
             {#if pending}
               <div class="spinner-border" role="status" />
             {:else}
               <Check width="1.5rem" height="1.5rem" />
             {/if}&nbsp;
-          </RoundButton>
+          </Button>
           {#if !noCancel}
             &nbsp;&nbsp;
-            <RoundButton
+            <Button
               label="Cancel"
               disabled={pending}
               onClick={onCancel}
@@ -167,7 +167,7 @@
         </div>
 
         <div class="section final">
-          <RoundButton
+          <Button
             label="Send transaction"
             outline
             disabled={pending}
@@ -178,7 +178,7 @@
             {:else}
               <ArrowTopRight width="1.5rem" height="1.5rem" />
             {/if}&nbsp;
-          </RoundButton>
+          </Button>
         </div>
       </div>
     {/if}
@@ -186,7 +186,7 @@
 </div>
 
 <style lang="scss">
-  @use "../res/styles/alerts.scss";
+  @use "../../res/styles/alerts.scss";
  
   .header {
     font-weight: 600;

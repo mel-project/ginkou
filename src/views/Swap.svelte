@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DenomPicker from "../components/atoms/themelio/DenomPicker.svelte";
+  import DenomPicker from "../components/molecules/DenomPicker.svelte";
   import BigNumber from "bignumber.js";
   import {
     denom2str,
@@ -10,11 +10,11 @@
   import type { SwapInfo } from "../utils/utils";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import { debounce } from "debounce";
-  import RoundButton from "../components/atoms/inputs/Button.svelte";
   import { currentWalletName, currentWalletSummary } from "../stores";
-  import SendDialog from "../components/SendDialog.svelte";
   import type { Transaction } from "../utils/types";
   import Modal from "../components/atoms/Modal.svelte";
+import SendDialog from "../components/organisms/SendDialog.svelte";
+import { Button } from "../components/atoms";
   let payDenom = "6d";
   let recvDenom = "73";
 
@@ -144,7 +144,7 @@
   </div>
 
   <div class="switch-protector">
-    <RoundButton
+    <Button
       label=""
       outline
       small
@@ -152,7 +152,7 @@
         let pd = payDenom;
         payDenom = recvDenom;
         recvDenom = pd;
-      }}><SwapVertical width="1rem" height="1rem" /></RoundButton
+      }}><SwapVertical width="1rem" height="1rem" /></Button
     >
   </div>
 
@@ -197,7 +197,7 @@
   </div>
 
   <div class="button-protector">
-    <RoundButton
+    <Button
       disabled={pending || payValue.eq(0)}
       label="Review transaction"
       outline

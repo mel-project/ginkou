@@ -1,14 +1,11 @@
 <script lang="ts">
   import Setting from "../components/atoms/Setting.svelte";
-  import Select from "../components/atoms/inputs/Select.svelte";
-  import Button from "../components/atoms/inputs/Button.svelte";
-  import BooleanInput from "../components/atoms/inputs/Boolean.svelte";
+  import {Select, Button, BooleanInput} from "../components/atoms";
   import { slide } from "svelte/transition";
   import { persistent_tabs, default_tab } from "../stores";
   import PasswordPrompt from "./PasswordPrompt.svelte";
   import { export_sk, showToast, copyToClipboard } from "../utils/utils";
   import Modal from "../components/atoms/Modal.svelte";
-  import RoundButton from "../components/atoms/inputs/Button.svelte";
 
   // import Settings from "../stores";
 
@@ -42,7 +39,7 @@
             to all your funds. <i>Do not share it with anybody else!</i>
           </div>
           <textarea class="sk-area">{sk}</textarea>
-          <RoundButton
+          <Button
             label="Copy to clipboard"
             onClick={() => {
               copyToClipboard(sk);
@@ -59,7 +56,7 @@
           description="Export wallet secret key"
           class="text-overflow-ellipsis"
         >
-          <RoundButton
+          <Button
             onClick={() => (show_sk = true)}
             label="Export"
             outline

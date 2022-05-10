@@ -1,13 +1,13 @@
 <script lang="ts">
   import WalletSelector from "../components/templates/WalletSelector.svelte";
   import HomeHero from "../components/molecules/HomeHero.svelte";
-  import DenomBubble from "../components/atoms/themelio/DenomBubble.svelte";
+  import DenomBubble from "../components/molecules/DenomBubble.svelte";
   import Modal from "../components/atoms/Modal.svelte";
   import { currentWalletSummary } from "../stores";
   import BigNumber from "bignumber.js";
   import { denom2str, kind2str } from "../utils/utils";
-  import SendDialog from "../components/SendDialog.svelte";
   import ReceiveDialog from "../components/organisms/ReceiveDialog.svelte";
+import SendDialog from "../components/organisms/SendDialog.svelte";
 
   let sendOpen = false;
   let recvOpen = false;
