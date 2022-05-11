@@ -22,6 +22,23 @@
   let selectedTab: number = 0;
   let firstDialog = false;
   onMount(async () => {
+		function log(mode: string) {
+			let logger = console[mode] as (s: string)=>void;
+			function inner(){
+				_ipc_handler('log',{loglevel:mode, args: arguments})
+				logger(...arguments)
+			}
+			return inner
+		}  
+		console.log = log('log')
+		console.debug = log('debug')
+		console.error = log('error')
+		console.info = log('info')
+		console.warn = log('warn')
+
+		window._ipc_handler = window._ipc_handler || (()=>{});
+    console.log("this is a log");
+
     let either = await getWalletSummaries();
     let list = either.unsafeCoerce();
     $currentWalletName = $currentWalletName || Object.keys(list)[0] || null;

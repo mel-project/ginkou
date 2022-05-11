@@ -6,4 +6,3 @@ export {default as QrScanWindow} from "./QrScanWindow.svelte"
 export {default as Select} from "./Select.svelte"
 export {default as Setting} from "./Setting.svelte"
 
-// export default {BooleanInput, Button, Textfield}

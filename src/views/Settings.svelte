@@ -1,10 +1,9 @@
 <script lang="ts">
   import Setting from "../components/atoms/Setting.svelte";
-  import {Select, Button, BooleanInput} from "../components/atoms";
-  import { slide } from "svelte/transition";
-  import { persistent_tabs, default_tab } from "../stores";
+  import {Select, Button, BooleanInput} from "components";
+  import { persistent_tabs, default_tab } from "stores";
   import PasswordPrompt from "./PasswordPrompt.svelte";
-  import { export_sk, showToast, copyToClipboard } from "../utils/utils";
+  import { export_sk, showToast, copyToClipboard } from "utils/utils";
   import Modal from "../components/atoms/Modal.svelte";
 
   // import Settings from "../stores";
@@ -47,6 +46,7 @@
             }}
           />
         </div>
+        
       </Modal>
       <div class="settings-list">
         <div class="settings-header">Backup</div>
@@ -60,6 +60,14 @@
             onClick={() => (show_sk = true)}
             label="Export"
             outline
+          />
+        </Setting>
+        <Setting name="Download Logs" label="Download Logs" description="">
+          <Button
+            outline
+            disabled={$persistent_tabs}
+            label="Download"
+            on:click={()=>_ipc_handler('download-logs')}
           />
         </Setting>
       </div>
@@ -85,6 +93,8 @@
             ]}
           />
         </Setting>
+
+
       </div>
     </div>
   {/if}
