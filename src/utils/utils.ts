@@ -254,14 +254,19 @@ export function net_spent(tx: Transaction, self_covhash: string): BigNumber {
     .plus(tx.fee);
 }
 
+/// Gets the current authtoken
+function melwalletd_auth_token(): string {
+  return (window as any).MELWALLETD_AUTH_TOKEN || "dummy";
+}
+
 /// Fetch a url endpoint and parse as json, error if the HTTP response is not OK
 export async function fetch_json_or_err(
   url: string,
   opts: any
 ): Promise<Either<string, any>> {
+  opts.headers = { "X-Melwalletd-Auth-Token": melwalletd_auth_token() };
   try {
     let res = await fetch(url, opts);
-
     if (!res.ok) return Left("(" + res.status + ") " + (await res.text()));
     else return Right(JSONbig.parse(await res.text()));
   } catch (e: any) {
@@ -274,6 +279,7 @@ export async function fetch_text_or_err(
   url: string,
   opts: any
 ): Promise<Either<string, string>> {
+  opts.headers = { "X-Melwalletd-Auth-Token": melwalletd_auth_token() };
   // Throws on a promise rejection, which will be caught by EitherAsync's run()
   let res = await fetch(url, opts);
 
@@ -356,7 +362,7 @@ export const unlock_wallet = (
     return liftEither(Right(undefined));
   });
 
-  // Unlocks a wallet.
+// Unlocks a wallet.
 export const export_sk = (
   wallet_name: string,
   password: string,
@@ -512,12 +518,12 @@ export const ensure_unlocked = async (
   walletSummary: WalletSummary,
   pwd: string
 ) => {
-    if (pwd != undefined) {
-      console.log("unlock wallet");
-      let result = await unlock_wallet(walletName, pwd).run();
-      result.ifLeft((err) => {
-        throw err;
-      });
+  if (pwd != undefined) {
+    console.log("unlock wallet");
+    let result = await unlock_wallet(walletName, pwd).run();
+    result.ifLeft((err) => {
+      throw err;
+    });
   }
 };
 
