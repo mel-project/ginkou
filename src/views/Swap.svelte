@@ -1,5 +1,4 @@
 <script lang="ts">
-  import DenomPicker from "../components/DenomPicker.svelte";
   import BigNumber from "bignumber.js";
   import {
     denom2str,
@@ -8,13 +7,12 @@
     swap_info,
   } from "../utils/utils";
   import type { SwapInfo } from "../utils/utils";
-  import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
-  import { debounce } from "debounce";
-  import RoundButton from "../components/RoundButton.svelte";
   import { currentWalletName, currentWalletSummary } from "../stores";
-  import SendDialog from "../components/SendDialog.svelte";
+  import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
+
   import type { Transaction } from "../utils/types";
-  import Modal from "../components/Modal.svelte";
+import debounce from "debounce";
+import { Button, DenomPicker, Modal, SendDialog } from "components";
   let payDenom = "6d";
   let recvDenom = "73";
 
@@ -144,7 +142,7 @@
   </div>
 
   <div class="switch-protector">
-    <RoundButton
+    <Button
       label=""
       outline
       small
@@ -152,7 +150,7 @@
         let pd = payDenom;
         payDenom = recvDenom;
         recvDenom = pd;
-      }}><SwapVertical width="1rem" height="1rem" /></RoundButton
+      }}><SwapVertical width="1rem" height="1rem" /></Button
     >
   </div>
 
@@ -197,7 +195,7 @@
   </div>
 
   <div class="button-protector">
-    <RoundButton
+    <Button
       disabled={pending || payValue.eq(0)}
       label="Review transaction"
       outline

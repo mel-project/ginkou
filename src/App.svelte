@@ -1,23 +1,15 @@
 <script lang="ts">
-  import Settings from "./views/Settings.svelte";
-  import BottomTabs from "./components/BottomTabs.svelte";
-  import Modal from "./components/Modal.svelte";
-  import RoundButton from "./components/RoundButton.svelte";
-  import WalletCreator from "./components/WalletCreator.svelte";
-  import { currentWalletName, currentWalletSummary } from "./stores";
-  import Overview from "./views/Overview.svelte";
-  import Transactions from "./views/Transactions.svelte";
-  import WalletSelector from "./components/WalletSelector.svelte";
-  import { slide } from "svelte/transition";
   import {
+    currentWalletName, currentWalletSummary,
     last_tab,
     default_tab,
     persistent_tabs,
     getWalletSummaries,
   } from "./stores";
-  import Swap from "./views/Swap.svelte";
+  import { BottomTabs, Modal, WalletCreator, WalletSelector } from "./components";
   import { onMount } from "svelte";
-  import PasswordPrompt from "./components/PasswordPrompt.svelte";
+  import { slide } from "svelte/transition";
+import { Overview, PasswordPrompt, Settings, Swap, Transactions } from "./views";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;

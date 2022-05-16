@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { currentWalletName, currentWalletSummary } from "../stores";
+  import { currentWalletName, currentWalletSummary } from "../../stores";
   import { slide, fade } from "svelte/transition";
   import {
     denom2str,
     prepare_tx,
     send_tx,
     unlock_wallet,
-  } from "../utils/utils";
-  import Button from "./Button.svelte";
-  import QrScanWindow from "./QrScanWindow.svelte";
+  } from "../../utils/utils";
+  
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
   import BigNumber from "bignumber.js";
-  import type { Transaction } from "../utils/types";
-  import TxSummary from "./TxSummary.svelte";
   import { onMount, tick } from "svelte";
+import TxSummary from "../molecules/TxSummary.svelte";
+import { Button, QrScanWindow } from "../atoms";
+import { Transaction } from "../../utils/types";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
@@ -186,7 +186,7 @@
 </div>
 
 <style lang="scss">
-  @use "../res/styles/alerts.scss";
+  @use "../../res/styles/alerts.scss";
  
   .header {
     font-weight: 600;

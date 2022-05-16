@@ -7,10 +7,12 @@
     "target": "es6",
     "lib": ["es2017"],
     "importsNotUsedAsValues": "remove",
-
+    "baseUrl": "src",
+    // "paths": {"@components": ["components"], "@components/*": ["components/*"]} ,
     "plugins": [
       { "transform": "typescript-is/lib/transform-inline/transformer" }
-    ]
+    ],
+    
   },
 
   "extends": "@tsconfig/svelte/tsconfig.json",

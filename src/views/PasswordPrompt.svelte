@@ -1,10 +1,9 @@
 <script lang="ts">
-  import TextField from "./UI/inputs/TextField.svelte";
+  import {Textfield, Button} from "../components";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import { ensure_unlocked } from "../utils/utils";
   import { slide } from "svelte/transition";
 
-  import Button from "../components/Button.svelte";
   import { createEventDispatcher } from "svelte";
   let password = "";
   let unsuccessful: Error | undefined;
@@ -56,7 +55,7 @@
       </div>
     </div>
   {/if}
-  <TextField
+  <Textfield
     bind:value={password}
     on:click={() => handleInputClick()}
     label="passphrase: "

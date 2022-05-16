@@ -11,10 +11,13 @@
   export let disabled: boolean = false;
   export let onClick: (() => void) | undefined = undefined;
 
+  let _class: string = "";
+  export {_class as class}
+
   onMount(() => {
     if (onClick) {
       console.warn(
-        "`RoundButton.svelte` attribute `onClick` will be depreciated"
+        "`Button.svelte` attribute `onClick` will be depreciated"
       );
     }
   });
@@ -29,6 +32,7 @@
   class:heavy={bold}
   class:small
   class:fill
+  class:_class
   {disabled}
   on:click={() => onClick && onClick()}
   on:click

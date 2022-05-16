@@ -1,14 +1,7 @@
 <script lang="ts">
-  import WalletSelector from "../components/WalletSelector.svelte";
-  import HomeHero from "../components/HomeHero.svelte";
-  import DenomBubble from "../components/DenomBubble.svelte";
-  import Modal from "../components/Modal.svelte";
+import { DenomBubble, HomeHero, Modal, ReceiveDialog, SendDialog } from "../components";
+import {denom2str} from "utils/utils";
   import { currentWalletSummary } from "../stores";
-  import BigNumber from "bignumber.js";
-  import { denom2str, kind2str } from "../utils/utils";
-  import SendDialog from "../components/SendDialog.svelte";
-  import ReceiveDialog from "../components/ReceiveDialog.svelte";
-
   let sendOpen = false;
   let recvOpen = false;
 </script>

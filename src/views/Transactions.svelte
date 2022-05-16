@@ -2,12 +2,11 @@
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
-  import WalletSelector from "../components/WalletSelector.svelte";
-  import TransactionBubble from "../components/TransactionBubble.svelte";
   import { currentNetworkStatus, currentWalletName } from "../stores";
   import type { WalletDump } from "../utils/types";
   import { list_transactions } from "../utils/utils";
   import { parse } from "json-bigint";
+import { TransactionBubble } from "components";
 
   const dateToTxhash: Readable<
     { [key: string]: [string, number][] } | undefined

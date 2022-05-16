@@ -1,11 +1,11 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { text } from "svelte/internal";
-  import Button from "./Button.svelte";
+  import Button from "../atoms/Button.svelte";
   import PlusCircleOutline from "svelte-material-icons/PlusCircleOutline.svelte";
   import DownloadCircleOutline from "svelte-material-icons/DownloadCircleOutline.svelte";
-  import { new_wallet, showToast } from "../utils/utils";
-  import { currentWalletName } from "../stores";
+  import { new_wallet, showToast } from "../../utils/utils";
+  import { currentWalletName } from "../../stores";
 
   let state = "start";
   export let onCreate = () => {};

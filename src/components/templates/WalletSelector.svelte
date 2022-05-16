@@ -1,19 +1,19 @@
 <script lang="ts">
-  import Button from "./Button.svelte";
+  import Button from "../atoms/Button.svelte";
   import WalletCreator from "./WalletCreator.svelte";
   import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
   import Lock from "svelte-material-icons/LockOutline.svelte";
   import LockOpen from "svelte-material-icons/LockOpenOutline.svelte";
   import Plus from "svelte-material-icons/Plus.svelte";
-  import Modal from "./Modal.svelte";
+  import Modal from "../atoms/Modal.svelte";
   import {
     currentWalletName,
     currentWalletSummary,
     walletSummaries,
-  } from "../stores";
-  import type { WalletSummary } from "../utils/types";
-  import { MAINNET, TESTNET, lock_wallet } from "../utils/utils";
+  } from "../../stores";
+  import type { WalletSummary } from "../../utils/types";
+  import { MAINNET, TESTNET, lock_wallet } from "../../utils/utils";
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
@@ -165,10 +165,13 @@
   .selector {
     height: 6rem;
     width: 100%;
+    // max-width: 30rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    // overflow: hidden;
+    // text-o
   }
 
   b {
