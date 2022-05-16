@@ -17,8 +17,16 @@ import { Overview, PasswordPrompt, Settings, Swap, Transactions } from "./views"
   onMount(async () => {
     let either = await getWalletSummaries();
     let list = either.unsafeCoerce();
+
+    // //if the wallet name cookie doesn't exist in the wallet list, unset the cookie
+    // //this can happen if a machine changes melwalletd databases
+    // if(!Object.keys(list).indexOf($currentWalletName || "")){
+    //   $currentWalletName = null
+    // }
+    // if a wallet cookie exists use it; get the first wallet in the list; else null
     $currentWalletName = $currentWalletName || Object.keys(list)[0] || null;
     firstDialog = $currentWalletName === null;
+
   });
   let handleEvent = (event: CustomEvent) => {
     event.detail._callback();
