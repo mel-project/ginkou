@@ -16,6 +16,7 @@ import type {
   WalletSummary,
   WalletEntry,
   NetworkStatus,
+  Obj,
 } from "./types";
 import Toastify from "toastify-js";
 import { walletSummaries } from "../stores";
@@ -647,3 +648,18 @@ export const copyToClipboard = (text: string) => {
   document.body.removeChild(input);
   return result;
 };
+
+
+export function ipc_handler(name: string, obj: Obj<String>){
+  // console._info("evoking ipc: ", _event);
+  return _ipc_handler(name, obj); 
+}
+export function log(mode: string) {
+  let logger = console[mode] as (s: string)=>void;
+  console["_"+mode] = logger
+  function inner(){
+    ipc_handler('log-event',{level:mode, message: Object.values(arguments).join("\n")})
+    logger(...arguments)
+  }
+  return inner
+}  
