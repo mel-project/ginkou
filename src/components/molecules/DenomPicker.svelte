@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { denom2str } from "../utils/utils";
+  import { denom2str } from "../../utils/utils";
 
-  import Modal from "./Modal.svelte";
+  import Modal from "../atoms/Modal.svelte";
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
   export let denom: string = "6d";
 

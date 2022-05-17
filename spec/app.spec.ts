@@ -1,4 +1,3 @@
-import App from '../src/App.svelte'
 import { render, fireEvent } from '@testing-library/svelte'
 it.skip('Opens the transaction tab', async ()=>{
   // const app_element = render(App)

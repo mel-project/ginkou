@@ -16,6 +16,7 @@ import type {
   WalletSummary,
   WalletEntry,
   NetworkStatus,
+  Obj,
 } from "./types";
 import Toastify from "toastify-js";
 import { walletSummaries } from "../stores";
@@ -647,3 +648,43 @@ export const copyToClipboard = (text: string) => {
   document.body.removeChild(input);
   return result;
 };
+
+
+//this is the shared definition of _ipc_handler as created by the various ginkou-loaders
+//we may want to move this implementation  directly into ginkou
+// function _ipc_handler(_event, params) {
+//   let _params = params || {};
+//   window.ipc.postMessage(JSON.stringify(Object.assign({ _event }, _params)));
+// }
+
+
+export function ipc_handler(name: string, obj: Obj<any>){
+  // console._info("evoking ipc: ", _event);
+  return _ipc_handler(name, obj); 
+}
+export function capture_log(mode: string) {
+  let logger = console[mode] as (s: string)=>void;
+  console["_"+mode] = logger
+  function inner(){
+    ipc_handler('log-event',{level:mode, message: Object.values(arguments).join("\n")})
+    logger(...arguments)
+  }
+  return inner
+}
+
+export function register_console_loggers(){
+  let levels = ["log","debug","info","warn","error"]
+  levels.forEach((level)=>console[level]=capture_log(level))
+}
+
+export function download_logs(){
+  ipc_handler("download-logs",{})
+}
+
+export function set_conversion_factor(conversion_factor: number){
+  ipc_handler("set-conversion-factor", {conversion_factor})
+}
+
+export function open_browser(url: string){
+  ipc_handler("open-browser", {url});
+}

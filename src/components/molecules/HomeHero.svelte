@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RoundButton from "../components/RoundButton.svelte";
+  import Button from "../atoms/Button.svelte";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
@@ -28,13 +28,13 @@
   </div> -->
   <div class="hero-buttons">
     <div>
-      <RoundButton label="Send" bold onClick={onSend}
-        ><ArrowTopRight width="1.5rem" height="1.5rem" />&nbsp;</RoundButton
+      <Button label="Send" bold onClick={onSend}
+        ><ArrowTopRight width="1.5rem" height="1.5rem" />&nbsp;</Button
       >
     </div>
     <div>
-      <RoundButton label="Receive" outline bold onClick={onReceive}
-        ><ArrowBottomLeft width="1.5rem" height="1.5rem" />&nbsp;</RoundButton
+      <Button label="Receive" outline bold onClick={onReceive}
+        ><ArrowBottomLeft width="1.5rem" height="1.5rem" />&nbsp;</Button
       >
     </div>
   </div>

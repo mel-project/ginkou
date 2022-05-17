@@ -1,17 +1,22 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { InputVariant } from "../../../utils/svelte-types";
-  export let value = "";
-  export let label = "";
-  export let disabled = false;
-  let focused = false;
-  export let password = false;
-  export let autofocus = false;
+  import { InputVariant } from "../../utils/svelte-types";
+  
+
+
   let _class: string = "";
   let variant: InputVariant = InputVariant.DEFAULT;
   let labeled: boolean = true;
+  let focused = false;
+
+  export let value = "";
+  export let label = "";
+  export let disabled = false;
+  export let password = false;
+  export let autofocus = false;
   export { _class as class };
 
+  let _password = password ? "password" : "text"
   const event_dispatcher = createEventDispatcher();
 
   const handleKeyPress = (evt: KeyboardEvent) => {
@@ -32,14 +37,13 @@
   <div class="container {variant}">
     <div class="input {_class}" on:click|stopPropagation>
       <label for="input">{labeled ? label : ""}</label>
-      {#if password}
         <input
-          type="password"
+          type={_password}
           name="input"
-          bind:value
           on:click|stopPropagation
           on:change
           on:input
+          on:input={(e)=>value = e.target.value}
           on:blur={handleBlur}
           on:focus={handleFocus}
           on:keypress={handleKeyPress}
@@ -48,30 +52,13 @@
           disabled={false}
           {autofocus}
         />
-      {:else}
-        <input
-          type="text"
-          name="input"
-          bind:value
-          on:click|stopPropagation
-          on:change
-          on:input
-          on:blur={handleBlur}
-          on:focus={handleFocus}
-          on:keypress={handleKeyPress}
-          placeholder={!labeled ? label : ""}
-          {...$$props}
-          disabled={false}
-          {autofocus}
-        />
-      {/if}
     </div>
     <slot {focused} {disabled} {value} />
   </div>
 </template>
 
 <style lang="scss">
-  @use '../../../res/styles/theme.scss' as theme;
+  @use '../../res/styles/theme.scss' as theme;
 
   input {
     border: none;

@@ -1,33 +1,48 @@
 <script lang="ts">
-  import Settings from "./views/Settings.svelte";
-  import BottomTabs from "./components/BottomTabs.svelte";
-  import Modal from "./components/Modal.svelte";
-  import RoundButton from "./components/RoundButton.svelte";
-  import WalletCreator from "./components/WalletCreator.svelte";
-  import { currentWalletName, currentWalletSummary } from "./stores";
-  import Overview from "./views/Overview.svelte";
-  import Transactions from "./views/Transactions.svelte";
-  import WalletSelector from "./components/WalletSelector.svelte";
-  import { slide } from "svelte/transition";
+  import { register_console_loggers } from "utils/utils";
+  register_console_loggers();
   import {
+    currentWalletName,
+    currentWalletSummary,
     last_tab,
     default_tab,
     persistent_tabs,
     getWalletSummaries,
   } from "./stores";
-  import Swap from "./views/Swap.svelte";
+  import {
+    BottomTabs,
+    Modal,
+    WalletCreator,
+    WalletSelector,
+  } from "./components";
   import { onMount } from "svelte";
-  import PasswordPrompt from "./components/PasswordPrompt.svelte";
+  import { slide } from "svelte/transition";
+  import {
+    Overview,
+    PasswordPrompt,
+    Settings,
+    Swap,
+    Transactions,
+  } from "./views";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
   let selectedTab: number = 0;
   let firstDialog = false;
-  onMount(async () => {
-    let either = await getWalletSummaries();
-    let list = either.unsafeCoerce();
-    $currentWalletName = $currentWalletName || Object.keys(list)[0] || null;
-    firstDialog = $currentWalletName === null;
-  });
+
+  $: {
+    getWalletSummaries().then((either) => {
+      let list = either.unsafeCoerce();
+      // //if the wallet name cookie doesn't exist in the wallet list, unset the cookie
+      // //this can happen if a machine changes melwalletd databases
+      if (Object.keys(list).indexOf($currentWalletName || "") < 0) {
+        $currentWalletName = null;
+      }
+      // if a wallet cookie exists use it; get the first wallet in the list; else null
+      $currentWalletName = $currentWalletName || Object.keys(list)[0] || null;
+      firstDialog = $currentWalletName === null;
+    });
+  }
+  onMount(async () => {});
   let handleEvent = (event: CustomEvent) => {
     event.detail._callback();
   };
