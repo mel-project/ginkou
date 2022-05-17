@@ -4,7 +4,7 @@ import { BooleanInput, Button, Modal, Select, Setting } from "components";
   import { slide } from "svelte/transition";
 import { PasswordPrompt } from "views";
   import { persistent_tabs, default_tab } from "../stores";
-  import { export_sk, showToast, copyToClipboard } from "../utils/utils";
+  import { export_sk, showToast, copyToClipboard, download_logs } from "../utils/utils";
 
   // import Settings from "../stores";
 
@@ -13,6 +13,7 @@ import { PasswordPrompt } from "views";
 
   let handleUnlock = async (ev: CustomEvent) => {
     let { walletName, password } = ev.detail;
+    //guarenteed to be the correct password
     let either = await export_sk(walletName, password);
     sk = either.extract() as string;
     show_sk = false;
@@ -62,6 +63,19 @@ import { PasswordPrompt } from "views";
           />
         </Setting>
       </div>
+      <div class="settings-header">System</div>
+      <Setting
+        name="Download_logs"
+        label="Download Logs"
+        description="Download mellis logs to your filesystem"
+        class="text-overflow-ellipsis"
+      >
+        <Button
+          on:click={()=>download_logs()}
+          label="Download"
+          outline
+        />
+      </Setting>
       <div class="settings-list">
         <div class="settings-header">Miscellaneous</div>
         <Setting
