@@ -1,22 +1,22 @@
-// import { assert } from 'chai';
-// import * as utils from '../src/utils/utils';
-// import type { PrivateKey } from '../src/utils/types';
-// import { EitherAsync } from 'purify-ts/EitherAsync';
+import { assert } from 'chai';
+import * as utils from '../src/utils/utils';
+import type { PrivateKey } from '../src/utils/types';
+import { EitherAsync } from 'purify-ts/EitherAsync';
 
-// describe.skip('list wallets', () => {
-//     it('should return empty list', async () => {
-//         const res = await utils.list_wallets();
+describe.skip('list wallets', () => {
+    it('should return empty list', async () => {
+    //     const res = await utils.list_wallets();
         
-//         res
-//             .ifRight( (wallets) => {
-//                 assert.isAbove(Object.keys(wallets).length, 0);
-//             })
-//             .ifLeft( e => {
-//                 console.warn(e);
-//                 assert(false);
-//             });
-//     });
-// });
+    //     res
+    //         .ifRight( (wallets) => {
+    //             assert.isAbove(Object.keys(wallets).length, 0);
+    //         })
+    //         .ifLeft( e => {
+    //             console.warn(e);
+    //             assert(false);
+    //         });
+    // });
+});
 
 // describe.skip('new wallet', () => {
 //     it('create a wallet', async () => {
@@ -28,4 +28,4 @@
 //             assert.equal(e, "(500) ERROR: cannot create wallet")
 //         });
 //     });
-// });
+});
