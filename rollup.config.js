@@ -61,7 +61,10 @@ export default {
       entries: {
         "@": path.resolve(rootDir),
         "components": path.resolve(rootDir, "components"),
-        "utils": path.resolve(rootDir, "utils")
+        "utils": path.resolve(rootDir, "utils"),
+        "views": path.resolve(rootDir, "views"),
+
+        
       },
     }),
     pug(),
