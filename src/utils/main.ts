@@ -1,7 +1,4 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
-import "core-js/es/set";
-import "core-js/es/weak-map";
+import "core-js"; // <- at the top of your entry point
 
 import App from "../App.svelte";
 

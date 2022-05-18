@@ -104,7 +104,7 @@ export default {
           "@babel/preset-env",
           {
             targets: "ie 10",
-            useBuiltIns: "entry",
+            // useBuiltIns: "entry",
             corejs: 3,
           },
         ],
@@ -120,6 +120,7 @@ export default {
         ],
       ],
     }),
+    buble(),
     // If w
 
     // In dev mode, call `npm run start` once
