@@ -1,11 +1,11 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { text } from "svelte/internal";
-  import RoundButton from "./RoundButton.svelte";
+  import Button from "../atoms/Button.svelte";
   import PlusCircleOutline from "svelte-material-icons/PlusCircleOutline.svelte";
   import DownloadCircleOutline from "svelte-material-icons/DownloadCircleOutline.svelte";
-  import { new_wallet, showToast } from "../utils/utils";
-  import { currentWalletName } from "../stores";
+  import { new_wallet, showToast } from "../../utils/utils";
+  import { currentWalletName } from "../../stores";
 
   let state = "start";
   export let onCreate = () => {};
@@ -100,13 +100,13 @@
       </div>
 
       <div class="final">
-        <RoundButton
+        <Button
           label="Create wallet"
           onClick={doCreate}
           disabled={pending}
         />
         &nbsp;&nbsp;
-        <RoundButton
+        <Button
           label="Cancel"
           onClick={() => (state = "start")}
           outline
@@ -146,13 +146,13 @@
         />
       </div>
       <div class="final">
-        <RoundButton
+        <Button
           label="Import"
           onClick={()=>doImport(secretKey)}
           disabled={pending}
         />
         &nbsp;&nbsp;
-        <RoundButton
+        <Button
           label="Cancel"
           onClick={() => (state = "start")}
           outline

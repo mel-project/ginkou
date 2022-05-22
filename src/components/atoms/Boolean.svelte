@@ -1,11 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { InputVariant } from "../../../utils/svelte-types";
-
-  type Source = $$Generic<number | string>;
-
-  export let value: Source;
-  export let options: [string, Source][];
+  export let value: boolean;
   let focused = false;
   let _class: string = "";
   let labeled: boolean = true;
@@ -28,11 +23,13 @@
 </script>
 
 <template>
-  <div class="input {_class}" on:click|stopPropagation>
-    <select
+  <div class="form-check form-switch input {_class}" on:click|stopPropagation>
+    <input
+      type="checkbox"
       name="input"
-      bind:value
-      class="form-select"
+      class="form-check-input"
+      role="switch"
+      bind:checked={value}
       on:click|stopPropagation
       on:change
       on:input
@@ -40,15 +37,15 @@
       on:focus={handleFocus}
       on:keypress={handleKeyPress}
       {...$$props}
-    >
-      {#each options as option}
-        <option value={option[1]}>
-          {option[0]}
-        </option>
-      {/each}
-    </select>
+      disabled={false}
+    />
   </div>
 </template>
 
 <style lang="scss">
+  input {
+    height: 1.5rem;
+    display: block;
+    width: 2.5rem !important;
+  }
 </style>

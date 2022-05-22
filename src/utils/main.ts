@@ -1,8 +1,11 @@
-import "core-js"; // <- at the top of your entry point
-
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+import "core-js/es/set";
+import "core-js/es/weak-map";
+import "../res/styles/app.scss";
+import "toastify-js/src/toastify.css";
 import App from "../App.svelte";
 
-import "../res/styles/app.scss";
 
 const app = new App({
   target: document.body,
