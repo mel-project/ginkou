@@ -103,7 +103,7 @@
   .txhash {
     overflow-x: hidden;
     text-overflow: ellipsis;
-    max-width: 70vw;
+    width: 50vw;
   }
 
   .index {

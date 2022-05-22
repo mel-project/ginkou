@@ -58,19 +58,19 @@
       {#if $currentWalletSummary.locked}
         <PasswordPrompt on:idk={handleEvent} />
       {:else if $last_tab === 0}
-        <div transition:slide>
+        <div>
           <Overview />
         </div>
       {:else if $last_tab === 1}
-        <div transition:slide>
+        <div>
           <Swap />
         </div>
       {:else if $last_tab === 2}
-        <div transition:slide>
+        <div>
           <Transactions />
         </div>
       {:else if $last_tab === 3}
-        <div transition:slide>
+        <div>
           <Settings />
         </div>
       {/if}
