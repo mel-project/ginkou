@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {Textfield, Button} from "components";
+  import { Textfield, Button } from "components";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import { ensure_unlocked } from "../utils/utils";
   import { slide } from "svelte/transition";
@@ -16,7 +16,6 @@
     if ($currentWalletName && $currentWalletSummary) {
       try {
         pending = true;
-        console.log("idk");
         await ensure_unlocked(
           $currentWalletName,
           $currentWalletSummary,
@@ -27,7 +26,6 @@
           password,
         });
       } catch (err) {
-        console.log("wtf");
         dispatch("unlock_failure");
         unsuccessful = err as Error;
       } finally {
@@ -69,9 +67,7 @@
     <div class="unlock">
       {#if close_button}
         <div class="close_button">
-          <Button on:click={(x) => dispatch("close")} fill
-            >Close</Button
-          >
+          <Button on:click={(x) => dispatch("close")} fill>Close</Button>
         </div>
       {/if}
       <Button

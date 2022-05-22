@@ -1,6 +1,6 @@
 <script lang="ts">
   import BigNumber from "bignumber.js";
-  import { Transaction } from "../../utils/types";
+  import type { Transaction } from "../../utils/types";
   import { denom2str,kind2str } from "../../utils/utils";
   // Transaction to display
   export let tx: Transaction;
@@ -19,7 +19,7 @@
     return toret;
   })();
 
-  const table_key_style: string = "font-weight: bold";
+  const table_key_style: string = "font-weight: bold"; 
   const table_val_style: string =
     "color: black; overflow: hidden; text-overflow:ellipsis";
   const melscan_url = () =>

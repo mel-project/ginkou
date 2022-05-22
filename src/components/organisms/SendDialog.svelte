@@ -7,15 +7,15 @@
     send_tx,
     unlock_wallet,
   } from "../../utils/utils";
-  
+
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
   import BigNumber from "bignumber.js";
   import { onMount, tick } from "svelte";
-import TxSummary from "../molecules/TxSummary.svelte";
-import { Button, QrScanWindow } from "../atoms";
-import { Transaction } from "../../utils/types";
+  import TxSummary from "../molecules/TxSummary.svelte";
+  import { Button, QrScanWindow } from "../atoms";
+  import type { Transaction } from "../../utils/types";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
@@ -32,8 +32,6 @@ import { Transaction } from "../../utils/types";
     console.error(e);
     sendError = e;
   };
-
-
 
   $: onPrepare = async () => {
     pending = true;
@@ -187,7 +185,7 @@ import { Transaction } from "../../utils/types";
 
 <style lang="scss">
   @use "../../res/styles/alerts.scss";
- 
+
   .header {
     font-weight: 600;
     opacity: 0.8;
