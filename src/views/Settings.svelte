@@ -1,10 +1,15 @@
 <script lang="ts">
-import { BooleanInput, Button, Modal, Select, Setting } from "components";
+  import { BooleanInput, Button, Modal, Select, Setting } from "components";
 
   import { slide } from "svelte/transition";
-import { PasswordPrompt } from "views";
+  import { PasswordPrompt } from "views";
   import { persistent_tabs, default_tab } from "../stores";
-  import { export_sk, showToast, copyToClipboard, download_logs } from "../utils/utils";
+  import {
+    export_sk,
+    showToast,
+    copyToClipboard,
+    download_logs,
+  } from "../utils/utils";
 
   // import Settings from "../stores";
 
@@ -56,26 +61,10 @@ import { PasswordPrompt } from "views";
           description="Export wallet secret key"
           class="text-overflow-ellipsis"
         >
-          <Button
-            onClick={() => (show_sk = true)}
-            label="Export"
-            outline
-          />
+          <Button onClick={() => (show_sk = true)} label="Export" outline />
         </Setting>
       </div>
-      <div class="settings-header">System</div>
-      <Setting
-        name="Download_logs"
-        label="Download Logs"
-        description="Download mellis logs to your filesystem"
-        class="text-overflow-ellipsis"
-      >
-        <Button
-          on:click={()=>download_logs()}
-          label="Download"
-          outline
-        />
-      </Setting>
+
       <div class="settings-list">
         <div class="settings-header">Miscellaneous</div>
         <Setting
@@ -98,6 +87,16 @@ import { PasswordPrompt } from "views";
           />
         </Setting>
       </div>
+
+      <div class="settings-header">Debug</div>
+      <Setting
+        name="Download_logs"
+        label="Export logs"
+        description="Export debugging logs"
+        class="text-overflow-ellipsis"
+      >
+        <Button on:click={() => download_logs()} label="Export" outline />
+      </Setting>
     </div>
   {/if}
 </template>

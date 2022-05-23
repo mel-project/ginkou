@@ -55,7 +55,7 @@
   <div class="main-container">
     <WalletSelector />
     {#if $currentWalletSummary}
-      {#if $currentWalletSummary.locked}
+      {#if $currentWalletSummary.locked && $last_tab !== 3}
         <PasswordPrompt on:idk={handleEvent} />
       {:else if $last_tab === 0}
         <div>
