@@ -69,9 +69,9 @@
         <div class="settings-header">Miscellaneous</div>
         <Setting
           name="Persistent Tabs"
-          label="Persistent Tabs"
+            label="Persistent Tabs"
           description="Open the last-opened tab on startup"
-        >
+         >
           <BooleanInput bind:value={$persistent_tabs} />
         </Setting>
 

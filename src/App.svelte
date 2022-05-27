@@ -74,9 +74,9 @@
           <Settings />
         </div>
       {/if}
-      <BottomTabs bind:selected={$last_tab} />
     {/if}
   </div>
+  <BottomTabs bind:selected={$last_tab} />
 </main>
 
 <svelte:head>
