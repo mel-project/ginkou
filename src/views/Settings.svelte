@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { BooleanInput, Button, Modal, Select, Setting } from "components";
-  import { slide } from "svelte/transition";
-import { mellis_version,  loader_version, melwalletd_version} from "utils/metadata";
-  import { PasswordPrompt } from "views";
+  import { BooleanInput, Button, Modal, Select, Setting } from "../components";
+  import { PasswordPrompt } from "../views";
   import { persistent_tabs, default_tab } from "../stores";
   import {
     export_sk,
@@ -23,6 +21,8 @@ import { mellis_version,  loader_version, melwalletd_version} from "utils/metada
     sk = either.extract() as string;
     show_sk = false;
   };
+
+  const versionString: string = (window as any).VERSION ? (window as any).VERSION : "(unavailable)";
 </script>
 
 <template>
@@ -100,14 +100,9 @@ import { mellis_version,  loader_version, melwalletd_version} from "utils/metada
         </Setting>
       </div>
       <div class="settings-header">Info</div>
-      {#each Object.entries(
-        {"Mellis Version": mellis_version, 
-        "Loader Version": loader_version, 
-        "Melwalletd Version": melwalletd_version}) as version}
-        <Setting name={version[0]} label={version[0] + ": " + version[1] } description="" thin>
-
+        <Setting name={"Version"} label={"Version"} description="" thin>
+          <span class="version-string">{versionString}</span>
         </Setting>
-      {/each}
     </div>
   {/if}
 </template>
@@ -115,7 +110,7 @@ import { mellis_version,  loader_version, melwalletd_version} from "utils/metada
 <style lang="scss">
   .outer-container{
     height: 100%;
-
+ 
     padding-right: 2rem;
     padding-left: 2rem;
   }
