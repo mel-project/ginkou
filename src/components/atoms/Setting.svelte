@@ -2,12 +2,13 @@
   export let label: string = "";
   export let description: string;
   export let name: string;
+  export let thin:boolean = false;
   let _class = "";
   export {_class as class}
 </script>
 
 <template>
-  <div class="setting">
+  <div class="setting" class:thin>
     <div class="info">
       <label for={name}>{label}</label>
       <div class="description {_class}" >{description}</div>
@@ -48,6 +49,9 @@
     padding-top: 1rem;
     padding-bottom: 1rem;
     font-size: 110%;
+  }
+  .setting.thin{
+    padding: 0
   }
   .description {
     opacity: 0.8;
