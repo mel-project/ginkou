@@ -1,5 +1,5 @@
 <script lang="ts">
-  import BigNumber from "bignumber.js";
+  import bigint from "bignumber.js";
   import {
     denom2str,
     prepare_swap_tx,
@@ -11,16 +11,16 @@
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
 
   import type { Transaction } from "../utils/types";
-import debounce from "debounce";
-import { Button, DenomPicker, Modal, SendDialog } from "components";
+  import debounce from "debounce";
+  import { Button, DenomPicker, Modal, SendDialog } from "components";
   let payDenom = "6d";
   let recvDenom = "73";
 
-  let payValue: BigNumber = new BigNumber(0);
+  let payValue: bigint = 0n;
   let payValueString = "";
   let previousPayValueString = "";
 
-  let receiveValue: BigNumber = new BigNumber(0);
+  let receiveValue: bigint = 0n;
 
   let swapInfo: SwapInfo | null = null;
   let pending = false;
@@ -49,13 +49,11 @@ import { Button, DenomPicker, Modal, SendDialog } from "components";
   const validate = (node: any, s: string) => {
     return {
       update(s: string) {
-        BigNumber.DEBUG = true;
+        bigint.DEBUG = true;
         try {
-          let res = new BigNumber(s ? s : "0").multipliedBy(1_000_000);
+          let res = new bigint(s ? s : "0").multipliedBy(1_000_000);
           let valid =
-            res.isInteger() &&
-            res.isPositive() &&
-            res.isLessThan(new BigNumber(2).pow(64));
+            res.isInteger() && res.isPositive() && res.isLessThan(2n.pow(64));
           if (!valid) {
             throw "invalid big number";
           }

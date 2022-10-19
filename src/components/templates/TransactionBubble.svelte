@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Transaction } from "../../utils/types";
-  import BigNumber from "bignumber.js";
+  import bigint from "bignumber.js";
   import { currentWalletName, currentWalletSummary } from "../../stores";
   import {
     denom2str,
@@ -20,12 +20,11 @@
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import JSONbig from "json-bigint";
   import TxSummary from "../molecules/TxSummary.svelte";
-import { Modal } from "../atoms";
+  import { Modal } from "../atoms";
   const JBig = JSONbig({ alwaysParseAsBig: true });
 
-  let balance: Writable<
-    [boolean, number, { [key: string]: BigNumber }] | null
-  > = writable(null);
+  let balance: Writable<[boolean, number, { [key: string]: bigint }] | null> =
+    writable(null);
 
   // Fire off whe nthis element is first observaable
   const onIntersection = (entries: any, observer: any) => {
@@ -76,7 +75,7 @@ import { Modal } from "../atoms";
           seenIn = true;
         }
       });
-      if (kind2str(new BigNumber($balance[1])) === "Swap") {
+      if (kind2str(new bigint($balance[1])) === "Swap") {
         rxText = "Swap funds";
         direction = 0;
       } else if (seenOut) {

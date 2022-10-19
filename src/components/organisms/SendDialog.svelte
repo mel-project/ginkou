@@ -11,7 +11,7 @@
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
-  import BigNumber from "bignumber.js";
+  import bigint from "bignumber.js";
   import { onMount, tick } from "svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Button, QrScanWindow } from "../atoms";
@@ -38,7 +38,7 @@
     setTimeout(async () => {
       let coinData = {
         covhash: recipient,
-        value: new BigNumber(amount).multipliedBy(1000000),
+        value: new bigint(amount).multipliedBy(1000000),
         denom: denom,
         additional_data: "",
       };

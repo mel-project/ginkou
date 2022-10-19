@@ -1,6 +1,6 @@
 import type { Either } from "purify-ts";
 import type { Readable, Writable } from "svelte/store";
-import type BigNumber from "bignumber.js";
+import { CoinDataHeight, Transaction } from "melwallet.js";
 
 export type BlockHeight = number;
 export type TxHash = string;
@@ -16,45 +16,25 @@ export interface WalletCryptoData {
 }
 
 export interface WalletSummary {
-  total_micromel: BigNumber;
-  network: BigNumber;
+  total_micromel: bigint;
+  network: bigint;
   address: string;
   locked: boolean;
-  detailed_balance: Obj<BigNumber>;
+  detailed_balance: Obj<bigint>;
 }
 
 export type WalletEntry = { [key: string]: WalletSummary };
 
-export interface CoinData {
-  covhash: string;
-  value: BigNumber;
-  denom: string;
-  additional_data: string;
-}
-
-export interface CoinDataHeight {
-  coin_data: CoinData;
-  height: BigNumber;
-}
 
 export interface CoinID {
   txhash: TxHash;
-  index: BigNumber;
+  index: bigint;
 }
 
-export interface Transaction {
-  kind: BigNumber;
-  inputs: CoinID[];
-  outputs: CoinData[];
-  fee: BigNumber;
-  scripts: string[];
-  data: string;
-  sigs: string[];
-}
 
 export interface TxHistory {
   tx_in_progress: [TxHash, Transaction][];
-  tx_confirmed: [TxHash, [Transaction, BigNumber]][];
+  tx_confirmed: [TxHash, [Transaction, bigint]][];
 }
 
 export interface WalletDump {
@@ -62,21 +42,21 @@ export interface WalletDump {
   full: {
     unspent_coins: [CoinID, CoinDataHeight][];
     spent_coins: [CoinID, CoinDataHeight][];
-    tx_in_progress_v2: { [key: string]: [Transaction, BigNumber] };
-    tx_confirmed: { [key: string]: [Transaction, BigNumber] };
+    tx_in_progress_v2: { [key: string]: [Transaction, bigint] };
+    tx_confirmed: { [key: string]: [Transaction, bigint] };
     my_covenant: string;
-    network: BigNumber;
+    network: bigint;
   };
 }
 
 export type UnconfirmedTransaction = [TxHash, [Transaction]];
-export type ConfirmedTransaction = [TxHash, [Transaction, BigNumber]];
+export type ConfirmedTransaction = [TxHash, [Transaction, bigint]];
 export type Either_Transaction = Either<
   UnconfirmedTransaction,
   ConfirmedTransaction
 >;
 
-export type Obj<T> = { [key: string]: T };
+export type Obj<T> = Record<string, T>;
 export type PersistentStorage = PersistentValue[];
 
 export interface Named {
@@ -124,15 +104,15 @@ export interface StateObject {
 
 // Network status
 export interface NetworkStatus {
-  network: BigNumber;
+  network: bigint;
   previous: string;
-  height: BigNumber;
+  height: bigint;
   history_hash: string;
   coins_hash: string;
   transactions_hash: string;
-  fee_pool: BigNumber;
-  fee_multiplier: BigNumber;
-  dosc_speed: BigNumber;
+  fee_pool: bigint;
+  fee_multiplier: bigint;
+  dosc_speed: bigint;
   pools_hash: string;
   stakes_hash: string;
 }
