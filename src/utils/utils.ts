@@ -6,7 +6,6 @@ import type {
 import Toastify from "toastify-js";
 import { EventDispatcher, PromiseCallback } from "./svelte-types";
 
-const JSONbig = JSONbiggg({ alwaysParseAsBig: true });
 
 console.log("in utils", Either);
 export const MEL = "6d";
