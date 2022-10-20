@@ -1,6 +1,5 @@
 import { Either, Left, Right } from "purify-ts/Either";
 import { Maybe, Just, Nothing } from "purify-ts/Maybe";
-import JSONbiggg from "json-bigint";
 import type {
   Obj,
 } from "./types";
