@@ -1,12 +1,12 @@
 <script lang="ts">
-import { Button, Textfield } from "components";
+  import { Button, Textfield } from "components";
 
   import { getContext, createEventDispatcher } from "svelte";
   import { add_coin, tap_faucet, TESTNET } from "../utils/utils";
 
-  const {settings} = getContext("settings")
-  const {current_wallet} = settings
-  const {current_wallet_dump} = getContext("melwalletd")
+  const { settings } = getContext("settings");
+  const { current_wallet } = settings;
+  const { current_wallet_dump } = getContext("melwalletd");
 
   const dispatcher = createEventDispatcher();
 
@@ -14,7 +14,7 @@ import { Button, Textfield } from "components";
     if ($current_wallet_dump) {
       const addr = $current_wallet_dump.summary.address;
       await navigator.clipboard.writeText(addr);
-      dispatcher("notify-banner", {text: `copied to clipboard`})
+      dispatcher("notify-banner", { text: `copied to clipboard` });
     }
   };
   const add_coin_handler = async () => {
@@ -38,7 +38,9 @@ import { Button, Textfield } from "components";
   <div class="container">
     <div class="box row">
       <div class="box-label">Address</div>
-      <div class="box-inner flex-text">{$current_wallet_dump.summary.address}</div>
+      <div class="box-inner flex-text">
+        {$current_wallet_dump.summary.address}
+      </div>
       <Button class="box-button" on:click={copy_wallet_handler}>Copy</Button>
     </div>
     <div class="box column">
@@ -63,11 +65,11 @@ import { Button, Textfield } from "components";
 {/if}
 
 <style>
-  .row{
+  .row {
     display: flex;
     flex-direction: row !important;
   }
-  .column{
+  .column {
     display: flex;
     flex-direction: column !important;
   }
@@ -95,7 +97,8 @@ import { Button, Textfield } from "components";
     font-weight: 400;
   }
 
-  .flex-text, .flex-text :global(.box-textfield){ 
+  .flex-text,
+  .flex-text :global(.box-textfield) {
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;

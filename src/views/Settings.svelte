@@ -22,7 +22,9 @@
     show_sk = false;
   };
 
-  const versionString: string = (window as any).VERSION ? (window as any).VERSION : "(unavailable)";
+  const versionString: string = (window as any).VERSION
+    ? (window as any).VERSION
+    : "(unavailable)";
 </script>
 
 <template>
@@ -41,8 +43,9 @@
         <Modal title="Secret key" open={sk !== ""} onClose={() => (sk = "")}>
           <div class="sk-wrap">
             <div class="sk-warning ">
-              <b class="text-danger">Warning:</b> Your secret key controls access
-              to all your funds. <i>Do not share it with anybody else!</i>
+              <b class="text-danger">Warning:</b> Your secret key controls
+              access to all your funds.
+              <i>Do not share it with anybody else!</i>
             </div>
             <textarea class="sk-area">{sk}</textarea>
             <Button
@@ -65,7 +68,7 @@
             <Button onClick={() => (show_sk = true)} label="Export" outline />
           </Setting>
         </div>
-  
+
         <div class="settings-list">
           <div class="settings-header">Miscellaneous</div>
           <Setting
@@ -75,7 +78,7 @@
           >
             <BooleanInput bind:value={$persistent_tabs} />
           </Setting>
-  
+
           <Setting name="Default Tab" label="Default Tab" description="">
             <Select
               disabled={$persistent_tabs}
@@ -88,7 +91,7 @@
             />
           </Setting>
         </div>
-  
+
         <div class="settings-header">Debug</div>
         <Setting
           name="Download_logs"
@@ -100,17 +103,17 @@
         </Setting>
       </div>
       <div class="settings-header">Info</div>
-        <Setting name={"Version"} label={"Version"} description="" thin>
-          <span class="version-string">{versionString}</span>
-        </Setting>
+      <Setting name={"Version"} label={"Version"} description="" thin>
+        <span class="version-string">{versionString}</span>
+      </Setting>
     </div>
   {/if}
 </template>
 
 <style lang="scss">
-  .outer-container{
+  .outer-container {
     height: 100%;
- 
+
     padding-right: 2rem;
     padding-left: 2rem;
   }

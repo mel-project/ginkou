@@ -1,8 +1,12 @@
 import { Either, Left, Right, EitherAsync, maybe } from "purify-ts";
 import { TxHash } from "./types";
 import { cast_to_either } from "./utils";
-const JSONbig = JSONbiggg({ alwaysParseAsBig: true });
-import { CoinData, Header, MelwalletdClient, MelwalletdWallet, Transaction, ThemelioJson as JsonBig, prepare_faucet } from "melwallet.js"
+import {
+    CoinData, Header,
+    MelwalletdClient, MelwalletdWallet,
+    Transaction, ThemelioJson as JsonBig, prepare_faucet, PreparedTransaction, WalletSummary
+} from "melwallet.js"
+import wallet_utils from "melwallet.js"
 
 
 const client: MelwalletdClient = new MelwalletdClient()
@@ -159,25 +163,29 @@ export const prepare_swap_tx = (
 ): EitherAsync<string, Transaction> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        // Prepare tx (get a json-encoded tx back)
-        const tx = await fromPromise(
-            maybe_error());
-
+        const prepare_swap: PreparedTransaction = {
+            kind: 0x51,
+            data: poolkey,
+            outputs,
+        };
+        const tx: Transaction = await fromPromise(
+            maybe_error(wallet.prepare_transaction(prepare_swap)));
         return tx;
     });
 
 export const ensure_unlocked = async (
-    walletName: string,
+    wallet_name: string,
     walletSummary: WalletSummary,
     pwd: string
 ) => {
-    if (pwd != undefined) {
-        console.log("unlock wallet");
-        let result = await unlock_wallet(walletName, pwd).run();
-        result.ifLeft((err) => {
-            throw err;
-        });
+    const wallet = await client.get_wallet(wallet_name);
+    try {
+        await wallet.unlock(pwd);
     }
+    catch {
+
+    }
+
 };
 
 export const prepare_tx = (
@@ -186,9 +194,12 @@ export const prepare_tx = (
 ): EitherAsync<string, Transaction> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
+        const prepared: PreparedTransaction = {
+            outputs,
+        };
         // Prepare tx (get a json-encoded tx back)
         const tx = await fromPromise(
-            maybe_error());
+            maybe_error(wallet.prepare_transaction(prepared)));
 
         return tx;
     });
@@ -196,29 +207,28 @@ export const prepare_tx = (
 
 // Get a list of all stored wallets
 export const list_wallets = (
-): EitherAsync<string, WalletSummary[]> =>
+): EitherAsync<string, Map<String, WalletSummary>> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
-        const wallet = await client.get_wallet(wallet_name);
-        const res = await fromPromise(maybe_error());
-        return liftEither(cast_to_either(res as any));
+        const res = maybe_error(client.list_wallets());
+        return fromPromise(res);
     });
 
 // Get a list of all stored wallets
 export const list_transactions = (
-    walletName: string,
+    wallet_name: string,
 ): EitherAsync<string, [string, bigint | null][]> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        const res = await fromPromise(maybe_error());
+        const res = await fromPromise(maybe_error(wallet.list_transactions()));
 
         return res;
     });
 
 // Get the balance for one particular transaction
 export const transaction_balance = (
-    walletName: string,
+    wallet_name: string,
     txhash: string,
-): EitherAsync<string, [boolean, number, { [key: string]: bigint }]> =>
+): EitherAsync<string, Map<string, bigint>> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
         const res = await fromPromise(maybe_error(wallet.get_balances()));
@@ -228,14 +238,14 @@ export const transaction_balance = (
 
 // Get the full value for one particular transaction
 export const transaction_full = (
-    walletName: string,
+    wallet_name: string,
     txhash: string,
 ): EitherAsync<string, Transaction> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        const res = await fromPromise(maybe_error());
+        const res = await fromPromise(maybe_error(wallet.get_transaction(txhash)));
 
-        return res.raw;
+        return res;
     });
 
 // Get the network status
@@ -243,6 +253,5 @@ export const network_status = (
     testnet: boolean,
 ): EitherAsync<string, Header> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
-        const wallet = await client.get_wallet(wallet_name);
-        return await fromPromise(maybe_error());
+        return await fromPromise(maybe_error(client.get_summary()));
     });

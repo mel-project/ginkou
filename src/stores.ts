@@ -24,7 +24,7 @@ export function persistentWritable<T>(
   return w;
 }
 
-export const getWalletSummaries = async ()=>{
+export const getWalletSummaries = async () => {
   const list = await list_wallets();
   list
     .ifLeft((e) =>
@@ -36,7 +36,7 @@ export const getWalletSummaries = async ()=>{
         lastSummaries = JSON.stringify(list);
       }
     })
-    return list
+  return list
 }
 // List of all wallets, both mainnet and testnet
 let lastSummaries: any = 0;
@@ -46,7 +46,7 @@ export const walletSummaries: Readable<Obj<WalletSummary>> = readable(
     const refresh = async () => {
       // fetch the stuff and set
       let list = await getWalletSummaries();
-      if((list).isRight()){
+      if ((list).isRight()) {
         set((list).unsafeCoerce())
       }
     };

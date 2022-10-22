@@ -78,11 +78,8 @@
     }}
   >
     {#if creatorOpen}
-      <Button
-        label="back"
-        small
-        outline
-        onClick={() => (creatorOpen = false)}><ArrowLeft /></Button
+      <Button label="back" small outline onClick={() => (creatorOpen = false)}
+        ><ArrowLeft /></Button
       >
       <WalletCreator onCreate={() => (creatorOpen = false)} />
     {:else}

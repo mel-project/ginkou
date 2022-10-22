@@ -16,7 +16,7 @@
   let testnet = false;
   let secretKey = "";
   $: doCreate = async (secret?: string) => {
-    secret = secret || undefined
+    secret = secret || undefined;
     pending = true;
     try {
       if (newPassword === "") {
@@ -35,15 +35,13 @@
     }
   };
 
-  let doImport = (secret: string)=>{
-    if(secret === ""){
+  let doImport = (secret: string) => {
+    if (secret === "") {
       showToast("must input a secret key");
       return;
     }
-    doCreate(secret)
-
-  }
-
+    doCreate(secret);
+  };
 </script>
 
 <div>
@@ -61,10 +59,7 @@
         </div>
       </div>
 
-      <div
-        class="card"
-        on:click={() => state="import"}
-      >
+      <div class="card" on:click={() => (state = "import")}>
         <div class="card-body">
           <h5 class="card-title">
             <DownloadCircleOutline width="3rem" height="3rem" />
@@ -100,11 +95,7 @@
       </div>
 
       <div class="final">
-        <Button
-          label="Create wallet"
-          onClick={doCreate}
-          disabled={pending}
-        />
+        <Button label="Create wallet" onClick={doCreate} disabled={pending} />
         &nbsp;&nbsp;
         <Button
           label="Cancel"
@@ -114,8 +105,7 @@
         />
       </div>
     </div>
-    {:else if state == "import"}
-
+  {:else if state == "import"}
     <div class="createpage">
       <div class="input-group">
         <span class="input-group-text">Name</span>
@@ -126,7 +116,7 @@
           bind:value={newName}
         />
       </div>
-      
+
       <div class="input-group">
         <span class="input-group-text">Secret Key</span>
         <input
@@ -148,7 +138,7 @@
       <div class="final">
         <Button
           label="Import"
-          onClick={()=>doImport(secretKey)}
+          onClick={() => doImport(secretKey)}
           disabled={pending}
         />
         &nbsp;&nbsp;
@@ -159,9 +149,8 @@
           disabled={pending}
         />
       </div>
-  </div>
-    {/if}
-  
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
