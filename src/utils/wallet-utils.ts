@@ -1,12 +1,10 @@
 import { Either, Left, Right, EitherAsync, maybe } from "purify-ts";
 import { TxHash } from "./types";
-import { cast_to_either } from "./utils";
 import {
     CoinData, Header,
     MelwalletdClient, MelwalletdWallet,
-    Transaction, ThemelioJson as JsonBig, prepare_faucet, PreparedTransaction, WalletSummary
+    Transaction, ThemelioJson as JsonBig, prepare_faucet, PreparedTransaction, WalletSummary, ThemelioJson
 } from "melwallet.js"
-import wallet_utils from "melwallet.js"
 
 
 const client: MelwalletdClient = new MelwalletdClient()
@@ -20,33 +18,6 @@ export async function maybe_error<T>(promise: Promise<T>): Promise<Either<string
     } catch (e: any) {
         return Left(e.to_string());
     }
-}
-/// Fetch a url endpoint and parse as json, error if the HTTP response is not OK
-export async function fetch_json_or_err(
-    url: string,
-    opts: any
-): Promise<Either<string, any>> {
-    opts.headers = {};
-    try {
-        let res = await fetch(url, opts);
-        if (!res.ok) return Left("(" + res.status + ") " + (await res.text()));
-        else return Right(JSONbig.parse(await res.text()));
-    } catch (e: any) {
-        return Left(e.to_string());
-    }
-}
-
-/// Fetch a url endpoint and parse as json, error if the HTTP response is not OK
-export async function fetch_text_or_err(
-    url: string,
-    opts: any
-): Promise<Either<string, string>> {
-    opts.headers = {};
-    // Throws on a promise rejection, which will be caught by EitherAsync's run()
-    let res = await fetch(url, opts);
-
-    if (!res.ok) return Left("(" + res.status + ") " + (await res.text()));
-    else return Right(await res.text());
 }
 
 type Wallet = InstanceType<typeof MelwalletdWallet>

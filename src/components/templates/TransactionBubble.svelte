@@ -1,13 +1,8 @@
 <script lang="ts">
-  import type { Transaction } from "../../utils/types";
-  import bigint from "bignumber.js";
   import { currentWalletName, currentWalletSummary } from "../../stores";
   import {
-    denom2str,
     kind2str,
     showToast,
-    transaction_balance,
-    transaction_full,
   } from "../../utils/utils";
   import { onDestroy } from "svelte";
   import { derived, writable } from "svelte/store";
@@ -21,6 +16,7 @@
   import JSONbig from "json-bigint";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Modal } from "../atoms";
+  import { transaction_balance } from "utils/wallet-utils";
   const JBig = JSONbig({ alwaysParseAsBig: true });
 
   let balance: Writable<[boolean, number, { [key: string]: bigint }] | null> =
