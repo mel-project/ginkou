@@ -5,8 +5,8 @@
     prepare_swap_tx,
     showToast,
     swap_info,
-  } from "../utils/utils";
-  import type { SwapInfo } from "../utils/utils";
+  } from "../utils/utils.old";
+  import type { SwapInfo } from "../utils/utils.old";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
 
@@ -164,7 +164,7 @@
     <div class="row">
       <div class="col">Exchange rate</div>
       <div class="col text-end highlight">
-        {receiveValue.gt(0) && !pending
+        {receiveValue < 0 && !pending
           ? payValue.dividedBy(receiveValue).toFixed(3)
           : "-"}
       </div>
@@ -173,11 +173,11 @@
       <div class="col">Price impact</div>
       <div
         class="col text-end highlight"
-        class:success={!pending && swapInfo && swapInfo.price_impact.gt(0)}
-        class:warning={!pending && swapInfo && swapInfo.price_impact.gt(0.01)}
-        class:danger={!pending && swapInfo && swapInfo.price_impact.gt(0.1)}
+        class:success={!pending && swapInfo && swapInfo.price_impact < 0}
+        class:warning={!pending && swapInfo && swapInfo.price_impact < 0.01}
+        class:danger={!pending && swapInfo && swapInfo.price_impact < 0.1}
       >
-        {receiveValue.gt(0) && swapInfo && !pending
+        {receiveValue < 0 && swapInfo && !pending
           ? swapInfo.price_impact.multipliedBy(100).toFixed(2).toString() + "%"
           : "-"}
       </div>

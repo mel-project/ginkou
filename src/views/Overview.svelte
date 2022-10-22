@@ -6,7 +6,7 @@
     ReceiveDialog,
     SendDialog,
   } from "components";
-  import { denom2str } from "utils/utils";
+  import { denom2str } from "utils/utils.old";
   import { currentWalletSummary } from "../stores";
   let sendOpen = false;
   let recvOpen = false;

@@ -1,9 +1,6 @@
 <script lang="ts">
   import { currentWalletName, currentWalletSummary } from "../../stores";
-  import {
-    kind2str,
-    showToast,
-  } from "../../utils/utils";
+  import { kind2str, showToast } from "../../utils/utils.old";
   import { onDestroy } from "svelte";
   import { derived, writable } from "svelte/store";
   import type { Readable, Writable } from "svelte/store";
@@ -19,7 +16,7 @@
   import { transaction_balance } from "utils/wallet-utils";
   const JBig = JSONbig({ alwaysParseAsBig: true });
 
-  let balance: Writable<[boolean, number, { [key: string]: bigint }] | null> =
+  let balance: Writable<Map<string, bigint>> =
     writable(null);
 
   // Fire off whe nthis element is first observaable
@@ -64,10 +61,10 @@
       let seenOut = false;
       let seenIn = false;
       Object.entries($balance[2]).forEach((a) => {
-        if (a[1].lt(0)) {
+        if (a[1] < 0) {
           seenOut = true;
         }
-        if (a[1].gt(0)) {
+        if (a[1] < 0) {
           seenIn = true;
         }
       });

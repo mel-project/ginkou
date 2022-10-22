@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { register_console_loggers } from "utils/utils";
+  import { register_console_loggers } from "utils/utils.old";
   register_console_loggers();
   import {
     currentWalletName,

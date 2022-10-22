@@ -2,7 +2,7 @@
   import { Button, Textfield } from "components";
 
   import { getContext, createEventDispatcher } from "svelte";
-  import { add_coin, tap_faucet, TESTNET } from "../utils/utils";
+  import { add_coin, tap_faucet, TESTNET } from "../utils/utils.old";
 
   const { settings } = getContext("settings");
   const { current_wallet } = settings;

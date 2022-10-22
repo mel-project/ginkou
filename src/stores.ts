@@ -5,7 +5,7 @@ import type {
   PersistentValue,
   WalletSummary,
 } from "./utils/types";
-import { list_wallets, network_status, TESTNET } from "./utils/utils";
+import { list_wallets, network_status, TESTNET } from "./utils/utils.old";
 import JSONbig from "json-bigint";
 import { Either } from "purify-ts";
 

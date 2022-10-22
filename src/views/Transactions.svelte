@@ -4,7 +4,7 @@
 
   import { currentNetworkStatus, currentWalletName } from "../stores";
   import type { WalletDump } from "../utils/types";
-  import { list_transactions } from "../utils/utils";
+  import { list_transactions } from "../utils/utils.old";
   import { parse } from "json-bigint";
   import { TransactionBubble } from "components";
 

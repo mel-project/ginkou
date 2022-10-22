@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Textfield, Button } from "components";
   import { currentWalletName, currentWalletSummary } from "../stores";
-  import { ensure_unlocked } from "../utils/utils";
+  import { ensure_unlocked } from "../utils/utils.old";
   import { slide } from "svelte/transition";
 
   import { createEventDispatcher } from "svelte";

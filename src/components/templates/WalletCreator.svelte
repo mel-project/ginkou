@@ -4,7 +4,7 @@
   import Button from "../atoms/Button.svelte";
   import PlusCircleOutline from "svelte-material-icons/PlusCircleOutline.svelte";
   import DownloadCircleOutline from "svelte-material-icons/DownloadCircleOutline.svelte";
-  import { new_wallet, showToast } from "../../utils/utils";
+  import { new_wallet, showToast } from "../../utils/utils.old";
   import { currentWalletName } from "../../stores";
 
   let state = "start";

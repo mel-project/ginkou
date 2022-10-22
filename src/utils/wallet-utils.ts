@@ -3,7 +3,7 @@ import { TxHash } from "./types";
 import {
     CoinData, Header,
     MelwalletdClient, MelwalletdWallet,
-    Transaction, ThemelioJson as JsonBig, prepare_faucet, PreparedTransaction, WalletSummary, ThemelioJson
+    Transaction, ThemelioJson as JsonBig, prepare_faucet, PreparedTransaction, WalletSummary, ThemelioJson, TxBalance
 } from "melwallet.js"
 
 
@@ -199,11 +199,11 @@ export const list_transactions = (
 export const transaction_balance = (
     wallet_name: string,
     txhash: string,
-): EitherAsync<string, Map<string, bigint>> =>
+): EitherAsync<string, TxBalance> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        const res = await fromPromise(maybe_error(wallet.get_balances()));
-
+        const tx = wallet.get_transaction(txhash);
+        const res = await fromPromise(maybe_error(wallet.get_transaction_balance(txhash)));
         return res;
     });
 

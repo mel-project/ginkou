@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Transaction } from "../../utils/types";
-  import { denom2str, kind2str } from "../../utils/utils";
+  import { denom2str, kind2str } from "../../utils/utils.old";
 
   export let transaction: Transaction;
   export let txhash: string | null = null;

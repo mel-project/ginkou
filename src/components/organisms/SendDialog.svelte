@@ -6,7 +6,7 @@
     prepare_tx,
     send_tx,
     unlock_wallet,
-  } from "../../utils/utils";
+  } from "../../utils/utils.old";
 
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
