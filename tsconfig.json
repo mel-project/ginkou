@@ -13,8 +13,7 @@
     // "paths": {"@components": ["components"], "@components/*": ["components/*"]} ,
     "plugins": [
       { "transform": "typescript-is/lib/transform-inline/transformer" }
-    ],
-    
+    ]
   },
 
   "include": ["src/**/*"],

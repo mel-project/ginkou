@@ -1,10 +1,9 @@
 import { derived, readable, Readable, writable, Writable } from "svelte/store";
 import type {
   Obj,
-  ,
   WalletSummary,
 } from "./utils/types";
-import { list_wallets, network_status, TESTNET } from "./utils/utils";
+import { list_wallets, network_status } from "./utils/utils";
 import JSONbig from "json-bigint";
 import { Either } from "purify-ts";
 import { Header, NetID } from "melwallet.js";

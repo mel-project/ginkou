@@ -13,7 +13,7 @@
     walletSummaries,
   } from "../../stores";
   import type { WalletSummary } from "../../utils/types";
-  import { MAINNET, TESTNET, lock_wallet } from "../../utils/utils";
+  import {lock_wallet } from "../../utils/utils";
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
   import { NetID } from "melwallet.js";

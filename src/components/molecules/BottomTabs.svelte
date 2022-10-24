@@ -14,7 +14,8 @@
 <div class="tabs">
   <div class="tab" class:selected={selected === 0} on:click={() => onSelect(0)}>
     <div class="tab-icon">
-      <ViewDashboardOutline width="2rem" height="2rem" box-shadow="100px"/>
+      <!-- <ViewDashboardOutline width="2rem" height="2rem" box-shadow="100px"/> -->
+      <ViewDashboardOutline width="2rem" height="2rem"/>
     </div>
     <div class="tab-label">Overview</div>
   </div>
