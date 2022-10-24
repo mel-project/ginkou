@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Transaction } from "../../utils/types";
-  import { denom2str, kind2str } from "../../utils/utils.old";
+  import { denom_to_string, Transaction } from "melwallet.js";
+  import { kind2str } from "../../utils/utils";
 
   export let transaction: Transaction;
   export let txhash: string | null = null;
@@ -28,15 +28,15 @@
               {output.covhash == selfAddr ? "(self)" : output.covhash}
             </td>
             <td class="amount">
-              {output.value.div(1000000)}
-              {denom2str(output.denom)}
+              {output.value / 1000000}
+              {denom_to_string(output.denom)}
             </td>
           </tr>
         {/if}
       {/each}
       <tr>
         <td>Fee</td>
-        <td class="amount text-danger">{transaction.fee.div(1000000)} MEL</td>
+        <td class="amount text-danger">{transaction.fee / 1000000} MEL</td>
       </tr>
     </tbody>
   </table>
@@ -57,7 +57,7 @@
         {/each}
         <tr>
           <td>Fee</td>
-          <td class="amount text-danger">{transaction.fee.div(1000000)} MEL</td>
+          <td class="amount text-danger">{transaction.fee / 1000000} MEL</td>
         </tr>
       </tbody>
     </table>

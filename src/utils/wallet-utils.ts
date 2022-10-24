@@ -221,7 +221,6 @@ export const transaction_full = (
 
 // Get the network status
 export const network_status = (
-    testnet: boolean,
 ): EitherAsync<string, Header> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         return await fromPromise(maybe_error(client.get_summary()));

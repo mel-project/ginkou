@@ -1,13 +1,13 @@
 import { derived, readable, Readable, writable, Writable } from "svelte/store";
 import type {
-  NetworkStatus,
   Obj,
-  PersistentValue,
+  ,
   WalletSummary,
 } from "./utils/types";
-import { list_wallets, network_status, TESTNET } from "./utils/utils.old";
+import { list_wallets, network_status, TESTNET } from "./utils/utils";
 import JSONbig from "json-bigint";
 import { Either } from "purify-ts";
+import { Header, NetID } from "melwallet.js";
 
 export function persistentWritable<T>(
   storage_name: string,
@@ -69,13 +69,13 @@ export const currentWalletSummary: Readable<WalletSummary | null> = derived(
 );
 
 // Current network status
-export const currentNetworkStatus: Readable<NetworkStatus | null> = derived(
+export const currentNetworkStatus: Readable<Header | null> = derived(
   [currentWalletSummary],
   ([summary], set) => {
     if (summary) {
       const refresh = async () => {
         // fetch the stuff and set
-        const list = await network_status(summary.network.eq(TESTNET));
+        const list = await network_status();
         list
           .ifLeft((e) =>
             console.error(

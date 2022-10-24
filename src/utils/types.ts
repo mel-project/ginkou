@@ -1,6 +1,6 @@
 import type { Either } from "purify-ts";
 import type { Readable, Writable } from "svelte/store";
-import { CoinDataHeight, Transaction } from "melwallet.js";
+import { CoinDataHeight, NetID, Transaction } from "melwallet.js";
 
 export type BlockHeight = number;
 export type TxHash = string;
@@ -17,7 +17,7 @@ export interface WalletCryptoData {
 
 export interface WalletSummary {
   total_micromel: bigint;
-  network: bigint;
+  network: NetID;
   address: string;
   locked: boolean;
   detailed_balance: Obj<bigint>;
@@ -102,17 +102,5 @@ export interface StateObject {
   // set_setting: (name: string | Readable<string>, value: string | Readable<string>) => void;
 }
 
-// Network status
-export interface NetworkStatus {
-  network: bigint;
-  previous: string;
-  height: bigint;
-  history_hash: string;
-  coins_hash: string;
-  transactions_hash: string;
-  fee_pool: bigint;
-  fee_multiplier: bigint;
-  dosc_speed: bigint;
-  pools_hash: string;
-  stakes_hash: string;
-}
+
+

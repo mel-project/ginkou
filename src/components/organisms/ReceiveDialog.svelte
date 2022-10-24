@@ -2,7 +2,7 @@
   import { slide } from "svelte/transition";
   import { currentWalletSummary } from "../../stores";
   import QRCode from "qrcode";
-  import { copyToClipboard, showToast } from "../../utils/utils.old";
+  import { copyToClipboard, showToast } from "../../utils/utils";
   let qrCodeUrl =
     "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="; // empty image
 

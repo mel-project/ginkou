@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { denom2str } from "../../utils/utils.old";
-
   import Modal from "../atoms/Modal.svelte";
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
+  import { denom_to_string } from "melwallet.js";
   export let denom: string = "6d";
 
   export let blacklist: string[] = [];
@@ -62,7 +61,7 @@
   </Modal>
   <div class="coin-switcher" on:click={() => (pickerOpen = true)}>
     <img src={`/images/${denom2img(denom)}`} class="icon" alt="icon" />
-    <span> {denom2str(denom)} </span>
+    <span> {denom_to_string(denom)} </span>
     <ChevronDown width="1.2rem" height="1.2rem" />
   </div>
 </div>

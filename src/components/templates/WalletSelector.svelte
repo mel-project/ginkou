@@ -13,9 +13,10 @@
     walletSummaries,
   } from "../../stores";
   import type { WalletSummary } from "../../utils/types";
-  import { MAINNET, TESTNET, lock_wallet } from "../../utils/utils.old";
+  import { MAINNET, TESTNET, lock_wallet } from "../../utils/utils";
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
+  import { NetID } from "melwallet.js";
 
   let modalOpen: boolean = false;
 
@@ -23,7 +24,7 @@
     walletSummaries,
     ($walletSummaries) => {
       return Object.entries($walletSummaries).filter((w) =>
-        w[1].network.eq(MAINNET)
+        w[1].network === NetID.Mainnet
       );
     }
   );
@@ -31,7 +32,7 @@
   const testnetWallets: Readable<[string, WalletSummary][]> = derived(
     walletSummaries,
     ($walletSummaries) =>
-      Object.entries($walletSummaries).filter((w) => w[1].network.eq(TESTNET))
+      Object.entries($walletSummaries).filter((w) => w[1].network === NetID.Testnet)
   );
 
   let creatorOpen = false;
@@ -42,12 +43,12 @@
     <div>
       <div
         class="icon"
-        class:icon-mainnet={$currentWalletSummary?.network.eq(MAINNET)}
-        class:icon-testnet={$currentWalletSummary?.network.eq(TESTNET)}
+        class:icon-mainnet={$currentWalletSummary?.network === NetID.Mainnet}
+        class:icon-testnet={$currentWalletSummary?.network === NetID.Testnet}
       />
     </div>
     <div class="text" class:placeholder={$currentWalletName === null}>
-      <b>{$currentWalletSummary?.network.eq(MAINNET) ? "Mainnet" : "Testnet"}</b
+      <b>{$currentWalletSummary?.network === NetID.Mainnet ? "Mainnet" : "Testnet"}</b
       >
       / {$currentWalletName}
     </div>

@@ -10,7 +10,7 @@
     selected = selection;
   };
 </script>
-
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="tabs">
   <div class="tab" class:selected={selected === 0} on:click={() => onSelect(0)}>
     <div class="tab-icon">

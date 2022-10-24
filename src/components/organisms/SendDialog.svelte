@@ -1,26 +1,21 @@
 <script lang="ts">
   import { currentWalletName, currentWalletSummary } from "../../stores";
-  import { slide, fade } from "svelte/transition";
   import {
-    denom2str,
     prepare_tx,
     send_tx,
-    unlock_wallet,
-  } from "../../utils/utils.old";
+  } from "../../utils/utils";
 
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
-  import bigint from "bignumber.js";
-  import { onMount, tick } from "svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Button, QrScanWindow } from "../atoms";
-  import type { Transaction } from "../../utils/types";
+  import { denom_to_string, Transaction } from "melwallet.js";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
   let recipient: string = "";
-  let amount: string = "";
+  let amount: bigint = 0n;
   let denom: string = "6d";
 
   let pending: boolean = false;
@@ -38,7 +33,7 @@
     setTimeout(async () => {
       let coinData = {
         covhash: recipient,
-        value: new bigint(amount).multipliedBy(1000000),
+        value: amount * 1000000n,
         denom: denom,
         additional_data: "",
       };
@@ -81,6 +76,7 @@
   let scannerOpen = false;
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div on:click={() => (sendError = null)}>
   {#if sendError}
     <div class="alert alert-danger" role="alert">
@@ -158,7 +154,7 @@
             />
             <select class="form-select" disabled={pending} bind:value={denom}>
               {#each Object.keys($currentWalletSummary.detailed_balance) as denom}
-                <option value={denom}>{denom2str(denom)}</option>
+                <option value={denom}>{denom_to_string(denom)}</option>
               {/each}
             </select>
           </div>

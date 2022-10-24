@@ -6,7 +6,7 @@
     ReceiveDialog,
     SendDialog,
   } from "components";
-  import { denom2str } from "utils/utils.old";
+  import { denom_to_string } from "utils/utils.old";
   import { currentWalletSummary } from "../stores";
   let sendOpen = false;
   let recvOpen = false;
@@ -37,7 +37,7 @@
   </Modal>
 
   <HomeHero
-    melBalance={$currentWalletSummary?.total_micromel.div(1000000).toFixed(6)}
+    melBalance={$currentWalletSummary?.total_micromel/ 1000000).toFixed(6}
     otherBalance="3.14"
     onSend={() => (sendOpen = true)}
     onReceive={() => (recvOpen = true)}
@@ -45,7 +45,10 @@
   <div class="denom-bubbles">
     {#if $currentWalletSummary}
       {#each Object.entries($currentWalletSummary.detailed_balance) as [k, v]}
-        <DenomBubble value={v.div(1000000).toFixed(6)} denom={denom2str(k)} />
+        <DenomBubble
+          value={v/ 1000000).toFixed(6}
+          denom={denom_to_string(k)}
+        />
       {/each}
     {/if}
   </div>

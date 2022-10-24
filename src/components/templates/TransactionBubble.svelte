@@ -1,6 +1,6 @@
 <script lang="ts">
   import { currentWalletName, currentWalletSummary } from "../../stores";
-  import { kind2str, showToast } from "../../utils/utils.old";
+  import { kind2str, map_entries, showToast } from "../../utils/utils";
   import { onDestroy } from "svelte";
   import { derived, writable } from "svelte/store";
   import type { Readable, Writable } from "svelte/store";
@@ -13,11 +13,11 @@
   import JSONbig from "json-bigint";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Modal } from "../atoms";
-  import { transaction_balance } from "utils/wallet-utils";
+  import { transaction_balance, transaction_full } from "utils/wallet-utils";
+  import { denom_to_string, Transaction, TxBalance, TxKind } from "melwallet.js";
   const JBig = JSONbig({ alwaysParseAsBig: true });
 
-  let balance: Writable<Map<string, bigint>> =
-    writable(null);
+  let balance: Writable<TxBalance | null> = writable(null);
 
   // Fire off whe nthis element is first observaable
   const onIntersection = (entries: any, observer: any) => {
@@ -68,7 +68,7 @@
           seenIn = true;
         }
       });
-      if (kind2str(new bigint($balance[1])) === "Swap") {
+      if ($balance[1] === TxKind.Swap) {
         rxText = "Swap funds";
         direction = 0;
       } else if (seenOut) {
@@ -119,6 +119,7 @@
     {/if}
   </Modal>
 
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div class="root" on:click={() => height > 0 && loadDetails()}>
     <div class="icon">
       {#if direction > 0}
@@ -143,17 +144,17 @@
     </div>
     <div class="amount">
       {#if $balance}
-        {#each Object.entries($balance[2]) as [denom, num]}
-          {#if num.toNumber()}
+        {#each map_entries($balance[2]) as [denom, num]}
+          {#if num}
             <div>
-              {#if num.gte(0)}
+              {#if num >= 0}
                 <span class="text-primary"
-                  ><b>+{num.div(1000000).toFixed(6)}</b>
-                  {denom2str(denom)}</span
+                  ><b>+{num / 1000000n}</b>
+                  {denom_to_string(denom)}</span
                 >
               {:else}
                 <span class="text-danger"
-                  ><b>{num.div(1000000).toFixed(6)}</b> {denom2str(denom)}</span
+                  ><b>{(num / 1000000n)}</b> {denom_to_string(denom)}</span
                 >
               {/if}
             </div>

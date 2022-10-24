@@ -1,12 +1,12 @@
 <script lang="ts">
   import bigint from "bignumber.js";
   import {
-    denom2str,
+    denom_to_string,
     prepare_swap_tx,
     showToast,
     swap_info,
-  } from "../utils/utils.old";
-  import type { SwapInfo } from "../utils/utils.old";
+  } from "../utils/utils";
+  import type { SwapInfo } from "../utils/utils";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
 
@@ -118,7 +118,7 @@
           {$currentWalletSummary.detailed_balance[payDenom]
             .dividedBy(1_000_000)
             .toFixed(6)}
-          &nbsp;{denom2str(payDenom)}
+          &nbsp;{denom_to_string(payDenom)}
         </span>
       {/if}
     </div>
@@ -187,7 +187,7 @@
       <div class="col text-end highlight">
         {payValue.dividedBy(200).dividedBy(1_000_000).toFixed(3).toString() +
           " " +
-          denom2str(payDenom)}
+          denom_to_string(payDenom)}
       </div>
     </div>
   </div>

@@ -5,16 +5,15 @@ import type {
 } from "./types";
 import Toastify from "toastify-js";
 import { EventDispatcher, PromiseCallback } from "./svelte-types";
-
+import { TxKind } from "melwallet.js";
+export * from "./wallet-utils";
 
 console.log("in utils", Either);
 export const MEL = "6d";
-export const TESTNET = 1n;
-export const MAINNET = 255n;
 const home_addr = "http://127.0.0.1";
 const default_port = 11773;
 
-export const kind2str = (bkind: bigint) => {
+export const kind2str = (bkind: TxKind) => {
   const kind = Number(bkind);
   if (kind === 0x00) {
     return "Normal";
@@ -35,6 +34,10 @@ export const kind2str = (bkind: bigint) => {
   }
 };
 
+export function map_entries<T,K>(map: Map<T,K>): [T,K][]{
+  let entries: [T, K][] = Object.entries(map) as any;
+  return entries
+}
 function intoListOf<T>(a: any, intoT: (a0: any) => Maybe<T>): Maybe<T[]> {
   if (Array.isArray(a))
     for (const x of a) {

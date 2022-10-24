@@ -7,7 +7,7 @@
     showToast,
     copyToClipboard,
     download_logs,
-  } from "../utils/utils.old";
+  } from "../utils/utils";
 
   // import Settings from "../stores";
 
