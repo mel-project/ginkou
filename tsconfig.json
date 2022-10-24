@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "module": "es2015",
     "lib": ["es2015", "es2016", "es2017", "dom", "ES2020.BigInt"],
     "strict": true,
@@ -11,11 +11,9 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "src",
     // "paths": {"@components": ["components"], "@components/*": ["components/*"]} ,
-    "plugins": [
-      { "transform": "typescript-is/lib/transform-inline/transformer" }
-    ]
-  },
 
-  "include": ["src/**/*"],
-  "exclude": ["node_modules/*", "__sapper__/*", "public/*"]
+  },
+  "extends": "@tsconfig/svelte/tsconfig.json",
+  "include": ["src/**/*", "src/node_modules"],
+  "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
 }

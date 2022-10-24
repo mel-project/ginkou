@@ -3,9 +3,7 @@
   import type { Readable } from "svelte/store";
 
   import { currentNetworkStatus, currentWalletName } from "../stores";
-  import type { WalletDump } from "../utils/types";
   import { list_transactions } from "../utils/utils";
-  import { parse } from "json-bigint";
   import { TransactionBubble } from "components";
 
   const dateToTxhash: Readable<
@@ -18,7 +16,7 @@
       }
 
       const heightToString = (height: number) => {
-        const latestHeight = netStatus ? netStatus.height.toNumber() : 1000000;
+        const latestHeight = netStatus ? Number(netStatus.height) : 1000000;
         const heightDifference = latestHeight - height;
         let heightTime = new Date(Date.now() - heightDifference * 30000);
         if (height < 0) {
@@ -40,7 +38,7 @@
           .ifLeft((err) => alert(err))
           .ifRight((res) => {
             res.forEach(([txhash, height]) => {
-              const real_height = height ? height.toNumber() : -1;
+              const real_height = height ? Number(height) : -1;
               const key = heightToString(real_height);
               if (!(key in toret)) {
                 toret[key] = [];
