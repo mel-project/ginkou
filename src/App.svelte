@@ -13,17 +13,4 @@
   />
 </svelte:head>
 
-<style lang="scss">
-  .main-container {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: calc(100% - 4rem);
-    overflow-y: scroll;
-  }
 
-  :global(button:focus) {
-    box-shadow: none !important;
-  }
-</style>

@@ -10,7 +10,6 @@ import nodePolyfills from "rollup-plugin-node-polyfills";
 import inlineSvg from "rollup-plugin-inline-svg";
 import alias from "@rollup/plugin-alias";
 import scss from "rollup-plugin-scss";
-import buble from "rollup-plugin-buble";
 import babel from "rollup-plugin-babel";
 
 const path = require("path");
