@@ -52,27 +52,27 @@
     bottom: 0;
   }
 
-  // .pullup.pullup-open {
-  //   bottom: 0;
-  //   transition: all 0.2s linear;
-  // }
+  .pullup.pullup-open {
+    bottom: 0;
+    transition: all 0.2s linear;
+  }
 
-  // .pullup.pullup-closed {
-  //   bottom: -70vh;
-  //   transition: all 0.2s linear;
-  // }
+  .pullup.pullup-closed {
+    bottom: -70vh;
+    transition: all 0.2s linear;
+  }
 
-  // .open {
-  //   visibility: visible !important;
-  //   opacity: 1 !important;
-  //   transition: opacity 0.2s linear;
-  // }
+  .open {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transition: opacity 0.2s linear;
+  }
 
-  // .closed {
-  //   visibility: hidden;
-  //   opacity: 0;
-  //   transition: visibility 0s 0.2s, opacity 0.2s linear;
-  // }
+  .closed {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.2s, opacity 0.2s linear;
+  }
 
   .blocker {
     position: fixed;
