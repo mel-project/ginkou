@@ -125,7 +125,6 @@ export default {
         ],
       ],
     }),
-    buble(),
     // If w
 
     // In dev mode, call `npm run start` once

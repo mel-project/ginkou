@@ -6,7 +6,7 @@
     ReceiveDialog,
     SendDialog,
   } from "components";
-  import { denom_to_string } from "melwallet.js";
+  import { denom_to_string } from "melwallet.js/dist/wallet-utils";
   import { currentWalletSummary } from "../stores";
   let sendOpen = false;
   let recvOpen = false;

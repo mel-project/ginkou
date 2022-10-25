@@ -10,7 +10,9 @@
 
   import debounce from "debounce";
   import { Button, DenomPicker, Modal, SendDialog } from "components";
-  import { denom_to_string, Transaction } from "melwallet.js";
+  import { Transaction } from "melwallet.js";
+  import { denom_to_string } from "melwallet.js/dist/wallet-utils";
+
   let payDenom = "6d";
   let recvDenom = "73";
 

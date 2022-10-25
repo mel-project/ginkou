@@ -28,7 +28,7 @@ specifiers:
   debounce: ^1.2.1
   json-bigint: ^1.0.0
   material-icons: ^1.10.8
-  melwallet.js: 0.0.23
+  melwallet.js: 0.0.22
   onsenui: ^2.11.2
   pug: ^3.0.2
   purify-ts: ^1.2.0
@@ -74,7 +74,7 @@ dependencies:
   debounce: 1.2.1
   json-bigint: 1.0.0
   material-icons: 1.12.0
-  melwallet.js: 0.0.23
+  melwallet.js: 0.0.22
   onsenui: 2.12.6
   purify-ts: 1.3.0
   qr-scanner: 1.4.1
@@ -2650,8 +2650,8 @@ packages:
     resolution: {integrity: sha512-QwiZGoNlXrorOqLbFYECxuFxxG0UTivX39b+6gmgbgg+w5v+LtNUoOuz4zPM0EPWmAYbQxv4PAdSNN08Wj6/nA==}
     dev: false
 
-  /melwallet.js/0.0.23:
-    resolution: {integrity: sha512-prAGV+JoubDx75Bx9XY8zN/ezBiMsglbGUHcRUamOK1xuJY5pBOE+tBBnraoU6S17/A2MJ4LePMNT88ripXhfQ==}
+  /melwallet.js/0.0.22:
+    resolution: {integrity: sha512-94Xqps4+XagwIM0SxHbhDJV1FaUbpr1rcT5qBfd3SP+tfc/cq+zoXI8PRMGGr96zLXyoSq6GRp3u5wk3KxxeVw==}
     engines: {node: '>=6.0.0'}
     dependencies:
       json-bigint: 1.0.0

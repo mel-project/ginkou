@@ -12,8 +12,9 @@
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Modal } from "../atoms";
   import { transaction_balance, transaction_full } from "utils/wallet-utils";
+  import { denom_to_string } from "melwallet.js/dist/wallet-utils";
+
   import {
-    denom_to_string,
     Transaction,
     TxBalance,
     TxKind,

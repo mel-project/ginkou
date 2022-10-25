@@ -7,7 +7,9 @@
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Button, QrScanWindow, Input } from "../atoms";
-  import { denom_to_string, Transaction } from "melwallet.js";
+  import { Transaction } from "melwallet.js";  
+  import { denom_to_string } from "melwallet.js/dist/wallet-utils";
+
   import QrScanner from "qr-scanner";
   export let onTransactionSent = () => {};
   export let noCancel = false;

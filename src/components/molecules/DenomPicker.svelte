@@ -1,7 +1,7 @@
 <script lang="ts">
   import Modal from "../atoms/Modal.svelte";
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
-  import { denom_to_string } from "melwallet.js";
+  import { denom_to_string } from "melwallet.js/dist/wallet-utils";
   export let denom: string = "6d";
 
   export let blacklist: string[] = [];

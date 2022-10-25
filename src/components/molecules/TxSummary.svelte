@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { denom_to_string, Transaction } from "melwallet.js";
+  import { Transaction } from "melwallet.js";
   import { kind2str } from "../../utils/utils";
+  import { denom_to_string } from "melwallet.js/dist/wallet-utils";
 
   export let transaction: Transaction;
   export let txhash: string | null = null;
