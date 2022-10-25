@@ -1,5 +1,4 @@
 <script lang="ts">
-  import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   export let value: string;
   export let denom: string;
   export let approxMelValue: string = "";

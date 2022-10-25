@@ -1,6 +1,5 @@
 <script lang="ts">
-    type ValueTypes = number | bigint | string;
-    type T = $$Generic<ValueTypes>;
+    type T = $$Generic<number | bigint | string>;
     export let value: T;
     export let toString: (t:T)=>string;
     $:  value_to_string = toString(value);

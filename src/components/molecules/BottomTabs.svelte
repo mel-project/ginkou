@@ -64,10 +64,10 @@
     opacity: 1;
 
   }
-  ::global(svg) {
-    // filter: drop-shadow(0px 0px 10px --primary-color)
-    // background: black;
-  }
+  // ::global(svg) {
+  //   // filter: drop-shadow(0px 0px 10px --primary-color)
+  //   // background: black;
+  // }
   .selected .tab-label {
     font-weight: 600;
   }

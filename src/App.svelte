@@ -26,7 +26,6 @@
   } from "./views";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
-  let selectedTab: number = 0;
   let firstDialog = false;
 
   $: {

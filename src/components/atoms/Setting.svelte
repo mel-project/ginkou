@@ -23,10 +23,10 @@
     text-overflow: ellipsis;
     overflow: hidden;
   }
-  select,
-  input {
-    width: 12em;
-  }
+  // select,
+  // input {
+  //   width: 12em;
+  // }
   .info {
     display: flex;
     flex-direction: column;

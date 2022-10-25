@@ -8,6 +8,7 @@
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Button, QrScanWindow, Input } from "../atoms";
   import { denom_to_string, Transaction } from "melwallet.js";
+  import QrScanner from "qr-scanner";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
@@ -24,7 +25,10 @@
     console.error(e);
     sendError = e;
   };
-
+  const onScanHandler = (s: QrScanner.ScanResult) => {
+            recipient = s.data;
+            scannerOpen = false;
+  }
   $: onPrepare = async () => {
     pending = true;
     setTimeout(async () => {
@@ -112,10 +116,7 @@
     {:else if scannerOpen}
       <div class="qr-canvas-wrap">
         <QrScanWindow
-          onScan={(s) => {
-            recipient = s;
-            scannerOpen = false;
-          }}
+          onScan={onScanHandler}
         />
       </div>
     {:else}
