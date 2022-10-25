@@ -1,0 +1,32 @@
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+$primary: #006e54;
+$dark: #003d2f;
+$font-family-sans-serif: "Public Sans";
+$font-family-base: "Public Sans";
+$body-bg: #f8fbf8;
+
+$theme-colors: (
+  "primary": #006e54,
+  "danger": #6e0005,
+);
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+:root {
+  --font-family: "Public Sans", sans-serif;
+  --primary-color: #{$primary};
+  --secondary-color: #660B6E;
+  --dark-color: #{$dark};
+  --bubble-color: #006e5410;
+  --background-color: #f8fbf8;
+}
+
+body {
+  background-color: #f8fbf8;
+  font-family: "Public Sans";
+  letter-spacing: -0.01em;
+}
+
+html {
+  font-size: 95%;
+}

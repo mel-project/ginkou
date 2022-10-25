@@ -18,8 +18,8 @@ const rootDir = path.resolve(__dirname, "src");
 
 console.log(rootDir);
 
-const production = !process.env.ROLLUP_WATCH;
-
+// const production = !process.env.ROLLUP_WATCH;
+const production = false;
 function serve() {
   let server;
 
@@ -53,8 +53,10 @@ export default {
     name: "app",
     file: "public/build/bundle.js",
     inlineDynamicImports: true,
+    globals: ""
   },
   plugins: [
+    // resolve(),
     alias({
       resolve: [".ts", ".js", ".svelte", ".scss"],
       entries: {
@@ -116,6 +118,7 @@ export default {
       ],
       plugins: [
         "@babel/plugin-syntax-dynamic-import",
+        "@babel/plugin-syntax-bigint",
         [
           "@babel/plugin-transform-runtime",
           {

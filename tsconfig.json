@@ -5,7 +5,7 @@
     "outDir": "./out",
     "strict": true,
     "target": "es6",
-    "lib": ["es2017"],
+    "lib": ["es2017", "DOM"],
     "importsNotUsedAsValues": "remove",
     "baseUrl": "src",
     // "paths": {"@components": ["components"], "@components/*": ["components/*"]} ,

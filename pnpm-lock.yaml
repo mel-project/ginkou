@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@babel/core': ^7.15.0
+  '@babel/plugin-syntax-bigint': ^7.8.3
   '@babel/plugin-transform-runtime': ^7.17.10
   '@babel/polyfill': ^7.12.1
   '@babel/preset-env': ^7.15.0
@@ -28,7 +29,7 @@ specifiers:
   debounce: ^1.2.1
   json-bigint: ^1.0.0
   material-icons: ^1.10.8
-  melwallet.js: 0.0.22
+  melwallet.js: 0.0.26
   onsenui: ^2.11.2
   pug: ^3.0.2
   purify-ts: ^1.2.0
@@ -74,7 +75,7 @@ dependencies:
   debounce: 1.2.1
   json-bigint: 1.0.0
   material-icons: 1.12.0
-  melwallet.js: 0.0.22
+  melwallet.js: 0.0.26
   onsenui: 2.12.6
   purify-ts: 1.3.0
   qr-scanner: 1.4.1
@@ -90,6 +91,7 @@ dependencies:
 
 devDependencies:
   '@babel/core': 7.19.3
+  '@babel/plugin-syntax-bigint': 7.8.3_@babel+core@7.19.3
   '@babel/preset-env': 7.19.4_@babel+core@7.19.3
   '@babel/preset-typescript': 7.18.6_@babel+core@7.19.3
   '@rollup/plugin-alias': 3.1.9_rollup@2.79.1
@@ -605,6 +607,15 @@ packages:
 
   /@babel/plugin-syntax-async-generators/7.8.4_@babel+core@7.19.3:
     resolution: {integrity: sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw==}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.19.3
+      '@babel/helper-plugin-utils': 7.19.0
+    dev: true
+
+  /@babel/plugin-syntax-bigint/7.8.3_@babel+core@7.19.3:
+    resolution: {integrity: sha512-wnTnFlG+YxQm3vDxpGE57Pj0srRU4sHE/mDkt1qv2YJJSeUAec2ma4WLUnUPeKjyrfntVwe/N6dCXpU+zL3Npg==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
@@ -2650,8 +2661,8 @@ packages:
     resolution: {integrity: sha512-QwiZGoNlXrorOqLbFYECxuFxxG0UTivX39b+6gmgbgg+w5v+LtNUoOuz4zPM0EPWmAYbQxv4PAdSNN08Wj6/nA==}
     dev: false
 
-  /melwallet.js/0.0.22:
-    resolution: {integrity: sha512-94Xqps4+XagwIM0SxHbhDJV1FaUbpr1rcT5qBfd3SP+tfc/cq+zoXI8PRMGGr96zLXyoSq6GRp3u5wk3KxxeVw==}
+  /melwallet.js/0.0.26:
+    resolution: {integrity: sha512-NhInVmLoWtObQ5PiOh8LibKhGX1lLY5gsbwddoMoFCf6tiFoahhZ5j+gblbCEyjQJX4mnnE1IX0jvc+a6YVfgA==}
     engines: {node: '>=6.0.0'}
     dependencies:
       json-bigint: 1.0.0
