@@ -68,7 +68,7 @@
     background-size: contain;
   }
 
-  .send {
-    color: var(--dark-color);
-  }
+  // .send {
+  //   color: var(--dark-color);
+  // }
 </style>

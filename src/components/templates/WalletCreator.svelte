@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { slide } from "svelte/transition";
-  import { text } from "svelte/internal";
   import Button from "../atoms/Button.svelte";
   import PlusCircleOutline from "svelte-material-icons/PlusCircleOutline.svelte";
   import DownloadCircleOutline from "svelte-material-icons/DownloadCircleOutline.svelte";
@@ -44,6 +42,7 @@
   };
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div>
   {#if state == "start"}
     <div class="page1">

@@ -54,6 +54,7 @@
     </div>
     <ChevronDown width="1.8rem" height="1.8rem" />
   </Button>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="lock-indicator"
     on:click={async () => {
@@ -96,7 +97,8 @@
         </div>
 
         <ul class="list-group">
-          {#each $mainnetWallets as [name, wallet]}
+          {#each $mainnetWallets as [name, _wallet]}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <li
               class="list-group-item"
               class:active={name === $currentWalletName}
@@ -112,7 +114,8 @@
 
         <div class="network-subtitle">Testnet</div>
         <ul class="list-group">
-          {#each $testnetWallets as [name, wallet]}
+          {#each $testnetWallets as [name, _wallet]}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <li
               class="list-group-item"
               class:active={name === $currentWalletName}

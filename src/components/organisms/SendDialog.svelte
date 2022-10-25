@@ -1,21 +1,18 @@
 <script lang="ts">
   import { currentWalletName, currentWalletSummary } from "../../stores";
-  import {
-    prepare_tx,
-    send_tx,
-  } from "../../utils/utils";
+  import { prepare_tx, send_tx } from "../../utils/utils";
 
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
-  import { Button, QrScanWindow } from "../atoms";
+  import { Button, QrScanWindow, Input } from "../atoms";
   import { denom_to_string, Transaction } from "melwallet.js";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
   let recipient: string = "";
-  let amount: bigint = 0n;
+  let amount: bigint = BigInt(0);
   let denom: string = "6d";
 
   let pending: boolean = false;
@@ -33,7 +30,7 @@
     setTimeout(async () => {
       let coinData = {
         covhash: recipient,
-        value: amount * 1000000n,
+        value: amount * BigInt(1000000),
         denom: denom,
         additional_data: "",
       };
@@ -145,8 +142,8 @@
 
           <div class="input-group">
             <span class="input-group-text">Amount</span>
-            <input
-              type="number"
+            <Input
+              type="bigint"
               placeholder="Enter an amount"
               class="form-control"
               disabled={pending}
@@ -219,13 +216,13 @@
     flex-grow: 1;
   }
 
-  .qr-canvas {
-    width: 40vmin;
-    height: 40vmin;
-    object-fit: cover;
-    border-radius: 1rem;
-    border: var(--primary-color) 0.2rem solid;
-  }
+  // .qr-canvas {
+  //   width: 40vmin;
+  //   height: 40vmin;
+  //   object-fit: cover;
+  //   border-radius: 1rem;
+  //   border: var(--primary-color) 0.2rem solid;
+  // }
 
   .qr-canvas-wrap {
     width: 100%;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { register_console_loggers } from "utils/utils.old";
+  import { register_console_loggers } from "utils/utils";
   register_console_loggers();
   import {
     currentWalletName,
@@ -16,7 +16,7 @@
     WalletSelector,
   } from "./components";
   import { onMount } from "svelte";
-  import { slide } from "svelte/transition";
+
   import {
     Overview,
     PasswordPrompt,

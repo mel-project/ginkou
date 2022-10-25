@@ -5,4 +5,5 @@ export { default as Modal } from "./Modal.svelte"
 export { default as QrScanWindow } from "./QrScanWindow.svelte"
 export { default as Select } from "./Select.svelte"
 export { default as Setting } from "./Setting.svelte"
+export { default as Input } from "./Input.svelte"
 

@@ -2,7 +2,6 @@
   import { Textfield, Button } from "components";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import { ensure_unlocked } from "../utils/utils";
-  import { slide } from "svelte/transition";
 
   import { createEventDispatcher } from "svelte";
   let password = "";
@@ -18,7 +17,6 @@
         pending = true;
         await ensure_unlocked(
           $currentWalletName,
-          $currentWalletSummary,
           password
         );
         dispatch("unlock_success", {
@@ -67,11 +65,11 @@
     <div class="unlock">
       {#if close_button}
         <div class="close_button">
-          <Button on:click={(x) => dispatch("close")} fill>Close</Button>
+          <Button on:click={(_x) => dispatch("close")} fill>Close</Button>
         </div>
       {/if}
       <Button
-        on:click={(x) => try_unlock(password)}
+        on:click={(_x) => try_unlock(password)}
         fill
         outline
         submit

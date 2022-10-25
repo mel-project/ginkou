@@ -2,14 +2,14 @@
   import Button from "../atoms/Button.svelte";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
-  import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
 
   export let melBalance: string | null = null;
+  // svelte-ignore unused-export-let
   export let otherBalance: string | null = null;
 
   export let onSend = () => {};
   export let onReceive = () => {};
-  export let onSwap = () => {};
+  // export let onSwap = () => {};
 </script>
 
 <div class="hero">
@@ -61,11 +61,11 @@
     font-weight: 400;
   }
 
-  .small-balance {
-    color: var(--dark-color);
-    font-family: "Rubik";
-    opacity: 0.8;
-  }
+  // .small-balance {
+  //   color: var(--dark-color);
+  //   font-family: "Rubik";
+  //   opacity: 0.8;
+  // }
 
   .hero-buttons {
     padding-top: 1rem;

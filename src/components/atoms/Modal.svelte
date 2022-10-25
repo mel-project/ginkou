@@ -1,6 +1,6 @@
 <script lang="ts">
   export let open: boolean;
-  import { slide, fade } from "svelte/transition";
+
   export let onClose: () => any = () => {};
 
   export let title: string;
@@ -8,6 +8,7 @@
   export let pullup: boolean = false;
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 {#if open}
   <div class="blocker" on:click={() => onClose()}>
     <div class="modal" tabindex="-1">
@@ -15,7 +16,6 @@
         <div
           class="modal-content"
           class:pullup
-          transition:slide
           on:click={(e) => e.stopPropagation()}
         >
           <div class="modal-header">

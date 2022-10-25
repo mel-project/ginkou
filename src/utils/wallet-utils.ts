@@ -64,7 +64,7 @@ export const tap_faucet = (
 ): EitherAsync<string, TxHash> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        let num: bigint = 1001000000n;
+        let num: bigint = BigInt(1001000000);
         let res = await fromPromise(maybe_error(wallet.send_faucet(num)));
         return await res;
     });
@@ -147,7 +147,6 @@ export const prepare_swap_tx = (
 
 export const ensure_unlocked = async (
     wallet_name: string,
-    walletSummary: WalletSummary,
     pwd: string
 ) => {
     const wallet = await client.get_wallet(wallet_name);

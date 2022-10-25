@@ -37,6 +37,7 @@
   ].filter((d) => !blacklist.includes(d.denom));
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="wrap">
   <Modal
     title="Select an asset"
@@ -72,9 +73,6 @@
     height: 1.5rem;
     margin-right: 0.5rem;
     border-radius: 200px;
-  }
-
-  .wrap {
   }
 
   .coin-switcher {

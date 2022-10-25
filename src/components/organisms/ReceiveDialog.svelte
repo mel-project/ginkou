@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { slide } from "svelte/transition";
   import { currentWalletSummary } from "../../stores";
   import QRCode from "qrcode";
   import { copyToClipboard, showToast } from "../../utils/utils";
@@ -36,6 +35,8 @@
 <div class="root">
   <img class="qrcode" src={qrCodeUrl} alt="qr code" />
   <div class="qrblurb">Scan for wallet address</div>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+
   <div class="address" on:click={onCopy}>
     <div class="address-ellipsis">{$currentWalletSummary?.address}</div>
     <div class="copy-pill">Copy</div>

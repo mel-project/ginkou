@@ -6,7 +6,7 @@
     ReceiveDialog,
     SendDialog,
   } from "components";
-  import { denom_to_string } from "utils/utils.old";
+  import { denom_to_string } from "melwallet.js";
   import { currentWalletSummary } from "../stores";
   let sendOpen = false;
   let recvOpen = false;
@@ -37,7 +37,11 @@
   </Modal>
 
   <HomeHero
-    melBalance={$currentWalletSummary?.total_micromel/ 1000000).toFixed(6}
+    melBalance={String(
+      $currentWalletSummary
+        ? $currentWalletSummary?.total_micromel / BigInt(1000000)
+        : BigInt(0)
+    )}
     otherBalance="3.14"
     onSend={() => (sendOpen = true)}
     onReceive={() => (recvOpen = true)}
@@ -46,7 +50,7 @@
     {#if $currentWalletSummary}
       {#each Object.entries($currentWalletSummary.detailed_balance) as [k, v]}
         <DenomBubble
-          value={v/ 1000000).toFixed(6}
+          value={String(v / BigInt(1000000))}
           denom={denom_to_string(k)}
         />
       {/each}

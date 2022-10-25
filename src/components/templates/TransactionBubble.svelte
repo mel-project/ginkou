@@ -1,21 +1,23 @@
 <script lang="ts">
   import { currentWalletName, currentWalletSummary } from "../../stores";
-  import { kind2str, map_entries, showToast } from "../../utils/utils";
-  import { onDestroy } from "svelte";
-  import { derived, writable } from "svelte/store";
-  import type { Readable, Writable } from "svelte/store";
+  import { map_entries, showToast } from "../../utils/utils";
+  import { writable } from "svelte/store";
+  import type { Writable } from "svelte/store";
   export let txhash: string;
   export let height: number;
 
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
-  import JSONbig from "json-bigint";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Modal } from "../atoms";
   import { transaction_balance, transaction_full } from "utils/wallet-utils";
-  import { denom_to_string, Transaction, TxBalance, TxKind } from "melwallet.js";
-  const JBig = JSONbig({ alwaysParseAsBig: true });
+  import {
+    denom_to_string,
+    Transaction,
+    TxBalance,
+    TxKind,
+  } from "melwallet.js";
 
   let balance: Writable<TxBalance | null> = writable(null);
 
@@ -59,13 +61,13 @@
   $: {
     if ($balance) {
       let seenOut = false;
-      let seenIn = false;
+      // let _seenIn;
       Object.entries($balance[2]).forEach((a) => {
         if (a[1] < 0) {
           seenOut = true;
         }
         if (a[1] < 0) {
-          seenIn = true;
+          // seenIn = true;
         }
       });
       if ($balance[1] === TxKind.Swap) {
@@ -149,12 +151,12 @@
             <div>
               {#if num >= 0}
                 <span class="text-primary"
-                  ><b>+{num / 1000000n}</b>
+                  ><b>+{num / BigInt(1000000)}</b>
                   {denom_to_string(denom)}</span
                 >
               {:else}
                 <span class="text-danger"
-                  ><b>{(num / 1000000n)}</b> {denom_to_string(denom)}</span
+                  ><b>{num / BigInt(1000000)}</b> {denom_to_string(denom)}</span
                 >
               {/if}
             </div>
@@ -186,11 +188,11 @@
     font-weight: 600;
   }
 
-  .txhash {
-    font-size: calc(min(1.7vw, 8px));
-    margin-top: -2px;
-    font-family: "Iosevka";
-  }
+  // .txhash {
+  //   font-size: calc(min(1.7vw, 8px));
+  //   margin-top: -2px;
+  //   font-family: "Iosevka";
+  // }
 
   .pending {
     opacity: 0.5;
@@ -242,17 +244,17 @@
     font-size: 0.9rem;
   }
 
-  .mel {
-    background-image: url("/images/mel-coin.png");
-    background-size: contain;
-  }
+  // .mel {
+  //   background-image: url("/images/mel-coin.png");
+  //   background-size: contain;
+  // }
 
-  .sym {
-    background-image: url("/images/sym-coin.png");
-    background-size: contain;
-  }
+  // .sym {
+  //   background-image: url("/images/sym-coin.png");
+  //   background-size: contain;
+  // }
 
-  .send {
-    color: var(--dark-color);
-  }
+  // .send {
+  //   color: var(--dark-color);
+  // }
 </style>

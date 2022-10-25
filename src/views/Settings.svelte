@@ -126,8 +126,7 @@
 
     background: var(--background-color);
   }
-  .settings-menu {
-  }
+
   .settings-header {
     font-weight: 600;
     color: var(--dark-color);
