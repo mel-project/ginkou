@@ -13,10 +13,10 @@
     walletSummaries,
   } from "../../stores";
   import type { WalletSummary } from "../../utils/types";
-  import {lock_wallet } from "../../utils/wallet-utils";
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
   import { NetID } from "melwallet.js";
+  import { lock_wallet } from "utils/wallet-utils";
 
   let modalOpen: boolean = false;
 
@@ -97,7 +97,7 @@
         </div>
 
         <ul class="list-group">
-          {#each $mainnetWallets as [name, _wallet]}
+          {#each $mainnetWallets as [name, wallet]}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <li
               class="list-group-item"
@@ -114,7 +114,7 @@
 
         <div class="network-subtitle">Testnet</div>
         <ul class="list-group">
-          {#each $testnetWallets as [name, _wallet]}
+          {#each $testnetWallets as [name, wallet]}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <li
               class="list-group-item"

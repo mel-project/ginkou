@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let value: string;
+  export let value: string | number | bigint;
   export let denom: string;
   export let approxMelValue: string = "";
 </script>
