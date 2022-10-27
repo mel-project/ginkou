@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { prepare_swap_tx, SwapInfo, swap_info } from "../utils/wallet-utils";
+	import { Transaction } from 'melwallet.js';
+	import { SwapInfo } from 'melwallet.js';
+  import { prepare_swap_tx, swap_info } from "../utils/wallet-utils";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
 
   import debounce from "debounce";
   import { Button, DenomPicker, Modal, SendDialog } from "components";
-  import { Transaction } from "melwallet.js";
-  import { denom_to_string } from "melwallet.js";
   import { showToast } from "utils/utils";
 
   let payDenom = "6d";
   let recvDenom = "73";
 
-  let payValue: bigint = BigInt(0);
+  let payValue: bigint = 0n;
   let payValueString = "";
   let previousPayValueString = "";
 
-  let receiveValue: bigint = BigInt(0);
+  let receiveValue: bigint = 0n;
 
   let swapInfo: SwapInfo | null = null;
   let pending = false;
@@ -48,9 +48,9 @@
     return {
       update(s: string) {
         try {
-          let res = BigInt(s ? s : "0") * BigInt(1_000_000);
-          let valid = res < BigInt(2) ** BigInt(64);
-          // res.isInteger() && res.isPositive() && res.isLessThan(BigInt(2).pow(64));
+          let res = BigInt(s ? s : "0") * 1_000_000n;
+          let valid = res < 2n ** 64n;
+          // res.isInteger() && res.isPositive() && res.isLessThan(2n.pow(64));
           if (!valid) {
             throw "invalid big number";
           }
@@ -112,7 +112,7 @@
     <div>
       {#if $currentWalletSummary && payDenom in $currentWalletSummary.detailed_balance}
         Balance: <span style="font-weight: 600">
-          {$currentWalletSummary.detailed_balance[payDenom] / BigInt(1_000_000)}
+          {$currentWalletSummary.detailed_balance[payDenom] / 1_000_000n}
           &nbsp;{denom_to_string(payDenom)}
         </span>
       {/if}
@@ -150,7 +150,7 @@
   <div class="header">You receive</div>
   <div class="gigantic-group">
     <div class="gigantic gigantic-shifted" class:pending>
-      ≈ {receiveValue / BigInt(1_000_000)}
+      ≈ {receiveValue / 1_000_000n}
     </div>
     <DenomPicker bind:denom={recvDenom} blacklist={[payDenom]} />
   </div>
@@ -171,23 +171,21 @@
         class:danger={!pending && swapInfo && swapInfo.price_impact < 0.1}
       >
         {receiveValue < 0 && swapInfo && !pending
-          ? swapInfo.price_impact * BigInt(100) + "%"
+          ? swapInfo.price_impact * 100n + "%"
           : "-"}
       </div>
     </div>
     <div class="row">
       <div class="col">Approx. swap fees</div>
       <div class="col text-end highlight">
-        {payValue / BigInt(200) / BigInt(1_000_000) +
-          " " +
-          denom_to_string(payDenom)}
+        {payValue / 200n / 1_000_000n + " " + denom_to_string(payDenom)}
       </div>
     </div>
   </div>
 
   <div class="button-protector">
     <Button
-      disabled={pending || payValue == BigInt(0)}
+      disabled={pending || payValue == 0n}
       label="Review transaction"
       outline
       onClick={onReview}

@@ -3,7 +3,7 @@ import { TxHash } from "./types";
 import {
     CoinData, Header,
     MelwalletdClient, MelwalletdWallet,
-    Transaction, ThemelioJson as JsonBig, prepare_faucet, UnpreparedTransaction, WalletSummary, ThemelioJson, TxBalance, PoolState, SwapInfo
+    Transaction, ThemelioJson as JsonBig, prepare_faucet, UnpreparedTransaction, WalletSummary, ThemelioJson, TxBalance, PoolState, SwapInfo, send_faucet
 } from "melwallet.js"
 
 
@@ -64,8 +64,8 @@ export const tap_faucet = (
 ): EitherAsync<string, TxHash> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        let num: bigint = BigInt(1001000000);
-        let res = await fromPromise(maybe_error(wallet.send_faucet(num)));
+        let num: bigint = 1001000000n;
+        let res = await fromPromise(maybe_error(send_faucet(wallet)));
         return await res;
     });
 
@@ -105,8 +105,10 @@ export const swap_info = (
     EitherAsync(async ({ liftEither, fromPromise }) => {
 
         // Send tx
-        const nfo = await fromPromise(maybe_error(client.simulate_swap(to, from, value)));
-
+        const nfo: SwapInfo | null = await fromPromise(maybe_error(client.simulate_swap(to, from, value)));
+        if (!nfo) {
+            throw `unable to swap: ${to}/${from}`
+        }
         // Runtime type check and return
         return nfo;
     });
