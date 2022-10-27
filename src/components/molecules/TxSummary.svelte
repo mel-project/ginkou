@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Transaction } from "melwallet.js";
-  import { kind2str } from "../../utils/utils";
+  import { Transaction, TxKind } from "melwallet.js";
   import { denom_to_string } from "melwallet.js";
 
   export let transaction: Transaction;
@@ -23,7 +22,7 @@
   <table class="table table-borderless">
     <tbody>
       {#each transaction.outputs as output, i}
-        {#if !simplified || output.covhash != selfAddr || (kind2str(transaction.kind) === "Swap" && i == 0)}
+        {#if !simplified || output.covhash != selfAddr || (transaction.kind === TxKind.Swap && i == 0)}
           <tr class:self={output.covhash === selfAddr}>
             <td class="covhash">
               {output.covhash == selfAddr ? "(self)" : output.covhash}

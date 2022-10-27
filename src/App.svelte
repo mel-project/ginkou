@@ -15,7 +15,6 @@
     WalletCreator,
     WalletSelector,
   } from "./components";
-  import { onMount } from "svelte";
   import {
     Overview,
     PasswordPrompt,
@@ -25,7 +24,6 @@
   } from "./views";
 
   if (!$persistent_tabs) $last_tab = $default_tab;
-  let selectedTab: number = 0;
   let firstDialog = false;
 
   $: {
@@ -41,7 +39,6 @@
       firstDialog = $currentWalletName === null;
     });
   }
-  onMount(async () => {});
   let handleEvent = (event: CustomEvent) => {
     event.detail._callback();
   };

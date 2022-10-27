@@ -1,14 +1,15 @@
 <script lang="ts">
-  export let value: string;
+	import DecimalBalance from './../atoms/DecimalBalance.svelte';
+  export let value: bigint;
   export let denom: string;
-  export let approxMelValue: string = "";
+  let approxMelValue: bigint;
 </script>
 
 <div class="wrap">
   <div class="root">
     <div class="icon" class:mel={denom === "MEL"} class:sym={denom === "SYM"} />
     <div class="label">
-      <div><b>{value}</b> {denom}</div>
+      <div><b><DecimalBalance {value}></DecimalBalance></b> {denom}</div>
       {#if approxMelValue}<div class="approx">
           ≈ <b>{approxMelValue}</b> MEL
         </div>{/if}

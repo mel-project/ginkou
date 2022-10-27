@@ -2,11 +2,11 @@
   import Button from "../atoms/Button.svelte";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
+  import { to_millions } from "utils/utils";
 
-  export let melBalance: string | null = null;
-  // svelte-ignore unused-export-let
-  export let otherBalance: string | null = null;
+  export let melBalance: bigint | null = null;
 
+  $: melstring = melBalance ? to_millions(melBalance).toFixed(6) : "0.00000000"
   export let onSend = () => {};
   export let onReceive = () => {};
   // export let onSwap = () => {};
@@ -15,7 +15,7 @@
 <div class="hero">
   <div class="big-balance placeholder-wave">
     <div class="big-balance-number" class:placeholder={melBalance === null}>
-      {melBalance || "0.00000000"}
+      {melstring}
     </div>
     MEL
   </div>

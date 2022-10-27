@@ -5,46 +5,22 @@ import type {
 } from "./types";
 import Toastify from "toastify-js";
 import { EventDispatcher, PromiseCallback } from "./svelte-types";
-import { TxKind } from "melwallet.js";
 // export * from "./wallet-utils";
 
 console.log("in utils", Either);
-export const MEL = "6d";
 const default_port = 11773;
 
-export const kind2str = (bkind: TxKind) => {
-  const kind = Number(bkind);
-  if (kind === 0x00) {
-    return "Normal";
-  } else if (kind === 0x10) {
-    return "Stake";
-  } else if (kind === 0x50) {
-    return "DoscMint";
-  } else if (kind === 0x51) {
-    return "Swap";
-  } else if (kind === 0x52) {
-    return "LiqDeposit";
-  } else if (kind === 0x53) {
-    return "LiqWithdrawal";
-  } else if (kind === 0xff) {
-    return "Faucet";
-  } else {
-    throw "this should never happen";
+export function to_millions(num: number | bigint): number{
+  if(typeof num === 'bigint'){
+    return Number(num) / 1000000
   }
-};
-
+  return num / 1000000
+}
 export function map_entries<T,K>(map: Map<T,K>): [T,K][]{
   let entries: [T, K][] = Object.entries(map) as any;
   return entries
 }
-function intoListOf<T>(a: any, intoT: (a0: any) => Maybe<T>): Maybe<T[]> {
-  if (Array.isArray(a))
-    for (const x of a) {
-      if (intoT(x).isNothing()) return Nothing;
-    }
 
-  return Just(a as T[]);
-}
 
 // Give a string cast error if maybe is nothing
 export function cast_to_either<T>(m: Maybe<T>): Either<string, T> {

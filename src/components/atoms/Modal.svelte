@@ -40,6 +40,7 @@
   <div style="display:none" />
 {/if}
 
+<!-- svelte-ignore css-unused-selector-->
 <style lang="scss">
   .modal-content {
     background-color: var(--background-color) !important;
