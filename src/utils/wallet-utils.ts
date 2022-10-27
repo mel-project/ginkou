@@ -3,7 +3,7 @@ import { TxHash } from "./types";
 import {
     CoinData, Header,
     MelwalletdClient, MelwalletdWallet,
-    Transaction, ThemelioJson as JsonBig, prepare_faucet, PreparedTransaction, WalletSummary, ThemelioJson, TxBalance
+    Transaction, ThemelioJson as JsonBig, prepare_faucet, UnpreparedTransaction, WalletSummary, ThemelioJson, TxBalance, PoolState, SwapInfo
 } from "melwallet.js"
 
 
@@ -95,11 +95,7 @@ export const export_sk = (
     });
 
 
-export interface SwapInfo {
-    result: bigint;
-    price_impact: bigint;
-    poolkey: string;
-}
+
 export const swap_info = (
     from: string,
     to: string,
@@ -109,7 +105,7 @@ export const swap_info = (
     EitherAsync(async ({ liftEither, fromPromise }) => {
 
         // Send tx
-        const nfo: any = await fromPromise(maybe_error(client.simulate_swap(to, from, value)));
+        const nfo = await fromPromise(maybe_error(client.simulate_swap(to, from, value)));
 
         // Runtime type check and return
         return nfo;
@@ -135,7 +131,7 @@ export const prepare_swap_tx = (
 ): EitherAsync<string, Transaction> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        const prepare_swap: PreparedTransaction = {
+        const prepare_swap: UnpreparedTransaction = {
             kind: 0x51,
             data: poolkey,
             outputs,
@@ -165,7 +161,7 @@ export const prepare_tx = (
 ): EitherAsync<string, Transaction> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        const prepared: PreparedTransaction = {
+        const prepared: UnpreparedTransaction = {
             outputs,
         };
         // Prepare tx (get a json-encoded tx back)

@@ -7,6 +7,7 @@
     "target": "es6",
     "lib": ["es2017", "DOM"],
     "importsNotUsedAsValues": "remove",
+    "allowSyntheticDefaultImports": true,
     "baseUrl": "src",
     // "paths": {"@components": ["components"], "@components/*": ["components/*"]} ,
     "plugins": [

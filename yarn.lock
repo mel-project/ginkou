@@ -1164,12 +1164,12 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.21.tgz#5de5a2385a35309427f6011992b544514d559aa1"
   integrity sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==
 
-"@rollup/plugin-alias@^3.1.2":
-  version "3.1.9"
-  resolved "https://registry.yarnpkg.com/@rollup/plugin-alias/-/plugin-alias-3.1.9.tgz#a5d267548fe48441f34be8323fb64d1d4a1b3fdf"
-  integrity sha512-QI5fsEvm9bDzt32k39wpOwZhVzRcL5ydcffUHMyLVaVaLeC70I8TJZ17F1z1eMoLu4E/UOcH9BWVkKpIKdrfiw==
+"@rollup/plugin-alias@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-alias/-/plugin-alias-4.0.2.tgz#fec6c6aff8dd6fce580ae6bc5345084cd702bb62"
+  integrity sha512-1hv7dBOZZwo3SEupxn4UA2N0EDThqSSS+wI1St1TNTBtOZvUchyIClyHcnDcjjrReTPZ47Faedrhblv4n+T5UQ==
   dependencies:
-    slash "^3.0.0"
+    slash "^4.0.0"
 
 "@rollup/plugin-commonjs@^17.0.0":
   version "17.1.0"
@@ -2560,10 +2560,10 @@ material-icons@^1.10.8:
   resolved "https://registry.yarnpkg.com/material-icons/-/material-icons-1.12.0.tgz#77a3504a98ca01e298df9e1d7e1b0950fb1d4ef5"
   integrity sha512-QwiZGoNlXrorOqLbFYECxuFxxG0UTivX39b+6gmgbgg+w5v+LtNUoOuz4zPM0EPWmAYbQxv4PAdSNN08Wj6/nA==
 
-melwallet.js@^0.0.27:
-  version "0.0.27"
-  resolved "https://registry.yarnpkg.com/melwallet.js/-/melwallet.js-0.0.27.tgz#ea720476d8fc11a368c88103d53961291c0cbd6f"
-  integrity sha512-awM+xn1NZ9SKy6W74kvxpZDf5ZuYfHed1rLZffGdQZPMMsKU6DGGLVxtb2RpK/vkkyguWXhlxCL88RtUhyZd2Q==
+melwallet.js@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/melwallet.js/-/melwallet.js-0.1.2.tgz#72bfcbf54c66bf8bc733158cb5aab24f62cb9ee2"
+  integrity sha512-6DAJHYklYpYAltrYmtOTtR2C59dwFC0KvOgcu7IW5SbmvvE53VJ/9Ny1UsMiXt9xYPug/I+zPckXXlYEqC4YZQ==
   dependencies:
     json-bigint "^1.0.0"
     node-fetch "^3.2.10"
@@ -3393,10 +3393,10 @@ sisteransi@^1.0.5:
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
   integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
 
-slash@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
-  integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
+slash@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/slash/-/slash-4.0.0.tgz#2422372176c4c6c5addb5e2ada885af984b396a7"
+  integrity sha512-3dOsAHXXUkQTpOYcoAxLIorMTp4gIQr5IW3iVb7A7lFIp0VHhnynm9izx6TssdrIcVIESAlVjtnO2K8bg+Coew==
 
 slice-ansi@^4.0.0:
   version "4.0.0"
