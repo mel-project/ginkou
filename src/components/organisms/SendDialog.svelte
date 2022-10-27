@@ -15,7 +15,7 @@
   export let noCancel = false;
 
   let recipient: string = "";
-  let amount: bigint = 0n;
+  let amount: bigint = BigInt(0);
   let denom: string = "6d";
 
   let pending: boolean = false;
@@ -36,7 +36,7 @@
     setTimeout(async () => {
       let coinData = {
         covhash: recipient,
-        value: amount * 1000000n,
+        value: amount * BigInt(1000000),
         denom: denom,
         additional_data: "",
       };

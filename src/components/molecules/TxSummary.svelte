@@ -29,7 +29,7 @@
               {output.covhash == selfAddr ? "(self)" : output.covhash}
             </td>
             <td class="amount">
-              {output.value / 1000000n}
+              {output.value / BigInt(1000000)}
               {denom_to_string(output.denom)}
             </td>
           </tr>
@@ -37,7 +37,9 @@
       {/each}
       <tr>
         <td>Fee</td>
-        <td class="amount text-danger">{transaction.fee / 1000000n} MEL</td>
+        <td class="amount text-danger"
+          >{transaction.fee / BigInt(1000000)} MEL</td
+        >
       </tr>
     </tbody>
   </table>
@@ -58,7 +60,9 @@
         {/each}
         <tr>
           <td>Fee</td>
-          <td class="amount text-danger">{transaction.fee / 1000000n} MEL</td>
+          <td class="amount text-danger"
+            >{transaction.fee / BigInt(1000000)} MEL</td
+          >
         </tr>
       </tbody>
     </table>

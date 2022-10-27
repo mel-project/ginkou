@@ -3,18 +3,16 @@
   import QrScanner from "qr-scanner";
   let qrCanvas: HTMLVideoElement;
 
-  export let onScan = (s: string) => {};
+  export let onScan = (_s: QrScanner.ScanResult) => {};
 
   onMount(async () => {
     console.log("qrs", qrCanvas);
-    const qrScanner = new QrScanner(qrCanvas, (result) => {
-      console.log("decoded qr code:", result);
-      onScan(result);
-    });
+    const qrScanner = new QrScanner(qrCanvas, onScan, {});
     qrScanner.start();
   });
 </script>
 
+<!-- svelte-ignore a11y-media-has-caption -->
 <video class="qr-canvas" bind:this={qrCanvas} />
 
 <style>

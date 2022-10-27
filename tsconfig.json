@@ -4,7 +4,7 @@
     "moduleResolution": "node",
     "outDir": "./out",
     "strict": true,
-    "target": "es6",
+    "target": "es2020",
     "lib": ["es2017", "DOM"],
     "importsNotUsedAsValues": "remove",
     "allowSyntheticDefaultImports": true,

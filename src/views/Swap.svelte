@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Transaction } from 'melwallet.js';
-	import { SwapInfo } from 'melwallet.js';
+  import { denom_to_string, Transaction } from "melwallet.js";
+  import { SwapInfo } from "melwallet.js";
   import { prepare_swap_tx, swap_info } from "../utils/wallet-utils";
   import { currentWalletName, currentWalletSummary } from "../stores";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";

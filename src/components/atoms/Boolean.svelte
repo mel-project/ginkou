@@ -1,9 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   export let value: boolean;
-  let focused = false;
+  export let focused = false;
   let _class: string = "";
-  let labeled: boolean = true;
+  // let labeled: boolean = true;
   export { _class as class };
 
   const event_dispatcher = createEventDispatcher();
@@ -22,6 +22,7 @@
   };
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <template>
   <div class="form-check form-switch input {_class}" on:click|stopPropagation>
     <input

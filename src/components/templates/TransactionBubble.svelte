@@ -1,13 +1,8 @@
 <script lang="ts">
-  import BigNumber from "bignumber.js";
   import { currentWalletName, currentWalletSummary } from "../../stores";
-  import {
-    kind2str,
-    showToast,
-  } from "../../utils/utils";
-  import { onDestroy } from "svelte";
-  import { derived, writable } from "svelte/store";
-  import type { Readable, Writable } from "svelte/store";
+  import { map_entries, showToast } from "../../utils/utils";
+  import { writable } from "svelte/store";
+  import type { Writable } from "svelte/store";
   export let txhash: string;
   export let height: number;
 
@@ -16,13 +11,12 @@
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Modal } from "../atoms";
-  import { denom_to_string, ThemelioJson, Transaction, TxBalance, TxKind } from "melwallet.js";
   import { transaction_balance, transaction_full } from "utils/wallet-utils";
-  const JBig = ThemelioJson
+  import { denom_to_string } from "melwallet.js";
 
-  let balance: Writable<
-    TxBalance | null
-  > = writable(null);
+  import { Transaction, TxBalance, TxKind } from "melwallet.js";
+
+  let balance: Writable<TxBalance | null> = writable(null);
 
   // Fire off whe nthis element is first observaable
   const onIntersection = (entries: any, observer: any) => {
@@ -64,13 +58,13 @@
   $: {
     if ($balance) {
       let seenOut = false;
-      let seenIn = false;
+      // let _seenIn;
       Object.entries($balance[2]).forEach((a) => {
-        if (a[1].lt(0)) {
+        if (a[1] < 0) {
           seenOut = true;
         }
-        if (a[1].gt(0)) {
-          seenIn = true;
+        if (a[1] < 0) {
+          // seenIn = true;
         }
       });
       if ($balance[1] === TxKind.Swap) {
@@ -149,17 +143,17 @@
     </div>
     <div class="amount">
       {#if $balance}
-        {#each Object.entries($balance[2]) as [denom, num]}
-          {#if num.toNumber()}
+        {#each map_entries($balance[2]) as [denom, num]}
+          {#if num}
             <div>
-              {#if num.gte(0)}
+              {#if num >= 0}
                 <span class="text-primary"
-                  ><b>+{num.div(1000000).toFixed(6)}</b>
+                  ><b>+{num / BigInt(1000000)}</b>
                   {denom_to_string(denom)}</span
                 >
               {:else}
                 <span class="text-danger"
-                  ><b>{num.div(1000000).toFixed(6)}</b> {denom_to_string(denom)}</span
+                  ><b>{num / BigInt(1000000)}</b> {denom_to_string(denom)}</span
                 >
               {/if}
             </div>
@@ -191,11 +185,11 @@
     font-weight: 600;
   }
 
-  .txhash {
-    font-size: calc(min(1.7vw, 8px));
-    margin-top: -2px;
-    font-family: "Iosevka";
-  }
+  // .txhash {
+  //   font-size: calc(min(1.7vw, 8px));
+  //   margin-top: -2px;
+  //   font-family: "Iosevka";
+  // }
 
   .pending {
     opacity: 0.5;
@@ -247,17 +241,17 @@
     font-size: 0.9rem;
   }
 
-  .mel {
-    background-image: url("/images/mel-coin.png");
-    background-size: contain;
-  }
+  // .mel {
+  //   background-image: url("/images/mel-coin.png");
+  //   background-size: contain;
+  // }
 
-  .sym {
-    background-image: url("/images/sym-coin.png");
-    background-size: contain;
-  }
+  // .sym {
+  //   background-image: url("/images/sym-coin.png");
+  //   background-size: contain;
+  // }
 
-  .send {
-    color: var(--dark-color);
-  }
+  // .send {
+  //   color: var(--dark-color);
+  // }
 </style>

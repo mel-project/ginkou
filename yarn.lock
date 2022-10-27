@@ -2560,10 +2560,10 @@ material-icons@^1.10.8:
   resolved "https://registry.yarnpkg.com/material-icons/-/material-icons-1.12.0.tgz#77a3504a98ca01e298df9e1d7e1b0950fb1d4ef5"
   integrity sha512-QwiZGoNlXrorOqLbFYECxuFxxG0UTivX39b+6gmgbgg+w5v+LtNUoOuz4zPM0EPWmAYbQxv4PAdSNN08Wj6/nA==
 
-melwallet.js@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/melwallet.js/-/melwallet.js-0.1.2.tgz#72bfcbf54c66bf8bc733158cb5aab24f62cb9ee2"
-  integrity sha512-6DAJHYklYpYAltrYmtOTtR2C59dwFC0KvOgcu7IW5SbmvvE53VJ/9Ny1UsMiXt9xYPug/I+zPckXXlYEqC4YZQ==
+melwallet.js@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/melwallet.js/-/melwallet.js-0.1.4.tgz#be9cc1f253dd3314f4e6b057b343fd5185717379"
+  integrity sha512-Q7YvEal0SmVrPpZVmtEanooLcap08yiVxKlKP7VYzaYyINdwvh5gXuuFk4Yt0tX3QwY/TuHWnnm0aYY8tp74wA==
   dependencies:
     json-bigint "^1.0.0"
     node-fetch "^3.2.10"
