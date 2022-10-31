@@ -11,14 +11,13 @@ specifiers:
   '@capacitor/cli': ^3.2.0
   '@capacitor/core': ^3.2.0
   '@capacitor/ios': ^3.2.0
-  '@rollup/plugin-alias': ^3.1.2
+  '@rollup/plugin-alias': ^4.0.2
   '@rollup/plugin-commonjs': ^17.0.0
   '@rollup/plugin-node-resolve': ^11.0.0
   '@rollup/plugin-typescript': ^9.0.2
   '@testing-library/svelte': ^3.0.3
   '@tsconfig/svelte': ^1.0.10
   '@types/debounce': ^1.2.1
-  '@types/json-bigint': ^1.0.0
   '@types/qrcode': ^1.4.2
   '@types/toastify-js': ^1.11.0
   add: ^2.0.6
@@ -27,9 +26,8 @@ specifiers:
   cross-fetch: ^3.1.4
   dart-sass: ^1.25.0
   debounce: ^1.2.1
-  json-bigint: ^1.0.0
   material-icons: ^1.10.8
-  melwallet.js: 0.0.26
+  melwallet.js: ^0.1.4
   onsenui: ^2.11.2
   pug: ^3.0.2
   purify-ts: ^1.2.0
@@ -66,16 +64,15 @@ dependencies:
   '@capacitor/cli': 3.9.0
   '@capacitor/core': 3.9.0
   '@capacitor/ios': 3.9.0_@capacitor+core@3.9.0
+  '@rollup/plugin-alias': 4.0.2_rollup@2.79.1
   '@types/debounce': 1.2.1
-  '@types/json-bigint': 1.0.1
   '@types/toastify-js': 1.11.1
   add: 2.0.6
   autoprefixer: 10.4.12_postcss@8.4.18
   bootstrap: 5.2.2_@popperjs+core@2.11.6
   debounce: 1.2.1
-  json-bigint: 1.0.0
   material-icons: 1.12.0
-  melwallet.js: 0.0.26
+  melwallet.js: 0.1.4
   onsenui: 2.12.6
   purify-ts: 1.3.0
   qr-scanner: 1.4.1
@@ -94,7 +91,6 @@ devDependencies:
   '@babel/plugin-syntax-bigint': 7.8.3_@babel+core@7.19.3
   '@babel/preset-env': 7.19.4_@babel+core@7.19.3
   '@babel/preset-typescript': 7.18.6_@babel+core@7.19.3
-  '@rollup/plugin-alias': 3.1.9_rollup@2.79.1
   '@rollup/plugin-commonjs': 17.1.0_rollup@2.79.1
   '@rollup/plugin-node-resolve': 11.2.1_rollup@2.79.1
   '@rollup/plugin-typescript': 9.0.2_gypgyaqhine6mwjfvh7icfhviq
@@ -1547,15 +1543,18 @@ packages:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
     dev: false
 
-  /@rollup/plugin-alias/3.1.9_rollup@2.79.1:
-    resolution: {integrity: sha512-QI5fsEvm9bDzt32k39wpOwZhVzRcL5ydcffUHMyLVaVaLeC70I8TJZ17F1z1eMoLu4E/UOcH9BWVkKpIKdrfiw==}
-    engines: {node: '>=8.0.0'}
+  /@rollup/plugin-alias/4.0.2_rollup@2.79.1:
+    resolution: {integrity: sha512-1hv7dBOZZwo3SEupxn4UA2N0EDThqSSS+wI1St1TNTBtOZvUchyIClyHcnDcjjrReTPZ47Faedrhblv4n+T5UQ==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
-      rollup: ^1.20.0||^2.0.0
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
     dependencies:
       rollup: 2.79.1
-      slash: 3.0.0
-    dev: true
+      slash: 4.0.0
+    dev: false
 
   /@rollup/plugin-commonjs/17.1.0_rollup@2.79.1:
     resolution: {integrity: sha512-PoMdXCw0ZyvjpCMT5aV4nkL0QywxP29sODQsSGeDpr/oI49Qq9tRtAsb/LbYbDzFlOydVEqHmmZWFtXJEAX9ew==}
@@ -1706,10 +1705,6 @@ packages:
     resolution: {integrity: sha512-SvSrYXfWSc7R4eqnOzbQF4TZmfpNSM9FrSWLU3EUnWBuyZqNBOrv1B1JA3byUDPUl9z4Ab3jeZG2eDdySlgNMg==}
     dependencies:
       '@types/node': 18.11.2
-    dev: false
-
-  /@types/json-bigint/1.0.1:
-    resolution: {integrity: sha512-zpchZLNsNuzJHi6v64UBoFWAvQlPhch7XAi36FkH6tL1bbbmimIF+cS7vwkzY4u5RaSWMoflQfu+TshMPPw8uw==}
     dev: false
 
   /@types/json-schema/7.0.11:
@@ -2661,8 +2656,8 @@ packages:
     resolution: {integrity: sha512-QwiZGoNlXrorOqLbFYECxuFxxG0UTivX39b+6gmgbgg+w5v+LtNUoOuz4zPM0EPWmAYbQxv4PAdSNN08Wj6/nA==}
     dev: false
 
-  /melwallet.js/0.0.26:
-    resolution: {integrity: sha512-NhInVmLoWtObQ5PiOh8LibKhGX1lLY5gsbwddoMoFCf6tiFoahhZ5j+gblbCEyjQJX4mnnE1IX0jvc+a6YVfgA==}
+  /melwallet.js/0.1.4:
+    resolution: {integrity: sha512-Q7YvEal0SmVrPpZVmtEanooLcap08yiVxKlKP7VYzaYyINdwvh5gXuuFk4Yt0tX3QwY/TuHWnnm0aYY8tp74wA==}
     engines: {node: '>=6.0.0'}
     dependencies:
       json-bigint: 1.0.0
@@ -3436,10 +3431,10 @@ packages:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
     dev: false
 
-  /slash/3.0.0:
-    resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
-    engines: {node: '>=8'}
-    dev: true
+  /slash/4.0.0:
+    resolution: {integrity: sha512-3dOsAHXXUkQTpOYcoAxLIorMTp4gIQr5IW3iVb7A7lFIp0VHhnynm9izx6TssdrIcVIESAlVjtnO2K8bg+Coew==}
+    engines: {node: '>=12'}
+    dev: false
 
   /slice-ansi/4.0.0:
     resolution: {integrity: sha512-qMCMfhY040cVHT43K9BFygqYbUPFZKHOg7K73mtTWJRb8pyP3fzf4Ixd5SzdEJQ6MRUg/WBnOLxghZtKKurENQ==}

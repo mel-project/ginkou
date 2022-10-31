@@ -10,7 +10,7 @@ import {
 const client: MelwalletdClient = new MelwalletdClient()
 const default_port = 11773
 
-
+console.log(client);
 export async function maybe_error<T>(promise: Promise<T>): Promise<Either<string, T>> {
     try {
         let res = await promise;
@@ -176,10 +176,10 @@ export const prepare_tx = (
 
 // Get a list of all stored wallets
 export const list_wallets = (
-): EitherAsync<string, Map<String, WalletSummary>> =>
+): EitherAsync<string, Map<string, WalletSummary>> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
-        const res = maybe_error(client.list_wallets());
-        return fromPromise(res);
+        const res = await fromPromise(maybe_error(client.list_wallets()));
+        return res;
     });
 
 // Get a list of all stored wallets

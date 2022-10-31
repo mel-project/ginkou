@@ -1,8 +1,8 @@
 Arguments: 
-  /usr/local/bin/node /home/shmendez/.yarn/bin/yarn.js install
+  /usr/local/bin/node /home/shmendez/.yarn/bin/yarn.js add melwallet.js@latest
 
 PATH: 
-  /home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/shmendez/.local/bin:/home/shmendez/.yarn/bin:/home/shmendez/.config/yarn/global/node_modules/.bin:/home/shmendez/.local/share/pnpm:/home/shmendez/.cargo/bin:/anaconda3/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/snap/bin:/home/shmendez/dev/themeliolabs/ginkou/node_modules/.bin:/home/shmendez/.yarn/bin:/usr/local/go/bin:/Users/mendez/.local/bin:/usr/local/go/bin:/home/mendez/.local/bin:/home/shmendez/.fzf/bin:/usr/local/go/bin:/home/shmendez/.foundry/bin:/usr/local/go/bin:/home/shmendez/themeliolabs/bin
+  /home/shmendez/.yarn/bin:/home/shmendez/.config/yarn/global/node_modules/.bin:/home/shmendez/.local/share/pnpm:/anaconda3/bin:/opt/local/bin:/opt/local/sbin:/home/shmendez/.yarn/bin:/home/shmendez/.config/yarn/global/node_modules/.bin:/home/shmendez/.local/share/pnpm:/anaconda3/bin:/opt/local/bin:/opt/local/sbin:/home/shmendez/.pyenv/shims:/home/shmendez/.pyenv/bin:/home/shmendez/.yarn/bin:/home/shmendez/.config/yarn/global/node_modules/.bin:/home/shmendez/.local/share/pnpm:/home/shmendez/.cargo/bin:/anaconda3/bin:/opt/local/bin:/opt/local/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/shmendez/node_modules/.bin:/home/shmendez/.yarn/bin:/usr/local/go/bin:/Users/mendez/.local/bin:/usr/local/go/bin:/home/mendez/.local/bin:/home/shmendez/.fzf/bin:/usr/local/go/bin:/home/shmendez/.foundry/bin:/usr/local/go/bin:/home/shmendez/themeliolabs/bin:/home/shmendez/node_modules/.bin:/home/shmendez/.yarn/bin:/usr/local/go/bin:/Users/mendez/.local/bin:/usr/local/go/bin:/home/mendez/.local/bin:/usr/local/go/bin:/home/shmendez/.foundry/bin:/usr/local/go/bin:/home/shmendez/themeliolabs/bin:/home/shmendez/dev/themeliolabs/ginkou/node_modules/.bin:/home/shmendez/.yarn/bin:/usr/local/go/bin:/Users/mendez/.local/bin:/usr/local/go/bin:/home/shmendez/.local/bin:/usr/local/go/bin:/home/shmendez/.foundry/bin:/usr/local/go/bin:/home/shmendez/themeliolabs/bin
 
 Yarn version: 
   1.22.19
@@ -31,9 +31,9 @@ npm manifest:
     },
     "devDependencies": {
       "@babel/core": "^7.15.0",
+      "@babel/plugin-syntax-bigint": "^7.8.3",
       "@babel/preset-env": "^7.15.0",
       "@babel/preset-typescript": "^7.15.0",
-      "@rollup/plugin-alias": "^3.1.2",
       "@rollup/plugin-commonjs": "^17.0.0",
       "@rollup/plugin-node-resolve": "^11.0.0",
       "@rollup/plugin-typescript": "^9.0.2",
@@ -66,17 +66,15 @@ npm manifest:
       "@capacitor/cli": "^3.2.0",
       "@capacitor/core": "^3.2.0",
       "@capacitor/ios": "^3.2.0",
+      "@rollup/plugin-alias": "^4.0.2",
       "@types/debounce": "^1.2.1",
-      "@types/json-bigint": "^1.0.0",
       "@types/toastify-js": "^1.11.0",
       "add": "^2.0.6",
       "autoprefixer": "^10.4.2",
       "bootstrap": "^5.1.3",
       "debounce": "^1.2.1",
-      "json-bigint": "^1.0.0",
       "material-icons": "^1.10.8",
-      "melwallet.js": "0.0.24",
-      "node-fetch": "^3.2.10",
+      "melwallet.js": "^0.1.4",
       "onsenui": "^2.11.2",
       "purify-ts": "^1.2.0",
       "qr-scanner": "^1.4.1",
@@ -514,6 +512,13 @@ Lockfile:
     version "7.8.4"
     resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-async-generators/-/plugin-syntax-async-generators-7.8.4.tgz#a983fb1aeb2ec3f6ed042a210f640e90e786fe0d"
     integrity sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw==
+    dependencies:
+      "@babel/helper-plugin-utils" "^7.8.0"
+  
+  "@babel/plugin-syntax-bigint@^7.8.3":
+    version "7.8.3"
+    resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-bigint/-/plugin-syntax-bigint-7.8.3.tgz#4c9a6f669f5d0cdf1b90a1671e9a146be5300cea"
+    integrity sha512-wnTnFlG+YxQm3vDxpGE57Pj0srRU4sHE/mDkt1qv2YJJSeUAec2ma4WLUnUPeKjyrfntVwe/N6dCXpU+zL3Npg==
     dependencies:
       "@babel/helper-plugin-utils" "^7.8.0"
   
@@ -1255,12 +1260,12 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.21.tgz#5de5a2385a35309427f6011992b544514d559aa1"
     integrity sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==
   
-  "@rollup/plugin-alias@^3.1.2":
-    version "3.1.9"
-    resolved "https://registry.yarnpkg.com/@rollup/plugin-alias/-/plugin-alias-3.1.9.tgz#a5d267548fe48441f34be8323fb64d1d4a1b3fdf"
-    integrity sha512-QI5fsEvm9bDzt32k39wpOwZhVzRcL5ydcffUHMyLVaVaLeC70I8TJZ17F1z1eMoLu4E/UOcH9BWVkKpIKdrfiw==
+  "@rollup/plugin-alias@^4.0.2":
+    version "4.0.2"
+    resolved "https://registry.yarnpkg.com/@rollup/plugin-alias/-/plugin-alias-4.0.2.tgz#fec6c6aff8dd6fce580ae6bc5345084cd702bb62"
+    integrity sha512-1hv7dBOZZwo3SEupxn4UA2N0EDThqSSS+wI1St1TNTBtOZvUchyIClyHcnDcjjrReTPZ47Faedrhblv4n+T5UQ==
     dependencies:
-      slash "^3.0.0"
+      slash "^4.0.0"
   
   "@rollup/plugin-commonjs@^17.0.0":
     version "17.1.0"
@@ -1393,11 +1398,6 @@ Lockfile:
     integrity sha512-SvSrYXfWSc7R4eqnOzbQF4TZmfpNSM9FrSWLU3EUnWBuyZqNBOrv1B1JA3byUDPUl9z4Ab3jeZG2eDdySlgNMg==
     dependencies:
       "@types/node" "*"
-  
-  "@types/json-bigint@^1.0.0":
-    version "1.0.1"
-    resolved "https://registry.yarnpkg.com/@types/json-bigint/-/json-bigint-1.0.1.tgz#201062a6990119a8cc18023cfe1fed12fc2fc8a7"
-    integrity sha512-zpchZLNsNuzJHi6v64UBoFWAvQlPhch7XAi36FkH6tL1bbbmimIF+cS7vwkzY4u5RaSWMoflQfu+TshMPPw8uw==
   
   "@types/json-schema@7.0.11":
     version "7.0.11"
@@ -2656,10 +2656,10 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/material-icons/-/material-icons-1.12.0.tgz#77a3504a98ca01e298df9e1d7e1b0950fb1d4ef5"
     integrity sha512-QwiZGoNlXrorOqLbFYECxuFxxG0UTivX39b+6gmgbgg+w5v+LtNUoOuz4zPM0EPWmAYbQxv4PAdSNN08Wj6/nA==
   
-  melwallet.js@0.0.22:
-    version "0.0.22"
-    resolved "https://registry.yarnpkg.com/melwallet.js/-/melwallet.js-0.0.22.tgz#6f38ec92c581c0befe00b0ebbdb4e5716492543f"
-    integrity sha512-94Xqps4+XagwIM0SxHbhDJV1FaUbpr1rcT5qBfd3SP+tfc/cq+zoXI8PRMGGr96zLXyoSq6GRp3u5wk3KxxeVw==
+  melwallet.js@^0.1.4:
+    version "0.1.4"
+    resolved "https://registry.yarnpkg.com/melwallet.js/-/melwallet.js-0.1.4.tgz#be9cc1f253dd3314f4e6b057b343fd5185717379"
+    integrity sha512-Q7YvEal0SmVrPpZVmtEanooLcap08yiVxKlKP7VYzaYyINdwvh5gXuuFk4Yt0tX3QwY/TuHWnnm0aYY8tp74wA==
     dependencies:
       json-bigint "^1.0.0"
       node-fetch "^3.2.10"
@@ -3489,10 +3489,10 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
     integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
   
-  slash@^3.0.0:
-    version "3.0.0"
-    resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
-    integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
+  slash@^4.0.0:
+    version "4.0.0"
+    resolved "https://registry.yarnpkg.com/slash/-/slash-4.0.0.tgz#2422372176c4c6c5addb5e2ada885af984b396a7"
+    integrity sha512-3dOsAHXXUkQTpOYcoAxLIorMTp4gIQr5IW3iVb7A7lFIp0VHhnynm9izx6TssdrIcVIESAlVjtnO2K8bg+Coew==
   
   slice-ansi@^4.0.0:
     version "4.0.0"

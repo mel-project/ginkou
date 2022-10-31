@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { WalletSummary } from './../../utils/types.ts';
   import Button from "../atoms/Button.svelte";
   import WalletCreator from "./WalletCreator.svelte";
   import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
@@ -12,29 +13,15 @@
     currentWalletSummary,
     walletSummaries,
   } from "../../stores";
-  import type { WalletSummary } from "../../utils/types";
-  import {lock_wallet } from "../../utils/wallet-utils";
+  import { lock_wallet } from "../../utils/wallet-utils";
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
-  import { NetID } from "melwallet.js";
+  import { NetID, netid_to_string } from "melwallet.js";
 
   let modalOpen: boolean = false;
 
-  const mainnetWallets: Readable<[string, WalletSummary][]> = derived(
-    walletSummaries,
-    ($walletSummaries) => {
-      return Object.entries($walletSummaries).filter((w) =>
-        w[1].network === NetID.Mainnet
-      );
-    }
-  );
-
-  const testnetWallets: Readable<[string, WalletSummary][]> = derived(
-    walletSummaries,
-    ($walletSummaries) =>
-      Object.entries($walletSummaries).filter((w) => w[1].network === NetID.Testnet)
-  );
-
+  $: console.log([...$walletSummaries.entries()])
+  $: mainnetWallets = [...$walletSummaries.entries()]
   let creatorOpen = false;
 </script>
 
@@ -44,14 +31,15 @@
       <div
         class="icon"
         class:icon-mainnet={$currentWalletSummary?.network === NetID.Mainnet}
-        class:icon-testnet={$currentWalletSummary?.network === NetID.Testnet}
       />
     </div>
-    <div class="text" class:placeholder={$currentWalletName === null}>
-      <b>{$currentWalletSummary?.network === NetID.Mainnet ? "Mainnet" : "Testnet"}</b
-      >
-      / {$currentWalletName}
-    </div>
+    {#if $currentWalletSummary}
+      <div class="text" class:placeholder={$currentWalletName === null}>
+        <b>{netid_to_string($currentWalletSummary.network)}</b>
+        / {$currentWalletName}
+      </div>
+    {/if}
+
     <ChevronDown width="1.8rem" height="1.8rem" />
   </Button>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -85,8 +73,7 @@
       >
       <WalletCreator onCreate={() => (creatorOpen = false)} />
     {:else}
-      <div>
-        <div class="network-subtitle">
+     <div class="network-subtitle">
           <div>Mainnet</div>
           <Button
             label="create"
@@ -97,8 +84,7 @@
         </div>
 
         <ul class="list-group">
-          {#each $mainnetWallets as [name, _wallet]}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
+          {#each mainnetWallets as [name, wallet]}
             <li
               class="list-group-item"
               class:active={name === $currentWalletName}
@@ -111,24 +97,6 @@
             </li>
           {/each}
         </ul>
-
-        <div class="network-subtitle">Testnet</div>
-        <ul class="list-group">
-          {#each $testnetWallets as [name, _wallet]}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <li
-              class="list-group-item"
-              class:active={name === $currentWalletName}
-              on:click={() => {
-                $currentWalletName = name;
-                modalOpen = false;
-              }}
-            >
-              {name}
-            </li>
-          {/each}
-        </ul>
-      </div>
     {/if}
   </Modal>
 </div>

@@ -28,14 +28,16 @@
 
   $: {
     getWalletSummaries().then((either) => {
-      let list = either.unsafeCoerce();
+      let list = Array.from(either.unsafeCoerce().keys());
+
       // //if the wallet name cookie doesn't exist in the wallet list, unset the cookie
       // //this can happen if a machine changes melwalletd databases
-      if (Object.keys(list).indexOf($currentWalletName || "") < 0) {
+      if (list.indexOf($currentWalletName || "") < 0) {
         $currentWalletName = null;
       }
       // if a wallet cookie exists use it; get the first wallet in the list; else null
-      $currentWalletName = $currentWalletName || Object.keys(list)[0] || null;
+      $currentWalletName = $currentWalletName || list[0] || null;
+      console.debug(list)
       firstDialog = $currentWalletName === null;
     });
   }

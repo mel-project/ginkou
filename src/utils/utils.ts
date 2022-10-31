@@ -7,7 +7,6 @@ import Toastify from "toastify-js";
 import { EventDispatcher, PromiseCallback } from "./svelte-types";
 // export * from "./wallet-utils";
 
-console.log("in utils", Either);
 const default_port = 11773;
 
 export function to_millions(num: number | bigint): number{

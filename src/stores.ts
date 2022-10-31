@@ -37,8 +37,8 @@ export const getWalletSummaries = async () => {
 }
 // List of all wallets, both mainnet and testnet
 let lastSummaries: any = 0;
-export const walletSummaries: Readable<Obj<WalletSummary>> = readable(
-  {},
+export const walletSummaries: Readable<Map<string, WalletSummary>> = readable(
+  new Map(),
   (set) => {
     const refresh = async () => {
       // fetch the stuff and set
@@ -60,9 +60,9 @@ export const currentWalletName: Writable<string | null> = persistentWritable(
 );
 
 // Summary of current wallet.
-export const currentWalletSummary: Readable<WalletSummary | null> = derived(
+export const currentWalletSummary: Readable<WalletSummary | undefined> = derived(
   [walletSummaries, currentWalletName],
-  ([a, b]) => (b ? a[b] : null)
+  ([a, b]) => (b ? a.get(b) : undefined)
 );
 
 // Current network status
