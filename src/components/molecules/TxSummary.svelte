@@ -1,12 +1,13 @@
 <script lang="ts">
   import { Transaction, TxKind } from "melwallet.js";
-  import { denom_to_string } from "melwallet.js";
+  import { to_millions } from "utils/utils";
 
   export let transaction: Transaction;
   export let txhash: string | null = null;
   export let selfAddr: string | null = null;
   export let simplified: boolean = false;
   export let height: number | null = null;
+  console.log('tx: ',transaction)
 </script>
 
 <div class="root">
@@ -28,8 +29,8 @@
               {output.covhash == selfAddr ? "(self)" : output.covhash}
             </td>
             <td class="amount">
-              {output.value / BigInt(1000000)}
-              {denom_to_string(output.denom)}
+              {to_millions(output.value)}
+              {output.denom.toString()}
             </td>
           </tr>
         {/if}

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { WalletSummary } from './../../utils/types.ts';
   import Button from "../atoms/Button.svelte";
   import WalletCreator from "./WalletCreator.svelte";
   import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
@@ -14,14 +13,11 @@
     walletSummaries,
   } from "../../stores";
   import { lock_wallet } from "../../utils/wallet-utils";
-  import { derived } from "svelte/store";
-  import type { Readable } from "svelte/store";
   import { NetID, netid_to_string } from "melwallet.js";
 
   let modalOpen: boolean = false;
 
-  $: console.log([...$walletSummaries.entries()])
-  $: mainnetWallets = [...$walletSummaries.entries()]
+  $: mainnetWallets = [...$walletSummaries.entries()];
   let creatorOpen = false;
 </script>
 
@@ -31,6 +27,7 @@
       <div
         class="icon"
         class:icon-mainnet={$currentWalletSummary?.network === NetID.Mainnet}
+        class:icon-testnet={$currentWalletSummary?.network === NetID.Testnet}
       />
     </div>
     {#if $currentWalletSummary}
@@ -73,30 +70,31 @@
       >
       <WalletCreator onCreate={() => (creatorOpen = false)} />
     {:else}
-     <div class="network-subtitle">
-          <div>Mainnet</div>
-          <Button
-            label="create"
-            small
-            outline
-            onClick={() => (creatorOpen = true)}><Plus /></Button
-          >
-        </div>
+      <!-- TODO: Change name to current network -->
+      <div class="network-subtitle">
+        <div>Mainnet</div>
+        <Button
+          label="create"
+          small
+          outline
+          onClick={() => (creatorOpen = true)}><Plus /></Button
+        >
+      </div>
 
-        <ul class="list-group">
-          {#each mainnetWallets as [name, wallet]}
-            <li
-              class="list-group-item"
-              class:active={name === $currentWalletName}
-              on:click={() => {
-                $currentWalletName = name;
-                modalOpen = false;
-              }}
-            >
-              {name}
-            </li>
-          {/each}
-        </ul>
+      <ul class="list-group">
+        {#each mainnetWallets as [name, _wallet]}
+          <li
+            class="list-group-item"
+            class:active={name === $currentWalletName}
+            on:click={() => {
+              $currentWalletName = name;
+              modalOpen = false;
+            }}
+          >
+            {name}
+          </li>
+        {/each}
+      </ul>
     {/if}
   </Modal>
 </div>

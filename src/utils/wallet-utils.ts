@@ -3,20 +3,19 @@ import { TxHash } from "./types";
 import {
     CoinData, Header,
     MelwalletdClient, MelwalletdWallet,
-    Transaction, ThemelioJson as JsonBig, prepare_faucet, UnpreparedTransaction, WalletSummary, ThemelioJson, TxBalance, PoolState, SwapInfo, send_faucet
+    Transaction, ThemelioJson as JsonBig, prepare_faucet, UnpreparedTransaction, WalletSummary, ThemelioJson, TxBalance, PoolState, SwapInfo, send_faucet, Denom
 } from "melwallet.js"
 
 
 const client: MelwalletdClient = new MelwalletdClient()
 const default_port = 11773
 
-console.log(client);
 export async function maybe_error<T>(promise: Promise<T>): Promise<Either<string, T>> {
     try {
         let res = await promise;
         return Right(res);
     } catch (e: any) {
-        return Left(e.to_string());
+        return Left(e.message);
     }
 }
 
@@ -41,7 +40,6 @@ export const lock_wallet = (
     wallet_name: string,
 ): EitherAsync<string, boolean> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
-        console.log("locking");
         const wallet = await client.get_wallet(wallet_name)
         return await fromPromise(maybe_error(wallet.lock()));
     });
@@ -53,6 +51,7 @@ export const unlock_wallet = (
 ): EitherAsync<string, boolean> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name)
+        console.log("this is the wallet: ", wallet)
         return await fromPromise(maybe_error(wallet.unlock(password)));
 
     });
@@ -97,8 +96,8 @@ export const export_sk = (
 
 
 export const swap_info = (
-    from: string,
-    to: string,
+    from: Denom,
+    to: Denom,
     value: bigint,
     testnet: boolean,
 ): EitherAsync<string, SwapInfo> =>
@@ -200,8 +199,9 @@ export const transaction_balance = (
 ): EitherAsync<string, TxBalance> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        const tx = wallet.get_transaction(txhash);
-        const res = await fromPromise(maybe_error(wallet.get_transaction_balance(txhash)));
+        let txbalance = wallet.get_transaction_balance(txhash);
+        const res = await fromPromise(maybe_error(txbalance));
+        console.log("balance: ",res)
         return res;
     });
 

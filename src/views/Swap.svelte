@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { denom_to_string, Transaction } from "melwallet.js";
+  import { Denom, Transaction } from "melwallet.js";
   import { SwapInfo } from "melwallet.js";
   import { prepare_swap_tx, swap_info } from "../utils/wallet-utils";
   import { currentWalletName, currentWalletSummary } from "../stores";
@@ -7,10 +7,10 @@
 
   import debounce from "debounce";
   import { Button, DenomPicker, Modal, SendDialog } from "components";
-  import { showToast } from "utils/utils";
+  import { showToast, to_millions } from "utils/utils";
 
-  let payDenom = "6d";
-  let recvDenom = "73";
+  let payDenom = Denom.MEL;
+  let recvDenom = Denom.SYM;
 
   let payValue: bigint = 0n;
   let payValueString = "";
@@ -19,6 +19,17 @@
   let receiveValue: bigint = 0n;
 
   let swapInfo: SwapInfo | null = null;
+  let pay_value: number | null = null;
+
+  $: {
+    let value = $currentWalletSummary?.detailed_balance.get(payDenom);
+    if (value) {
+      pay_value = to_millions(value);
+    } else {
+      pay_value = null;
+    }
+  }
+
   let pending = false;
   const onUpdateDebounced = debounce(async () => {
     pending = true;
@@ -110,10 +121,10 @@
   <div class="header">
     <div>You pay</div>
     <div>
-      {#if $currentWalletSummary && payDenom in $currentWalletSummary.detailed_balance}
+      {#if $currentWalletSummary &&  $currentWalletSummary.detailed_balance.get(payDenom)}
         Balance: <span style="font-weight: 600">
-          {$currentWalletSummary.detailed_balance[payDenom] / 1_000_000n}
-          &nbsp;{denom_to_string(payDenom)}
+          {pay_value}
+          &nbsp;{payDenom.toString()}
         </span>
       {/if}
     </div>
@@ -178,7 +189,7 @@
     <div class="row">
       <div class="col">Approx. swap fees</div>
       <div class="col text-end highlight">
-        {payValue / 200n / 1_000_000n + " " + denom_to_string(payDenom)}
+        {payValue / 200n / 1_000_000n + " " + payDenom.toString()}
       </div>
     </div>
   </div>

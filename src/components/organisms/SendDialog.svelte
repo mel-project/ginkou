@@ -7,8 +7,7 @@
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Button, QrScanWindow, Input } from "../atoms";
-  import { Transaction } from "melwallet.js";
-  import { denom_to_string } from "melwallet.js";
+  import { Denom, Transaction } from "melwallet.js";
 
   import QrScanner from "qr-scanner";
   export let onTransactionSent = () => {};
@@ -16,7 +15,7 @@
 
   let recipient: string = "";
   let amount: bigint = BigInt(0);
-  let denom: string = "6d";
+  let denom: Denom = Denom.MEL;
 
   let pending: boolean = false;
   export let preparedTx: Transaction | null = null;
@@ -152,7 +151,7 @@
             />
             <select class="form-select" disabled={pending} bind:value={denom}>
               {#each Object.keys($currentWalletSummary.detailed_balance) as denom}
-                <option value={denom}>{denom_to_string(denom)}</option>
+                <option value={denom}>{denom.toString()}</option>
               {/each}
             </select>
           </div>

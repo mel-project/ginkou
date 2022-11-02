@@ -1,6 +1,6 @@
 <script lang="ts">
   import { register_console_loggers } from "utils/utils";
-  register_console_loggers();
+  // register_console_loggers();
   import {
     currentWalletName,
     currentWalletSummary,
@@ -22,10 +22,9 @@
     Swap,
     Transactions,
   } from "./views";
-
-  if (!$persistent_tabs) $last_tab = $default_tab;
+  if (!$persistent_tabs) $last_tab = Number($default_tab);
+  $last_tab = Number($last_tab)
   let firstDialog = false;
-
   $: {
     getWalletSummaries().then((either) => {
       let list = Array.from(either.unsafeCoerce().keys());
@@ -37,7 +36,7 @@
       }
       // if a wallet cookie exists use it; get the first wallet in the list; else null
       $currentWalletName = $currentWalletName || list[0] || null;
-      console.debug(list)
+      console.debug(list);
       firstDialog = $currentWalletName === null;
     });
   }

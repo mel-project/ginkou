@@ -1,11 +1,10 @@
 import { derived, readable, Readable, writable, Writable } from "svelte/store";
 import type {
   Obj,
-  WalletSummary,
 } from "./utils/types";
 import { list_wallets, network_status } from "./utils/wallet-utils";
 import { Either } from "purify-ts";
-import { Header, NetID, NotPromise, ThemelioJson } from "melwallet.js";
+import { Header, NetID, NotPromise, ThemelioJson, WalletSummary } from "melwallet.js";
 
 export function persistentWritable<T>(
   storage_name: string,

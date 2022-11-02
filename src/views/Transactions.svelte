@@ -5,7 +5,6 @@
   import { currentNetworkStatus, currentWalletName } from "../stores";
   import { list_transactions } from "../utils/wallet-utils";
   import { TransactionBubble } from "components";
-
   const dateToTxhash: Readable<
     { [key: string]: [string, number][] } | undefined
   > = derived(
@@ -21,7 +20,7 @@
         let heightTime = new Date(Date.now() - heightDifference * 30000);
         if (height < 0) {
           heightTime = new Date(Date.now());
-          console.log("subzero", heightTime);
+          console.error("subzero", heightTime);
         }
         heightTime.setHours(0, 0, 0, 0);
         return heightTime.toLocaleDateString("en-GB", {

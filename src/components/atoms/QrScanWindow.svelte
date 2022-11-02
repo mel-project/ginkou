@@ -6,7 +6,7 @@
   export let onScan = (_s: QrScanner.ScanResult) => {};
 
   onMount(async () => {
-    console.log("qrs", qrCanvas);
+    console.debug("qrs", qrCanvas);
     const qrScanner = new QrScanner(qrCanvas, onScan, {});
     qrScanner.start();
   });

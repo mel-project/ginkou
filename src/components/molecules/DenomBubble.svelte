@@ -1,13 +1,14 @@
 <script lang="ts">
+  import { Denom } from 'melwallet.js';
 	import DecimalBalance from './../atoms/DecimalBalance.svelte';
   export let value: bigint;
-  export let denom: string;
+  export let denom: Denom;
   let approxMelValue: bigint;
 </script>
 
-<div class="wrap">
+<div class="wrap denom-bubble">
   <div class="root">
-    <div class="icon" class:mel={denom === "MEL"} class:sym={denom === "SYM"} />
+    <div class="icon" class:mel={denom === Denom.MEL} class:sym={denom === Denom.SYM} />
     <div class="label">
       <div><b><DecimalBalance {value}></DecimalBalance></b> {denom}</div>
       {#if approxMelValue}<div class="approx">

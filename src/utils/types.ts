@@ -1,6 +1,6 @@
 import type { Either } from "purify-ts";
 import type { Readable, Writable } from "svelte/store";
-import { CoinDataHeight, NetID, Transaction } from "melwallet.js";
+import { CoinDataHeight, NetID, Transaction, WalletSummary } from "melwallet.js";
 
 export type BlockHeight = number;
 export type TxHash = string;
@@ -13,14 +13,6 @@ export interface WalletCryptoData {
   salt: Uint8Array;
   iv: Uint8Array;
   priv_key: Uint8Array;
-}
-
-export interface WalletSummary {
-  total_micromel: bigint;
-  network: NetID;
-  address: string;
-  locked: boolean;
-  detailed_balance: Obj<bigint>;
 }
 
 export type WalletEntry = { [key: string]: WalletSummary };

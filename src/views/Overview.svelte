@@ -1,9 +1,15 @@
 <script lang="ts">
-import { DenomBubble, HomeHero, Modal, ReceiveDialog, SendDialog } from "components";
-  import { denom_to_string } from "melwallet.js";
+  import {
+    DenomBubble,
+    HomeHero,
+    Modal,
+    ReceiveDialog,
+    SendDialog,
+  } from "components";
   import { currentWalletSummary } from "../stores";
   let sendOpen = false;
   let recvOpen = false;
+  console.debug($currentWalletSummary);
 </script>
 
 <div>
@@ -31,14 +37,16 @@ import { DenomBubble, HomeHero, Modal, ReceiveDialog, SendDialog } from "compone
   </Modal>
 
   <HomeHero
-    melBalance={$currentWalletSummary?.total_micromel ? $currentWalletSummary?.total_micromel : 0n}
+    melBalance={$currentWalletSummary?.total_micromel
+      ? $currentWalletSummary?.total_micromel
+      : 0n}
     onSend={() => (sendOpen = true)}
     onReceive={() => (recvOpen = true)}
   />
   <div class="denom-bubbles">
     {#if $currentWalletSummary}
-      {#each Object.entries($currentWalletSummary.detailed_balance) as [k, v]}
-        <DenomBubble value={v} denom={denom_to_string(k)} />
+      {#each [...$currentWalletSummary.detailed_balance] as [k, v]}
+        <DenomBubble value={v} denom={k} />
       {/each}
     {/if}
   </div>

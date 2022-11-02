@@ -3,34 +3,44 @@
   import { map_entries, showToast } from "../../utils/utils";
   import { writable } from "svelte/store";
   import type { Writable } from "svelte/store";
-  export let txhash: string;
-  export let height: number;
-
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Modal } from "../atoms";
   import { transaction_balance, transaction_full } from "utils/wallet-utils";
-  import { denom_to_string } from "melwallet.js";
-
   import { Transaction, TxBalance, TxKind } from "melwallet.js";
 
+  export let txhash: string;
+  export let height: number;
+  let rxText = "Unknown";
+  let direction = 0;
   let balance: Writable<TxBalance | null> = writable(null);
+  $: loading = !$balance;
+  
+  const options = {
+    root: null,
+    rootMargin: "50px 0px",
+    threshold: [0],
+  };
+  let self: Element | null;
+
 
   // Fire off whe nthis element is first observaable
   const onIntersection = (entries: any, observer: any) => {
     for (const { isIntersecting, target } of entries) {
+      
       if (isIntersecting && loading) {
-        console.log("something becoming visible");
+
         (async () => {
           if ($currentWalletName) {
+            console.log('loading balance', txhash)
             let res = await transaction_balance(
               $currentWalletName,
               txhash
             ).run();
             res
-              .ifLeft((err) => console.log(err))
+              .ifLeft((err) => console.warn(err))
               .ifRight((res) => {
                 balance.set(res);
               });
@@ -40,23 +50,16 @@
       }
     }
   };
-  const options = {
-    root: null,
-    rootMargin: "50px 0px",
-    threshold: [0],
-  };
-  let self: Element | null;
+
+
   const observer = new IntersectionObserver(onIntersection, options);
   $: {
     self && observer.observe(self);
   }
 
-  $: loading = !$balance;
-
-  let rxText = "Unknown";
-  let direction = 0;
   $: {
     if ($balance) {
+      // console.log($balance)
       let seenOut = false;
       // let _seenIn;
       Object.entries($balance[2]).forEach((a) => {
@@ -149,11 +152,11 @@
               {#if num >= 0}
                 <span class="text-primary"
                   ><b>+{num / BigInt(1000000)}</b>
-                  {denom_to_string(denom)}</span
+                  {denom.toString()}</span
                 >
               {:else}
                 <span class="text-danger"
-                  ><b>{num / BigInt(1000000)}</b> {denom_to_string(denom)}</span
+                  ><b>{num / BigInt(1000000)}</b> {denom.toString()}</span
                 >
               {/if}
             </div>
