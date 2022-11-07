@@ -3,12 +3,11 @@ import { TxHash } from "./types";
 import {
     CoinData, Header,
     MelwalletdClient, MelwalletdWallet,
-    Transaction, ThemelioJson as JsonBig, prepare_faucet, UnpreparedTransaction, WalletSummary, ThemelioJson, TxBalance, PoolState, SwapInfo, send_faucet, Denom
+    Transaction, ThemelioJson, UnpreparedTransaction, WalletSummary, TxBalance, SwapInfo, send_faucet, Denom
 } from "melwallet.js"
 
 
 const client: MelwalletdClient = new MelwalletdClient()
-const default_port = 11773
 
 export async function maybe_error<T>(promise: Promise<T>): Promise<Either<string, T>> {
     try {
