@@ -7,7 +7,7 @@
   export let selfAddr: string | null = null;
   export let simplified: boolean = false;
   export let height: number | null = null;
-  console.log('tx: ',transaction)
+  console.log("tx: ", transaction);
 </script>
 
 <div class="root">
@@ -38,7 +38,7 @@
       <tr>
         <td>Fee</td>
         <td class="amount text-danger"
-          >{transaction.fee / BigInt(1000000)} MEL</td
+          >{Number(transaction.fee) / 1000000} MEL</td
         >
       </tr>
     </tbody>
@@ -61,13 +61,13 @@
         <tr>
           <td>Fee</td>
           <td class="amount text-danger"
-            >{transaction.fee / BigInt(1000000)} MEL</td
+            >{Number(transaction.fee) / 1000000} MEL</td
           >
         </tr>
       </tbody>
     </table>
   {/if}
-</div>
+</div>  
 
 <style lang="scss">
   a {

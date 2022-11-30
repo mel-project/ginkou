@@ -2,13 +2,12 @@
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
-  import { currentNetworkStatus, currentWalletName } from "../stores";
-  import { list_transactions } from "../utils/wallet-utils";
+  import { latestHeader, currentWalletName, melwalletdClient } from "../stores";
   import { TransactionBubble } from "components";
   const dateToTxhash: Readable<
     { [key: string]: [string, number][] } | undefined
   > = derived(
-    [currentWalletName, currentNetworkStatus],
+    [currentWalletName, latestHeader],
     ([name, netStatus], set) => {
       if (!name || !netStatus) {
         return;
@@ -31,12 +30,9 @@
       };
 
       (async () => {
-        let res = await list_transactions(name);
+        let res = await melwalletdClient.dump_transactions(name);
         let toret: { [key: string]: [string, number][] } = {};
-        res
-          .ifLeft((err) => alert(err))
-          .ifRight((res) => {
-            res.forEach(([txhash, height]) => {
+        res.forEach(([txhash, height]) => {
               const real_height = height ? Number(height) : -1;
               const key = heightToString(real_height);
               if (!(key in toret)) {
@@ -44,9 +40,7 @@
               }
               toret[key].push([txhash, real_height]);
             });
-            console.log(toret);
-            set(toret);
-          });
+        set(toret)
       })();
     }
   );

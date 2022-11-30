@@ -1,10 +1,7 @@
 import { derived, readable, Readable, writable, Writable } from "svelte/store";
-import type {
-  Obj,
-} from "./utils/types";
 import { list_wallets, network_status } from "./utils/wallet-utils";
+import { Header, MelwalletdClient, NetID, NotPromise, ThemelioJson, ThemelioWallet, WalletSummary } from "melwallet.js"
 import { Either } from "purify-ts";
-import { Header, NetID, NotPromise, ThemelioJson, WalletSummary } from "melwallet.js";
 
 export function persistentWritable<T>(
   storage_name: string,
@@ -20,31 +17,44 @@ export function persistentWritable<T>(
   return w;
 }
 
-export const getWalletSummaries = async () => {
-  const list = await list_wallets();
-  list
-    .ifLeft((e) =>
-      console.error(`error encountered in list_wallets: ${JSON.stringify(e)}`)
-    )
-    .map((list) => {
-      // console.info("obtained list_wallets");
-      if (JSON.stringify(list) !== lastSummaries) {
-        lastSummaries = JSON.stringify(list);
-      }
-    })
-  return list
+export const melwalletdClient: MelwalletdClient = new MelwalletdClient();
+const default_header: Header = {
+  network: NetID.Custom08,
+  previous: "",
+  height: 0n,
+  history_hash: "",
+  coins_hash: "",
+  transactions_hash: "",
+  fee_pool: 0n,
+  fee_multiplier: 0n,
+  dosc_speed: 0n,
+  pools_hash: "",
+  stakes_hash: ""
 }
-// List of all wallets, both mainnet and testnet
-let lastSummaries: any = 0;
-export const walletSummaries: Readable<Map<string, WalletSummary>> = readable(
-  new Map(),
+
+export const latestHeader: Readable<Header> = readable(
+  default_header,
   (set) => {
     const refresh = async () => {
       // fetch the stuff and set
-      let list = await getWalletSummaries();
-      if ((list).isRight()) {
-        set((list).unsafeCoerce())
-      }
+     melwalletdClient.latest_header().then(set)
+    };
+    refresh();
+    const interval = setInterval(refresh, 1000);
+    return () => clearInterval(interval);
+  }
+);
+
+// List of all wallets, both mainnet and testnet
+let lastSummaries: any = 0;
+export const walletList: Readable<string[]> = readable(
+  [] as string[],
+  (set) => {
+    const refresh = async () => {
+      // fetch the stuff and set
+      let list: Either<string, string[]> = await list_wallets()
+      if (list.isLeft()) set([]);
+      set(list.unsafeCoerce())
     };
     refresh();
     const interval = setInterval(refresh, 1000);
@@ -53,41 +63,39 @@ export const walletSummaries: Readable<Map<string, WalletSummary>> = readable(
 );
 
 // Name of current wallet, as a string.
-export const currentWalletName: Writable<string | null> = persistentWritable(
+export const currentWalletName: Writable<string> = persistentWritable(
   "current_wallet",
-  null
+  "%null%"
 );
+
+export const currentWallet: Readable<ThemelioWallet> = derived(
+  currentWalletName,
+  (wallet_name, set) => {
+    if (!wallet_name) return;
+    melwalletdClient.get_wallet(wallet_name).then(set);
+    return;
+  }
+)
 
 // Summary of current wallet.
-export const currentWalletSummary: Readable<WalletSummary | undefined> = derived(
-  [walletSummaries, currentWalletName],
-  ([a, b]) => (b ? a.get(b) : undefined)
-);
-
-// Current network status
-export const currentNetworkStatus: Readable<Header | null> = derived(
-  [currentWalletSummary],
-  ([summary], set) => {
-    if (summary) {
-      const refresh = async () => {
-        // fetch the stuff and set
-        const list = await network_status();
-        list
-          .ifLeft((e) =>
-            console.error(
-              `error encountered in network_status: ${JSON.stringify(e)}`
-            )
-          )
-          .ifRight((list) => {
-            set(list);
-          });
-      };
-      refresh();
-      const interval = setInterval(refresh, 15000);
-      return () => clearInterval(interval);
-    }
+export const currentWalletSummary: Readable<WalletSummary> = derived(
+  currentWallet,
+  (wallet: ThemelioWallet | null, set) => {
+    const refresh = async () => {
+      if (wallet) {
+        wallet.get_name()
+          .then((name)=>melwalletdClient.wallet_summary(name))
+          .then(set)
+      }
+      // fetch the stuff and set
+    };
+    refresh();
+    const interval = setInterval(refresh, 200);
+    return () => clearInterval(interval);
   }
 );
+
+
 
 export const persistent_tabs: Writable<boolean> = persistentWritable(
   "persistent_tabs",

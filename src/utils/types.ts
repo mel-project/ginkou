@@ -1,6 +1,7 @@
+import { WalletSummary } from "melwallet.js"
+import { Transaction, CoinDataHeight } from "melwallet.js"
 import type { Either } from "purify-ts";
 import type { Readable, Writable } from "svelte/store";
-import { CoinDataHeight, NetID, Transaction, WalletSummary } from "melwallet.js";
 
 export type BlockHeight = number;
 export type TxHash = string;

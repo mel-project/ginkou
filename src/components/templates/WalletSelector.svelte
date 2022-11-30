@@ -9,15 +9,15 @@
   import Modal from "../atoms/Modal.svelte";
   import {
     currentWalletName,
+    currentWallet,
     currentWalletSummary,
-    walletSummaries,
+    walletList,
+    latestHeader,
   } from "../../stores";
-  import { lock_wallet } from "../../utils/wallet-utils";
-  import { NetID, netid_to_string } from "melwallet.js";
+  import { NetID } from "melwallet.js";
 
+  let { network } = $latestHeader;
   let modalOpen: boolean = false;
-
-  $: mainnetWallets = [...$walletSummaries.entries()];
   let creatorOpen = false;
 </script>
 
@@ -32,7 +32,7 @@
     </div>
     {#if $currentWalletSummary}
       <div class="text" class:placeholder={$currentWalletName === null}>
-        <b>{netid_to_string($currentWalletSummary.network)}</b>
+        <b>{$currentWalletSummary.network}</b>
         / {$currentWalletName}
       </div>
     {/if}
@@ -43,8 +43,8 @@
   <div
     class="lock-indicator"
     on:click={async () => {
-      if ($currentWalletName) {
-        await lock_wallet($currentWalletName);
+      if ($currentWallet) {
+        await $currentWallet.lock();
       }
     }}
   >
@@ -72,7 +72,7 @@
     {:else}
       <!-- TODO: Change name to current network -->
       <div class="network-subtitle">
-        <div>Mainnet</div>
+        <div>{network}</div>
         <Button
           label="create"
           small
@@ -82,7 +82,7 @@
       </div>
 
       <ul class="list-group">
-        {#each mainnetWallets as [name, _wallet]}
+        {#each $walletList as name}
           <li
             class="list-group-item"
             class:active={name === $currentWalletName}

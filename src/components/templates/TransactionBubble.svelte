@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { currentWalletName, currentWalletSummary } from "../../stores";
-  import { map_entries, showToast } from "../../utils/utils";
+  import {
+    currentWallet,
+    currentWalletSummary,
+    currentWalletName,
+    melwalletdClient,
+  } from "../../stores";
+  import { showToast } from "../../utils/utils";
   import { writable } from "svelte/store";
   import type { Writable } from "svelte/store";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
@@ -8,16 +13,16 @@
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Modal } from "../atoms";
-  import { transaction_balance, transaction_full } from "utils/wallet-utils";
-  import { Transaction, TxBalance, TxKind } from "melwallet.js";
+  import { TransactionStatus, TxBalance } from "melwallet.js";
+  import { Transaction, TxKind } from "melwallet.js";
 
   export let txhash: string;
   export let height: number;
   let rxText = "Unknown";
   let direction = 0;
-  let balance: Writable<TxBalance | null> = writable(null);
-  $: loading = !$balance;
-  
+  let balance: TxBalance | null = null;
+  $: loading = !balance;
+
   const options = {
     root: null,
     rootMargin: "50px 0px",
@@ -25,25 +30,17 @@
   };
   let self: Element | null;
 
-
   // Fire off whe nthis element is first observaable
   const onIntersection = (entries: any, observer: any) => {
     for (const { isIntersecting, target } of entries) {
-      
       if (isIntersecting && loading) {
-
         (async () => {
           if ($currentWalletName) {
-            console.log('loading balance', txhash)
-            let res = await transaction_balance(
+            console.log("loading balance", txhash);
+            balance = await melwalletdClient.tx_balance(
               $currentWalletName,
               txhash
-            ).run();
-            res
-              .ifLeft((err) => console.warn(err))
-              .ifRight((res) => {
-                balance.set(res);
-              });
+            );
           }
         })();
         observer.unobserve(target);
@@ -51,26 +48,25 @@
     }
   };
 
-
   const observer = new IntersectionObserver(onIntersection, options);
   $: {
     self && observer.observe(self);
   }
 
   $: {
-    if ($balance) {
-      // console.log($balance)
+    if (balance) {
       let seenOut = false;
       // let _seenIn;
-      Object.entries($balance[2]).forEach((a) => {
-        if (a[1] < 0) {
+      Object.entries(balance[2]).forEach(([_denom, value]) => {
+        if (!value) return;
+        if (value < 0) {
           seenOut = true;
         }
-        if (a[1] < 0) {
+        if (value < 0) {
           // seenIn = true;
         }
       });
-      if ($balance[1] === TxKind.Swap) {
+      if (balance[1] === TxKind.Swap) {
         rxText = "Swap funds";
         direction = 0;
       } else if (seenOut) {
@@ -85,16 +81,18 @@
 
   let modalOpen = false;
   let loadedTx: Transaction | null = null;
-
   $: loadDetails = async () => {
     if ($currentWalletName) {
       modalOpen = true;
-      let txn = await transaction_full($currentWalletName, txhash).run();
-      txn
-        .ifLeft((err) => showToast(err))
-        .ifRight((res) => {
-          loadedTx = res;
-        });
+      let txn: TransactionStatus | null = await melwalletdClient.tx_status(
+        $currentWalletName,
+        txhash
+      );
+      if (!txn) {
+        showToast("Bug: Transaction exists but can't load!");
+        return;
+      }
+      loadedTx = txn.raw;
     }
   };
 </script>
@@ -111,10 +109,10 @@
     title="Transaction details"
     onClose={() => (modalOpen = false)}
   >
-    {#if loadedTx}
+    {#if loadedTx && $currentWalletSummary}
       <TxSummary
         transaction={loadedTx}
-        selfAddr={$currentWalletSummary?.address}
+        selfAddr={$currentWalletSummary.address}
         {txhash}
         {height}
       />
@@ -145,18 +143,18 @@
       <!-- <div class="txhash">{txhash}</div> -->
     </div>
     <div class="amount">
-      {#if $balance}
-        {#each map_entries($balance[2]) as [denom, num]}
+      {#if balance}
+        {#each Object.entries(balance[2]) as [denom, num]}
           {#if num}
             <div>
               {#if num >= 0}
                 <span class="text-primary"
-                  ><b>+{num / BigInt(1000000)}</b>
-                  {denom.toString()}</span
+                  ><b>+{Number(num) / 1000000}</b>
+                  {denom}</span
                 >
               {:else}
                 <span class="text-danger"
-                  ><b>{num / BigInt(1000000)}</b> {denom.toString()}</span
+                  ><b>{Number(num) / 1000000}</b> {denom}</span
                 >
               {/if}
             </div>

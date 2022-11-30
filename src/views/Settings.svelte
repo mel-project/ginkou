@@ -85,7 +85,8 @@
               bind:value={$default_tab}
               options={[
                 ["Home", 0],
-                ["Transactions", 1],
+                ["Swap", 1],
+                ["Transactions", 2],
                 ["Settings", 3],
               ]}
             />

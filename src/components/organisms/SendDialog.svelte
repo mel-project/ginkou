@@ -1,23 +1,22 @@
 <script lang="ts">
-  import { currentWalletName, currentWalletSummary } from "../../stores";
-  import { prepare_tx, send_tx } from "../../utils/wallet-utils";
+  import { currentWallet, currentWalletSummary } from "../../stores";
 
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
   import { Button, QrScanWindow, Input } from "../atoms";
-  import { Denom, Transaction } from "melwallet.js";
 
   import QrScanner from "qr-scanner";
+  import { Denom, Transaction } from "melwallet.js";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
   let recipient: string = "";
   let amount: bigint = BigInt(0);
   let denom: Denom = Denom.MEL;
-
   let pending: boolean = false;
+  let wallet = $currentWallet;
   export let preparedTx: Transaction | null = null;
 
   let sendError: string | null = null;
@@ -39,16 +38,9 @@
         denom: denom,
         additional_data: "",
       };
-      let res = await prepare_tx($currentWalletName ? $currentWalletName : "", [
-        coinData,
-      ]).run();
-      res
-        .ifLeft((err) => {
-          onError(err);
-        })
-        .ifRight((txn) => {
-          preparedTx = txn;
-        });
+      preparedTx = await wallet.prepare_tx({
+        outputs: [coinData],
+      });
       pending = false;
     }, 500);
   };
@@ -59,18 +51,12 @@
 
   $: onConfirm = async () => {
     pending = true;
-    if ($currentWalletName && $currentWalletSummary && preparedTx) {
+    if ($currentWalletSummary && preparedTx) {
       try {
-        let result = await send_tx($currentWalletName, preparedTx).run();
-        result
-          .ifLeft((err) => {
-            onError(err);
-          })
-          .ifRight((_) => {
-            onTransactionSent();
-          });
+        await wallet.send_tx(preparedTx);
       } finally {
         setTimeout(() => (pending = false), 1500);
+        onTransactionSent()
       }
     }
   };

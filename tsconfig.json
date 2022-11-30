@@ -12,7 +12,8 @@
     // "paths": {"@components": ["components"], "@components/*": ["components/*"]} ,
     "plugins": [
       { "transform": "typescript-is/lib/transform-inline/transformer" }
-    ]
+    ],
+    "exactOptionalPropertyTypes": true
   },
 
   "extends": "@tsconfig/svelte/tsconfig.json",

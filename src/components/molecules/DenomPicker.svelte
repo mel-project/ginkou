@@ -5,8 +5,6 @@
   export let denom: Denom = Denom.MEL;
   export let blacklist: Denom[] = [];
 
-
-
   let pickerOpen = false;
 
   const denom2img = (denom: Denom) => {

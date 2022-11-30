@@ -1,11 +1,10 @@
 import { Either, Left, Right, EitherAsync, maybe } from "purify-ts";
 import { TxHash } from "./types";
 import {
-    CoinData, Header,
     MelwalletdClient, MelwalletdWallet,
-    Transaction, ThemelioJson, UnpreparedTransaction, WalletSummary, TxBalance, SwapInfo, send_faucet, Denom
 } from "melwallet.js"
-
+import { PrepareTxArgsHelpers, SwapInfo, TxBalance, WalletSummary } from "melwallet.js"
+import { Denom, Transaction, CoinData, Header } from "melwallet.js"
 
 const client: MelwalletdClient = new MelwalletdClient()
 
@@ -62,9 +61,11 @@ export const tap_faucet = (
 ): EitherAsync<string, TxHash> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
+        const address = await wallet.get_address();
         let num: bigint = 1001000000n;
-        let res = await fromPromise(maybe_error(send_faucet(wallet)));
-        return await res;
+        let prepare_faucet_args = PrepareTxArgsHelpers.faucet(address, num);
+        let tx_hash = await wallet.send_tx(prepare_faucet_args);
+        return tx_hash;
     });
 
 // Creates a new wallet and returns a private key for the new wallet.
@@ -88,7 +89,8 @@ export const export_sk = (
 ): EitherAsync<string, string> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
         const wallet = await client.get_wallet(wallet_name);
-        let res = await fromPromise(maybe_error(wallet.export_sk(password)));
+        // the forced cast is because I don't think export_sk will ever be able to return None, since the wallet exists by this point
+        let res = await fromPromise(maybe_error(wallet.export_sk(password))) as string;
         return liftEither(Right(res));
     });
 
@@ -124,22 +126,6 @@ export const send_tx = (
         return e_txhash;
     });
 
-export const prepare_swap_tx = (
-    wallet_name: string,
-    poolkey: string,
-    outputs: CoinData[],
-): EitherAsync<string, Transaction> =>
-    EitherAsync(async ({ liftEither, fromPromise }) => {
-        const wallet = await client.get_wallet(wallet_name);
-        const prepare_swap: UnpreparedTransaction = {
-            kind: 0x51,
-            data: poolkey,
-            outputs,
-        };
-        const tx: Transaction = await fromPromise(
-            maybe_error(wallet.prepare_transaction(prepare_swap)));
-        return tx;
-    });
 
 export const ensure_unlocked = async (
     wallet_name: string,
@@ -154,65 +140,12 @@ export const ensure_unlocked = async (
     }
 
 };
-
-export const prepare_tx = (
-    wallet_name: string,
-    outputs: CoinData[],
-): EitherAsync<string, Transaction> =>
-    EitherAsync(async ({ liftEither, fromPromise }) => {
-        const wallet = await client.get_wallet(wallet_name);
-        const prepared: UnpreparedTransaction = {
-            outputs,
-        };
-        // Prepare tx (get a json-encoded tx back)
-        const tx = await fromPromise(
-            maybe_error(wallet.prepare_transaction(prepared)));
-
-        return tx;
-    });
-
-
-// Get a list of all stored wallets
+console.log(client)
+// Get a list of all stored wallet names
 export const list_wallets = (
-): EitherAsync<string, Map<string, WalletSummary>> =>
+): EitherAsync<string, string[]> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
-        const res = await fromPromise(maybe_error(client.list_wallets()));
-        return res;
-    });
-
-// Get a list of all stored wallets
-export const list_transactions = (
-    wallet_name: string,
-): EitherAsync<string, [string, bigint | null][]> =>
-    EitherAsync(async ({ liftEither, fromPromise }) => {
-        const wallet = await client.get_wallet(wallet_name);
-        const res = await fromPromise(maybe_error(wallet.list_transactions()));
-
-        return res;
-    });
-
-// Get the balance for one particular transaction
-export const transaction_balance = (
-    wallet_name: string,
-    txhash: string,
-): EitherAsync<string, TxBalance> =>
-    EitherAsync(async ({ liftEither, fromPromise }) => {
-        const wallet = await client.get_wallet(wallet_name);
-        let txbalance = wallet.get_transaction_balance(txhash);
-        const res = await fromPromise(maybe_error(txbalance));
-        console.log("balance: ",res)
-        return res;
-    });
-
-// Get the full value for one particular transaction
-export const transaction_full = (
-    wallet_name: string,
-    txhash: string,
-): EitherAsync<string, Transaction> =>
-    EitherAsync(async ({ liftEither, fromPromise }) => {
-        const wallet = await client.get_wallet(wallet_name);
-        const res = await fromPromise(maybe_error(wallet.get_transaction(txhash)));
-
+        const res = await client.list_wallets()
         return res;
     });
 
@@ -220,5 +153,5 @@ export const transaction_full = (
 export const network_status = (
 ): EitherAsync<string, Header> =>
     EitherAsync(async ({ liftEither, fromPromise }) => {
-        return await fromPromise(maybe_error(client.get_summary()));
+        return await fromPromise(maybe_error(client.latest_header()));
     });

@@ -6,10 +6,17 @@
     ReceiveDialog,
     SendDialog,
   } from "components";
+  import { Denom } from "melwallet.js";
   import { currentWalletSummary } from "../stores";
   let sendOpen = false;
   let recvOpen = false;
-  console.debug($currentWalletSummary);
+  let balances: [Denom, bigint][];
+  $: {
+    // remove all undefined values
+    balances = Object.entries($currentWalletSummary.detailed_balance).filter(
+      ([_k, v]) => v
+    ) as typeof balances;
+  }
 </script>
 
 <div>
@@ -45,7 +52,7 @@
   />
   <div class="denom-bubbles">
     {#if $currentWalletSummary}
-      {#each [...$currentWalletSummary.detailed_balance] as [k, v]}
+      {#each balances as [k, v]}
         <DenomBubble value={v} denom={k} />
       {/each}
     {/if}
