@@ -4,15 +4,16 @@
     "moduleResolution": "node",
     "outDir": "./out",
     "strict": true,
-    "target": "es6",
-    "lib": ["es2017"],
+    "target": "es2020",
+    "lib": ["es2017", "DOM"],
     "importsNotUsedAsValues": "remove",
+    "allowSyntheticDefaultImports": true,
     "baseUrl": "src",
     // "paths": {"@components": ["components"], "@components/*": ["components/*"]} ,
     "plugins": [
       { "transform": "typescript-is/lib/transform-inline/transformer" }
     ],
-    
+    "exactOptionalPropertyTypes": true
   },
 
   "extends": "@tsconfig/svelte/tsconfig.json",

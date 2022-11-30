@@ -1,6 +1,9 @@
 /node_modules/
 /public/build/
-# yarn.lock
+yarn.lock
+.yarn
+.yarnrc.yml
+pnpm-lock.yaml
 yarn-error.log
 nohup.out
 build

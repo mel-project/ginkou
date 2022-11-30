@@ -1,12 +1,13 @@
 <script lang="ts">
-  import type { Transaction } from "../../utils/types";
-  import { denom2str, kind2str } from "../../utils/utils";
+  import { Transaction, TxKind } from "melwallet.js";
+  import { to_millions } from "utils/utils";
 
   export let transaction: Transaction;
   export let txhash: string | null = null;
   export let selfAddr: string | null = null;
   export let simplified: boolean = false;
   export let height: number | null = null;
+  console.log("tx: ", transaction);
 </script>
 
 <div class="root">
@@ -14,7 +15,7 @@
     <a
       href={`https://scan.themelio.org/blocks/${height}/${txhash}`}
       target="_blank"
-      rel="noopener">view on Melscan &#x2197;</a
+      rel="noreferrer">view on Melscan &#x2197;</a
     >
   {/if}
 
@@ -22,21 +23,23 @@
   <table class="table table-borderless">
     <tbody>
       {#each transaction.outputs as output, i}
-        {#if !simplified || output.covhash != selfAddr || (kind2str(transaction.kind) === "Swap" && i == 0)}
+        {#if !simplified || output.covhash != selfAddr || (transaction.kind === TxKind.Swap && i == 0)}
           <tr class:self={output.covhash === selfAddr}>
             <td class="covhash">
               {output.covhash == selfAddr ? "(self)" : output.covhash}
             </td>
             <td class="amount">
-              {output.value.div(1000000)}
-              {denom2str(output.denom)}
+              {to_millions(output.value)}
+              {output.denom.toString()}
             </td>
           </tr>
         {/if}
       {/each}
       <tr>
         <td>Fee</td>
-        <td class="amount text-danger">{transaction.fee.div(1000000)} MEL</td>
+        <td class="amount text-danger"
+          >{Number(transaction.fee) / 1000000} MEL</td
+        >
       </tr>
     </tbody>
   </table>
@@ -57,12 +60,14 @@
         {/each}
         <tr>
           <td>Fee</td>
-          <td class="amount text-danger">{transaction.fee.div(1000000)} MEL</td>
+          <td class="amount text-danger"
+            >{Number(transaction.fee) / 1000000} MEL</td
+          >
         </tr>
       </tbody>
     </table>
   {/if}
-</div>
+</div>  
 
 <style lang="scss">
   a {

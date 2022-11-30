@@ -1,9 +1,22 @@
 <script lang="ts">
-import { DenomBubble, HomeHero, Modal, ReceiveDialog, SendDialog } from "components";
-import {denom2str} from "utils/utils";
+  import {
+    DenomBubble,
+    HomeHero,
+    Modal,
+    ReceiveDialog,
+    SendDialog,
+  } from "components";
+  import { Denom } from "melwallet.js";
   import { currentWalletSummary } from "../stores";
   let sendOpen = false;
   let recvOpen = false;
+  let balances: [Denom, bigint][];
+  $: {
+    // remove all undefined values
+    balances = Object.entries($currentWalletSummary.detailed_balance).filter(
+      ([_k, v]) => v
+    ) as typeof balances;
+  }
 </script>
 
 <div>
@@ -31,15 +44,16 @@ import {denom2str} from "utils/utils";
   </Modal>
 
   <HomeHero
-    melBalance={$currentWalletSummary?.total_micromel.div(1000000).toFixed(6)}
-    otherBalance="3.14"
+    melBalance={$currentWalletSummary?.total_micromel
+      ? $currentWalletSummary?.total_micromel
+      : 0n}
     onSend={() => (sendOpen = true)}
     onReceive={() => (recvOpen = true)}
   />
   <div class="denom-bubbles">
     {#if $currentWalletSummary}
-      {#each Object.entries($currentWalletSummary.detailed_balance) as [k, v]}
-        <DenomBubble value={v.div(1000000).toFixed(6)} denom={denom2str(k)} />
+      {#each balances as [k, v]}
+        <DenomBubble value={v} denom={k} />
       {/each}
     {/if}
   </div>

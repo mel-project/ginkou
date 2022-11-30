@@ -1,29 +1,22 @@
 <script lang="ts">
-  import { currentWalletName, currentWalletSummary } from "../../stores";
-  import { slide, fade } from "svelte/transition";
-  import {
-    denom2str,
-    prepare_tx,
-    send_tx,
-    unlock_wallet,
-  } from "../../utils/utils";
+  import { currentWallet, currentWalletSummary } from "../../stores";
 
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import Check from "svelte-material-icons/Check.svelte";
   import QrcodeScan from "svelte-material-icons/QrcodeScan.svelte";
-  import BigNumber from "bignumber.js";
-  import { onMount, tick } from "svelte";
   import TxSummary from "../molecules/TxSummary.svelte";
-  import { Button, QrScanWindow } from "../atoms";
-  import type { Transaction } from "../../utils/types";
+  import { Button, QrScanWindow, Input } from "../atoms";
+
+  import QrScanner from "qr-scanner";
+  import { Denom, Transaction } from "melwallet.js";
   export let onTransactionSent = () => {};
   export let noCancel = false;
 
   let recipient: string = "";
-  let amount: string = "";
-  let denom: string = "6d";
-
+  let amount: bigint = BigInt(0);
+  let denom: Denom = Denom.MEL;
   let pending: boolean = false;
+  let wallet = $currentWallet;
   export let preparedTx: Transaction | null = null;
 
   let sendError: string | null = null;
@@ -32,26 +25,22 @@
     console.error(e);
     sendError = e;
   };
-
+  const onScanHandler = (s: QrScanner.ScanResult) => {
+    recipient = s.data;
+    scannerOpen = false;
+  };
   $: onPrepare = async () => {
     pending = true;
     setTimeout(async () => {
       let coinData = {
         covhash: recipient,
-        value: new BigNumber(amount).multipliedBy(1000000),
+        value: amount * BigInt(1000000),
         denom: denom,
         additional_data: "",
       };
-      let res = await prepare_tx($currentWalletName ? $currentWalletName : "", [
-        coinData,
-      ]).run();
-      res
-        .ifLeft((err) => {
-          onError(err);
-        })
-        .ifRight((txn) => {
-          preparedTx = txn;
-        });
+      preparedTx = await wallet.prepare_tx({
+        outputs: [coinData],
+      });
       pending = false;
     }, 500);
   };
@@ -62,18 +51,12 @@
 
   $: onConfirm = async () => {
     pending = true;
-    if ($currentWalletName && $currentWalletSummary && preparedTx) {
+    if ($currentWalletSummary && preparedTx) {
       try {
-        let result = await send_tx($currentWalletName, preparedTx).run();
-        result
-          .ifLeft((err) => {
-            onError(err);
-          })
-          .ifRight((_) => {
-            onTransactionSent();
-          });
+        await wallet.send_tx(preparedTx);
       } finally {
         setTimeout(() => (pending = false), 1500);
+        onTransactionSent()
       }
     }
   };
@@ -81,6 +64,7 @@
   let scannerOpen = false;
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div on:click={() => (sendError = null)}>
   {#if sendError}
     <div class="alert alert-danger" role="alert">
@@ -118,12 +102,7 @@
       </div>
     {:else if scannerOpen}
       <div class="qr-canvas-wrap">
-        <QrScanWindow
-          onScan={(s) => {
-            recipient = s;
-            scannerOpen = false;
-          }}
-        />
+        <QrScanWindow onScan={onScanHandler} />
       </div>
     {:else}
       <div>
@@ -149,8 +128,8 @@
 
           <div class="input-group">
             <span class="input-group-text">Amount</span>
-            <input
-              type="number"
+            <Input
+              type="bigint"
               placeholder="Enter an amount"
               class="form-control"
               disabled={pending}
@@ -158,7 +137,7 @@
             />
             <select class="form-select" disabled={pending} bind:value={denom}>
               {#each Object.keys($currentWalletSummary.detailed_balance) as denom}
-                <option value={denom}>{denom2str(denom)}</option>
+                <option value={denom}>{denom.toString()}</option>
               {/each}
             </select>
           </div>
@@ -223,13 +202,13 @@
     flex-grow: 1;
   }
 
-  .qr-canvas {
-    width: 40vmin;
-    height: 40vmin;
-    object-fit: cover;
-    border-radius: 1rem;
-    border: var(--primary-color) 0.2rem solid;
-  }
+  // .qr-canvas {
+  //   width: 40vmin;
+  //   height: 40vmin;
+  //   object-fit: cover;
+  //   border-radius: 1rem;
+  //   border: var(--primary-color) 0.2rem solid;
+  // }
 
   .qr-canvas-wrap {
     width: 100%;

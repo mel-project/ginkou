@@ -1,18 +1,16 @@
 <script lang="ts">
-  import { denom2str } from "../../utils/utils";
-
   import Modal from "../atoms/Modal.svelte";
   import ChevronDown from "svelte-material-icons/ChevronDown.svelte";
-  export let denom: string = "6d";
-
-  export let blacklist: string[] = [];
+  import { Denom } from "melwallet.js";
+  export let denom: Denom = Denom.MEL;
+  export let blacklist: Denom[] = [];
 
   let pickerOpen = false;
 
-  const denom2img = (denom: string) => {
-    if (denom === "6d") {
+  const denom2img = (denom: Denom) => {
+    if (denom === Denom.MEL) {
       return "mel-coin.png";
-    } else if (denom == "73") {
+    } else if (denom == Denom.SYM) {
       return "sym-coin.png";
     } else {
       return "unknown-coin.png";
@@ -23,21 +21,22 @@
     {
       name: "MEL",
       desc: "Main circulating currency of Themelio",
-      denom: "6d",
+      denom: Denom.MEL,
     },
     {
       name: "SYM",
       desc: "Proof-of-stake asset of Themelio",
-      denom: "73",
+      denom: Denom.SYM,
     },
     {
       name: "ERG",
       desc: "Temporary asset for sequential proof-of-work",
-      denom: "64",
+      denom: Denom.ERG,
     },
   ].filter((d) => !blacklist.includes(d.denom));
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="wrap">
   <Modal
     title="Select an asset"
@@ -62,7 +61,7 @@
   </Modal>
   <div class="coin-switcher" on:click={() => (pickerOpen = true)}>
     <img src={`/images/${denom2img(denom)}`} class="icon" alt="icon" />
-    <span> {denom2str(denom)} </span>
+    <span> {denom.toString()} </span>
     <ChevronDown width="1.2rem" height="1.2rem" />
   </div>
 </div>
@@ -73,9 +72,6 @@
     height: 1.5rem;
     margin-right: 0.5rem;
     border-radius: 200px;
-  }
-
-  .wrap {
   }
 
   .coin-switcher {

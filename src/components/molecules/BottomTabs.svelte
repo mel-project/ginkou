@@ -10,11 +10,12 @@
     selected = selection;
   };
 </script>
-
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="tabs">
   <div class="tab" class:selected={selected === 0} on:click={() => onSelect(0)}>
     <div class="tab-icon">
-      <ViewDashboardOutline width="2rem" height="2rem" box-shadow="100px"/>
+      <!-- <ViewDashboardOutline width="2rem" height="2rem" box-shadow="100px"/> -->
+      <ViewDashboardOutline width="2rem" height="2rem"/>
     </div>
     <div class="tab-label">Overview</div>
   </div>
@@ -63,10 +64,10 @@
     opacity: 1;
 
   }
-  ::global(svg) {
-    // filter: drop-shadow(0px 0px 10px --primary-color)
-    // background: black;
-  }
+  // ::global(svg) {
+  //   // filter: drop-shadow(0px 0px 10px --primary-color)
+  //   // background: black;
+  // }
   .selected .tab-label {
     font-weight: 600;
   }

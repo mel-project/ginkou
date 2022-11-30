@@ -1,34 +1,55 @@
 <script lang="ts">
-  import BigNumber from "bignumber.js";
+  import { Denom, PoolState, Transaction } from "melwallet.js";
+  import { swap_info } from "../utils/wallet-utils";
   import {
-    denom2str,
-    prepare_swap_tx,
-    showToast,
-    swap_info,
-  } from "../utils/utils";
-  import type { SwapInfo } from "../utils/utils";
-  import { currentWalletName, currentWalletSummary } from "../stores";
+    currentWallet,
+    currentWalletSummary,
+    melwalletdClient,
+  } from "../stores";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
 
-  import type { Transaction } from "../utils/types";
-import debounce from "debounce";
-import { Button, DenomPicker, Modal, SendDialog } from "components";
-  let payDenom = "6d";
-  let recvDenom = "73";
+  import debounce from "debounce";
+  import { Button, DenomPicker, Modal, SendDialog } from "components";
+  import { showToast, to_millions } from "utils/utils";
+  import { PrepareTxArgsHelpers, SwapInfo } from "melwallet.js";
 
-  let payValue: BigNumber = new BigNumber(0);
+  let payDenom: Denom = Denom.MEL;
+  let recvDenom: Denom = Denom.SYM;
+
+  let payValue: bigint = 0n;
   let payValueString = "";
   let previousPayValueString = "";
 
-  let receiveValue: BigNumber = new BigNumber(0);
+  let receiveValue: bigint = 0n;
 
   let swapInfo: SwapInfo | null = null;
+  let pay_value: number | null = null;
+
+  let pool_state: PoolState | null;
+  $: {
+    melwalletdClient
+      .melswap_info({ right: payDenom, left: recvDenom })
+      .then((state: PoolState | null) => {
+        pool_state = state;
+      });
+  }
+
+  $: {
+    let value = $currentWalletSummary?.detailed_balance[payDenom];
+    if (value) {
+      pay_value = to_millions(value);
+    } else {
+      pay_value = null;
+    }
+  }
+
   let pending = false;
   const onUpdateDebounced = debounce(async () => {
     pending = true;
     let info = await swap_info(payDenom, recvDenom, payValue, false).run();
     info
       .ifRight((res) => {
+        console.log(res);
         swapInfo = res;
         receiveValue = res.result;
       })
@@ -44,25 +65,26 @@ import { Button, DenomPicker, Modal, SendDialog } from "components";
   };
 
   // hack to run onUpdate every time the payDenom or recvDenom changes
-  $: _placeholder = ((a, b) => onUpdate())(payDenom, recvDenom);
+  $: {
+    ((_a, _b) => onUpdate())(payDenom, recvDenom);
+  }
 
-  const validate = (node: any, s: string) => {
+  const validate = (_node: any, _s: string) => {
     return {
       update(s: string) {
-        BigNumber.DEBUG = true;
         try {
-          let res = new BigNumber(s ? s : "0").multipliedBy(1_000_000);
-          let valid =
-            res.isInteger() &&
-            res.isPositive() &&
-            res.isLessThan(new BigNumber(2).pow(64));
+          let res = BigInt(s ? s : "0") * 1_000_000n;
+          let valid = res < BigInt(2 ** 64);
+          // res.isInteger() && res.isPositive() && res.isLessThan(2n.pow(64));
           if (!valid) {
             throw "invalid big number";
           }
           payValueString = s;
           previousPayValueString = payValueString;
           payValue = res;
-        } catch {
+          return res;
+        } catch (e) {
+          console.log(e);
           payValueString = previousPayValueString;
         }
       },
@@ -70,27 +92,19 @@ import { Button, DenomPicker, Modal, SendDialog } from "components";
   };
 
   let preparedTx: Transaction | null = null;
-
   $: onReview = async () => {
     pending = true;
-    if ($currentWalletName && swapInfo && $currentWalletSummary) {
+    if (swapInfo && $currentWalletSummary) {
       try {
-        let res = await prepare_swap_tx($currentWalletName, swapInfo.poolkey, [
-          {
-            covhash: $currentWalletSummary.address,
-            denom: payDenom,
-            value: payValue,
-            additional_data: "",
-          },
-        ]).run();
-        res
-          .ifLeft((err) => {
-            throw err;
-          })
-          .ifRight((val) => {
-            preparedTx = val;
-          });
-      } catch (err) {
+        preparedTx = await $currentWallet.prepare_tx(
+          await PrepareTxArgsHelpers.swap(
+            await $currentWallet.get_address(),
+            payDenom,
+            recvDenom,
+            payValue
+          )
+        );
+      } catch (err: any) {
         showToast(err);
       }
     }
@@ -115,12 +129,10 @@ import { Button, DenomPicker, Modal, SendDialog } from "components";
   <div class="header">
     <div>You pay</div>
     <div>
-      {#if $currentWalletSummary && payDenom in $currentWalletSummary.detailed_balance}
+      {#if $currentWalletSummary.detailed_balance[payDenom]}
         Balance: <span style="font-weight: 600">
-          {$currentWalletSummary.detailed_balance[payDenom]
-            .dividedBy(1_000_000)
-            .toFixed(6)}
-          &nbsp;{denom2str(payDenom)}
+          {pay_value}
+          &nbsp;{payDenom.toString()}
         </span>
       {/if}
     </div>
@@ -128,7 +140,7 @@ import { Button, DenomPicker, Modal, SendDialog } from "components";
   <div class="gigantic-group">
     <input
       type="text"
-      inputmode="numeric"
+      inputmode="number"
       class="gigantic"
       placeholder="0"
       class:tiny={payValueString.length > 10}
@@ -157,7 +169,7 @@ import { Button, DenomPicker, Modal, SendDialog } from "components";
   <div class="header">You receive</div>
   <div class="gigantic-group">
     <div class="gigantic gigantic-shifted" class:pending>
-      ≈ {receiveValue.dividedBy(1_000_000).toFixed(2)}
+      ≈ {receiveValue / 1_000_000n}
     </div>
     <DenomPicker bind:denom={recvDenom} blacklist={[payDenom]} />
   </div>
@@ -166,37 +178,33 @@ import { Button, DenomPicker, Modal, SendDialog } from "components";
     <div class="row">
       <div class="col">Exchange rate</div>
       <div class="col text-end highlight">
-        {receiveValue.gt(0) && !pending
-          ? payValue.dividedBy(receiveValue).toFixed(3)
-          : "-"}
+        {payValue > 0n && !pending ? Number(receiveValue) / Number(payValue) + ` ${recvDenom}/${payDenom}`  : "-"}
       </div>
     </div>
     <div class="row">
       <div class="col">Price impact</div>
       <div
         class="col text-end highlight"
-        class:success={!pending && swapInfo && swapInfo.price_impact.gt(0)}
-        class:warning={!pending && swapInfo && swapInfo.price_impact.gt(0.01)}
-        class:danger={!pending && swapInfo && swapInfo.price_impact.gt(0.1)}
+        class:success={!pending && swapInfo && swapInfo.slippage < 0}
+        class:warning={!pending && swapInfo && swapInfo.slippage < 0.01}
+        class:danger={!pending && swapInfo && swapInfo.slippage < 0.1}
       >
-        {receiveValue.gt(0) && swapInfo && !pending
-          ? swapInfo.price_impact.multipliedBy(100).toFixed(2).toString() + "%"
+        {receiveValue > 0 && swapInfo && !pending
+          ? Number(swapInfo.slippage) / 1_000_000 + ` ${recvDenom}`
           : "-"}
       </div>
     </div>
     <div class="row">
       <div class="col">Approx. swap fees</div>
       <div class="col text-end highlight">
-        {payValue.dividedBy(200).dividedBy(1_000_000).toFixed(3).toString() +
-          " " +
-          denom2str(payDenom)}
+        {Number(payValue) / 200 / 1_000_000 + " " + payDenom.toString()}
       </div>
     </div>
   </div>
 
   <div class="button-protector">
     <Button
-      disabled={pending || payValue.eq(0)}
+      disabled={pending || payValue == 0n}
       label="Review transaction"
       outline
       onClick={onReview}

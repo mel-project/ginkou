@@ -10,7 +10,6 @@ import nodePolyfills from "rollup-plugin-node-polyfills";
 import inlineSvg from "rollup-plugin-inline-svg";
 import alias from "@rollup/plugin-alias";
 import scss from "rollup-plugin-scss";
-import buble from "rollup-plugin-buble";
 import babel from "rollup-plugin-babel";
 
 const path = require("path");
@@ -19,8 +18,8 @@ const rootDir = path.resolve(__dirname, "src");
 
 console.log(rootDir);
 
-const production = !process.env.ROLLUP_WATCH;
-
+// const production = !process.env.ROLLUP_WATCH;
+const production = false;
 function serve() {
   let server;
 
@@ -33,7 +32,7 @@ function serve() {
       if (server) return;
       server = require("child_process").spawn(
         "npm",
-        ["run", "start", "--", "--dev"],
+        ["run", "start", "--", "--dev", "--port", "5001"],
         {
           stdio: ["ignore", "inherit", "inherit"],
           shell: true,
@@ -54,8 +53,10 @@ export default {
     name: "app",
     file: "public/build/bundle.js",
     inlineDynamicImports: true,
+    globals: ""
   },
   plugins: [
+    // resolve(),
     alias({
       resolve: [".ts", ".js", ".svelte", ".scss"],
       entries: {
@@ -117,6 +118,7 @@ export default {
       ],
       plugins: [
         "@babel/plugin-syntax-dynamic-import",
+        "@babel/plugin-syntax-bigint",
         [
           "@babel/plugin-transform-runtime",
           {
@@ -125,7 +127,6 @@ export default {
         ],
       ],
     }),
-    buble(),
     // If w
 
     // In dev mode, call `npm run start` once

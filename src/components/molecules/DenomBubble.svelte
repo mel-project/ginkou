@@ -1,15 +1,20 @@
 <script lang="ts">
-  import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
-  export let value: string;
-  export let denom: string;
-  export let approxMelValue: string = "";
+  import { Denom } from "melwallet.js";
+  import DecimalBalance from "./../atoms/DecimalBalance.svelte";
+  export let value: bigint;
+  export let denom: Denom;
+  let approxMelValue: bigint;
 </script>
 
-<div class="wrap">
+<div class="wrap denom-bubble">
   <div class="root">
-    <div class="icon" class:mel={denom === "MEL"} class:sym={denom === "SYM"} />
+    <div
+      class="icon"
+      class:mel={denom === Denom.MEL}
+      class:sym={denom === Denom.SYM}
+    />
     <div class="label">
-      <div><b>{value}</b> {denom}</div>
+      <div><b><DecimalBalance {value} /></b> {denom}</div>
       {#if approxMelValue}<div class="approx">
           ≈ <b>{approxMelValue}</b> MEL
         </div>{/if}
@@ -68,7 +73,7 @@
     background-size: contain;
   }
 
-  .send {
-    color: var(--dark-color);
-  }
+  // .send {
+  //   color: var(--dark-color);
+  // }
 </style>

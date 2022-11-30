@@ -1,82 +1,72 @@
 <script lang="ts">
-  import type { Transaction } from "../../utils/types";
-  import BigNumber from "bignumber.js";
-  import { currentWalletName, currentWalletSummary } from "../../stores";
   import {
-    denom2str,
-    kind2str,
-    showToast,
-    transaction_balance,
-    transaction_full,
-  } from "../../utils/utils";
-  import { onDestroy } from "svelte";
-  import { derived, writable } from "svelte/store";
-  import type { Readable, Writable } from "svelte/store";
-  export let txhash: string;
-  export let height: number;
-
+    currentWallet,
+    currentWalletSummary,
+    currentWalletName,
+    melwalletdClient,
+  } from "../../stores";
+  import { showToast } from "../../utils/utils";
+  import { writable } from "svelte/store";
+  import type { Writable } from "svelte/store";
   import ArrowTopRight from "svelte-material-icons/ArrowTopRight.svelte";
   import ArrowBottomLeft from "svelte-material-icons/ArrowBottomLeft.svelte";
   import SwapVertical from "svelte-material-icons/SwapVertical.svelte";
-  import JSONbig from "json-bigint";
   import TxSummary from "../molecules/TxSummary.svelte";
-import { Modal } from "../atoms";
-  const JBig = JSONbig({ alwaysParseAsBig: true });
+  import { Modal } from "../atoms";
+  import { TransactionStatus, TxBalance } from "melwallet.js";
+  import { Transaction, TxKind } from "melwallet.js";
 
-  let balance: Writable<
-    [boolean, number, { [key: string]: BigNumber }] | null
-  > = writable(null);
+  export let txhash: string;
+  export let height: number;
+  let rxText = "Unknown";
+  let direction = 0;
+  let balance: TxBalance | null = null;
+  $: loading = !balance;
 
-  // Fire off whe nthis element is first observaable
-  const onIntersection = (entries: any, observer: any) => {
-    for (const { isIntersecting, target } of entries) {
-      if (isIntersecting && loading) {
-        console.log("something becoming visible");
-        (async () => {
-          if ($currentWalletName) {
-            let res = await transaction_balance(
-              $currentWalletName,
-              txhash
-            ).run();
-            res
-              .ifLeft((err) => console.log(err))
-              .ifRight((res) => {
-                balance.set(res);
-              });
-          }
-        })();
-        observer.unobserve(target);
-      }
-    }
-  };
   const options = {
     root: null,
     rootMargin: "50px 0px",
     threshold: [0],
   };
   let self: Element | null;
+
+  // Fire off whe nthis element is first observaable
+  const onIntersection = (entries: any, observer: any) => {
+    for (const { isIntersecting, target } of entries) {
+      if (isIntersecting && loading) {
+        (async () => {
+          if ($currentWalletName) {
+            console.log("loading balance", txhash);
+            balance = await melwalletdClient.tx_balance(
+              $currentWalletName,
+              txhash
+            );
+          }
+        })();
+        observer.unobserve(target);
+      }
+    }
+  };
+
   const observer = new IntersectionObserver(onIntersection, options);
   $: {
     self && observer.observe(self);
   }
 
-  $: loading = !$balance;
-
-  let rxText = "Unknown";
-  let direction = 0;
   $: {
-    if ($balance) {
+    if (balance) {
       let seenOut = false;
-      let seenIn = false;
-      Object.entries($balance[2]).forEach((a) => {
-        if (a[1].lt(0)) {
+      // let _seenIn;
+      Object.entries(balance[2]).forEach(([_denom, value]) => {
+        if (!value) return;
+        if (value < 0) {
           seenOut = true;
         }
-        if (a[1].gt(0)) {
-          seenIn = true;
+        if (value < 0) {
+          // seenIn = true;
         }
       });
-      if (kind2str(new BigNumber($balance[1])) === "Swap") {
+      if (balance[1] === TxKind.Swap) {
         rxText = "Swap funds";
         direction = 0;
       } else if (seenOut) {
@@ -91,16 +81,18 @@ import { Modal } from "../atoms";
 
   let modalOpen = false;
   let loadedTx: Transaction | null = null;
-
   $: loadDetails = async () => {
     if ($currentWalletName) {
       modalOpen = true;
-      let txn = await transaction_full($currentWalletName, txhash).run();
-      txn
-        .ifLeft((err) => showToast(err))
-        .ifRight((res) => {
-          loadedTx = res;
-        });
+      let txn: TransactionStatus | null = await melwalletdClient.tx_status(
+        $currentWalletName,
+        txhash
+      );
+      if (!txn) {
+        showToast("Bug: Transaction exists but can't load!");
+        return;
+      }
+      loadedTx = txn.raw;
     }
   };
 </script>
@@ -117,16 +109,17 @@ import { Modal } from "../atoms";
     title="Transaction details"
     onClose={() => (modalOpen = false)}
   >
-    {#if loadedTx}
+    {#if loadedTx && $currentWalletSummary}
       <TxSummary
         transaction={loadedTx}
-        selfAddr={$currentWalletSummary?.address}
+        selfAddr={$currentWalletSummary.address}
         {txhash}
         {height}
       />
     {/if}
   </Modal>
 
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div class="root" on:click={() => height > 0 && loadDetails()}>
     <div class="icon">
       {#if direction > 0}
@@ -150,18 +143,18 @@ import { Modal } from "../atoms";
       <!-- <div class="txhash">{txhash}</div> -->
     </div>
     <div class="amount">
-      {#if $balance}
-        {#each Object.entries($balance[2]) as [denom, num]}
-          {#if num.toNumber()}
+      {#if balance}
+        {#each Object.entries(balance[2]) as [denom, num]}
+          {#if num}
             <div>
-              {#if num.gte(0)}
+              {#if num >= 0}
                 <span class="text-primary"
-                  ><b>+{num.div(1000000).toFixed(6)}</b>
-                  {denom2str(denom)}</span
+                  ><b>+{Number(num) / 1000000}</b>
+                  {denom}</span
                 >
               {:else}
                 <span class="text-danger"
-                  ><b>{num.div(1000000).toFixed(6)}</b> {denom2str(denom)}</span
+                  ><b>{Number(num) / 1000000}</b> {denom}</span
                 >
               {/if}
             </div>
@@ -193,11 +186,11 @@ import { Modal } from "../atoms";
     font-weight: 600;
   }
 
-  .txhash {
-    font-size: calc(min(1.7vw, 8px));
-    margin-top: -2px;
-    font-family: "Iosevka";
-  }
+  // .txhash {
+  //   font-size: calc(min(1.7vw, 8px));
+  //   margin-top: -2px;
+  //   font-family: "Iosevka";
+  // }
 
   .pending {
     opacity: 0.5;
@@ -249,17 +242,17 @@ import { Modal } from "../atoms";
     font-size: 0.9rem;
   }
 
-  .mel {
-    background-image: url("/images/mel-coin.png");
-    background-size: contain;
-  }
+  // .mel {
+  //   background-image: url("/images/mel-coin.png");
+  //   background-size: contain;
+  // }
 
-  .sym {
-    background-image: url("/images/sym-coin.png");
-    background-size: contain;
-  }
+  // .sym {
+  //   background-image: url("/images/sym-coin.png");
+  //   background-size: contain;
+  // }
 
-  .send {
-    color: var(--dark-color);
-  }
+  // .send {
+  //   color: var(--dark-color);
+  // }
 </style>

@@ -2,28 +2,24 @@
   import { derived } from "svelte/store";
   import type { Readable } from "svelte/store";
 
-  import { currentNetworkStatus, currentWalletName } from "../stores";
-  import type { WalletDump } from "../utils/types";
-  import { list_transactions } from "../utils/utils";
-  import { parse } from "json-bigint";
-import { TransactionBubble } from "components";
-
+  import { latestHeader, currentWalletName, melwalletdClient } from "../stores";
+  import { TransactionBubble } from "components";
   const dateToTxhash: Readable<
     { [key: string]: [string, number][] } | undefined
   > = derived(
-    [currentWalletName, currentNetworkStatus],
+    [currentWalletName, latestHeader],
     ([name, netStatus], set) => {
       if (!name || !netStatus) {
         return;
       }
 
       const heightToString = (height: number) => {
-        const latestHeight = netStatus ? netStatus.height.toNumber() : 1000000;
+        const latestHeight = netStatus ? Number(netStatus.height) : 1000000;
         const heightDifference = latestHeight - height;
         let heightTime = new Date(Date.now() - heightDifference * 30000);
         if (height < 0) {
           heightTime = new Date(Date.now());
-          console.log("subzero", heightTime);
+          console.error("subzero", heightTime);
         }
         heightTime.setHours(0, 0, 0, 0);
         return heightTime.toLocaleDateString("en-GB", {
@@ -34,22 +30,17 @@ import { TransactionBubble } from "components";
       };
 
       (async () => {
-        let res = await list_transactions(name);
+        let res = await melwalletdClient.dump_transactions(name);
         let toret: { [key: string]: [string, number][] } = {};
-        res
-          .ifLeft((err) => alert(err))
-          .ifRight((res) => {
-            res.forEach(([txhash, height]) => {
-              const real_height = height ? height.toNumber() : -1;
+        res.forEach(([txhash, height]) => {
+              const real_height = height ? Number(height) : -1;
               const key = heightToString(real_height);
               if (!(key in toret)) {
                 toret[key] = [];
               }
               toret[key].push([txhash, real_height]);
             });
-            console.log(toret);
-            set(toret);
-          });
+        set(toret)
       })();
     }
   );
